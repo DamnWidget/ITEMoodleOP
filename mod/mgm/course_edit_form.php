@@ -62,18 +62,52 @@ class mgm_course_edit_form extends moodleform {
         $mform->addElement('select', 'opcion1', get_string('opcionuno', 'mgm'), $choices, 'onChange="mgm_opciones(true);"');
         $mform->addElement('select', 'opcion2', get_string('opciondos', 'mgm'), $choices, 'onChange="mgm_opciones(false);"');
 
-        if (isset($criteria->id)) {
-            $mform->addElement('hidden', 'id', 0);
-            $mform->setType('id', PARAM_INT);
-            $mform->setDefault('id', $criteria->id);
+        $achoices = $schoices = array();
+        $aespecs = & $this->_customdata->aespecs;
+        $sespecs = & $this->_customdata->sespecs;
+
+        if (is_array($aespecs)) {
+            $achoices += $aespecs;
         }
 
-        if (isset($criteria->edition)) {
-            $mform->addElement('hidden', 'id', 0);
+        if (is_array($sespecs)) {
+            $schoices += $sespecs;
+        }
+
+        $especs = array();
+        $especs[0] = & $mform->createElement('select', 'aespecs', get_string('cavailable', 'mgm'), $achoices,
+        	          						 'size="15" class="mod-mgm courses-select"
+        									  onfocus="getElementById(\'id_addsel\').disabled=false;
+        									  getElementById(\'id_removesel\').disabled=true;
+        									  getElementById(\'id_scourses\').selectedIndex=-1;"');
+        $especs[0]->setMultiple(true);
+        $especs[1] = & $mform->createElement('select', 'sespecs', get_string('cselected', 'mgm'), $schoices,
+        									 'size="15" class="mod-mgm courses-select"
+        									  onfocus="getElementById(\'id_addsel\').disabled=true;
+        									  getElementById(\'id_removesel\').disabled=false;
+        									  getElementById(\'id_acourses\').selectedIndex=-1;"');
+        $especs[1]->setMultiple(true);
+
+        $grp =& $mform->addElement('group', 'especsgrp', get_string('especialidades', 'mgm'), $especs, ' ', false);
+
+        $objs = array();
+        $objs[] =& $mform->createElement('submit', 'addsel', get_string('addespec', 'mgm'));
+        $objs[] =& $mform->createElement('submit', 'removesel', get_string('removeespec', 'mgm'));
+        $grp =& $mform->addElement('group', 'buttonsgrp', get_string('selectedespeclist', 'mgm'), $objs, array(' ', '<br />'), false);
+
+
+        if (isset($criteria->edicionid)) {
+            $mform->addElement('hidden', 'edicionid', 0);
             $mform->setType('edicionid', PARAM_INT);
-            $mform->setDefault('edicionid', $criteria->edition);
+            $mform->setDefault('edicionid', $criteria->edicionid);
         }
 
-        $this->add_action_buttons(true, $strsubmit);
+        if (isset($criteria->courseid)) {
+            $mform->addElement('hidden', 'courseid', 0);
+            $mform->setType('courseid', PARAM_INT);
+            $mform->setDefault('courseid', $criteria->courseid);
+        }
+
+        $this->add_action_buttons(true);
     }
 }

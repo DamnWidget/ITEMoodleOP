@@ -38,6 +38,9 @@ define('MGM_CRITERIA_OPCION1', 1);
 define('MGM_CRITERIA_OPCION2', 2);
 define('MGM_CRITERIA_ESPECIALIDAD', 3);
 
+define('MGM_ITE_ESPECIALIDADES', 1);
+define('MGM_ITE_CENTROS', 2);
+
 /**
  * Checks if an user can perform the view action on module access
  * @param object $cm
@@ -403,12 +406,21 @@ function mgm_remove_edition_contents($editionid) {
     return true;
 }
 
+function mgm_translate_especialidad($id) {
+    global $CFG;
+
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+    		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
+    $especialidades = explode("\n", get_record_sql($sql)->value);
+
+    return $especialidades[$id];
+}
+
 function mgm_get_edition_course_criteria($editionid, $courseid) {
     global $CFG;
 
     $criteria = new stdClass();
     $criteria->plazas = 0;
-    $criteria->opciones = array(null, null);
     $criteria->espec = array();
 
     $sql = 'SELECT * FROM '.$CFG->prefix.'edicion_criterios
@@ -423,19 +435,110 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
         }
 
         if ($c->type == MGM_CRITERIA_OPCION1) {
-            $criteria->opciones[0] = $c->value;
+            $criteria->opcion1 = $c->value;
         }
 
         if ($c->type == MGM_CRITERIA_OPCION2) {
-            $criteria->opciones[1] = $c->value;
+            $criteria->opcion2 = $c->value;
         }
 
         if ($c->type == MGM_CRITERIA_ESPECIALIDAD) {
-            array_push($criteria->espec, $c->value);
+            $criteria->espec[$c->value] = mgm_translate_especialidad($c->value);
         }
     }
 
     return $criteria;
+}
+
+function mgm_set_edition_course_criteria($data) {
+    global $CFG;
+
+    $criteria = new stdClass();
+    $criteria->edicion = $data->edicionid;
+    $criteria->course = $data->courseid;
+
+    // Plazas
+    $criteria->type = MGM_CRITERIA_PLAZAS;
+    $criteria->value = $data->plazas;
+    if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+        insert_record('edicion_criterios', $criteria);
+    } else {
+        $criteria->id = $criteriaid->id;
+        update_record('edicion_criterios', $criteria);
+        unset($criteria->id);
+    }
+
+    // Opcion1
+    $criteria->type = MGM_CRITERIA_OPCION1;
+    $criteria->value = $data->opcion1;
+    if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+        insert_record('edicion_criterios', $criteria);
+    } else {
+        $criteria->id = $criteriaid->id;
+        update_record('edicion_criterios', $criteria);
+        unset($criteria->id);
+    }
+
+    // Opcion2
+    $criteria->type = MGM_CRITERIA_OPCION2;
+    $criteria->value = $data->opcion2;
+    if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+        insert_record('edicion_criterios', $criteria);
+    } else {
+        $criteria->id = $criteriaid->id;
+        update_record('edicion_criterios', $criteria);
+        unset($criteria->id);
+    }
+
+    // Add especialidad
+    if (isset($data->aespecs)) {
+        foreach($data->aespecs as $k=>$v) {
+            $criteria->type = MGM_CRITERIA_ESPECIALIDAD;
+            $criteria->value = $v;
+            if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+                insert_record('edicion_criterios', $criteria);
+            } else {
+                $criteria->id = $criteriaid->id;
+                update_record('edicion_criterios', $criteria);
+                unset($criteria->id);
+            }
+        }
+    }
+
+    // Remove especialidad
+    if (isset($data->sespecs)) {
+        foreach($data->sespecs as $k=>$v) {
+            $criteria->type = MGM_CRITERIA_ESPECIALIDAD;
+            $criteria->value = $v;
+            if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+                continue;
+            } else {
+                delete_records('edicion_criterios', 'id', $criteriaid->id);
+            }
+        }
+    }
+}
+
+function mgm_edition_course_criteria_data_exists($criteria) {
+    global $CFG;
+
+    if ($criteria->type !== MGM_CRITERIA_ESPECIALIDAD) {
+        $sql = 'SELECT id FROM '.$CFG->prefix.'edicion_criterios
+    			WHERE edicion = \''.$criteria->edicion.'\' AND course = \''.$criteria->course.'\'
+    			AND type = \''.$criteria->type.'\'';
+        if (!$value = get_record_sql($sql)) {
+            return false;
+        }
+    } else {
+        $sql = 'SELECT id FROM '.$CFG->prefix.'edicion_criterios
+    		WHERE edicion = \''.$criteria->edicion.'\' AND course = \''.$criteria->course.'\'
+    		AND type = \''.$criteria->type.'\' AND value = \''.$criteria->value.'\'';
+        if (!$value = get_record_sql($sql)) {
+            return false;
+        }
+    }
+
+    return $value;
 }
 
 function mgm_get_edition_plazas($edition) {
@@ -451,4 +554,24 @@ function mgm_get_edition_plazas($edition) {
     }
 
     return $plazas;
+}
+
+function mgm_get_course_especialidades($courseid, $editionid) {
+    $criteria = mgm_get_edition_course_criteria($editionid, $courseid);
+
+    return $criteria->espec;
+}
+
+function mgm_get_course_available_especialidades($courseid, $editionid) {
+    global $CFG;
+
+    $data = mgm_get_course_especialidades($courseid, $editionid);
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+    		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
+    $especialidades = explode("\n", get_record_sql($sql)->value);
+    $filterespecialidades = array_filter($especialidades, function($element) use ($data) {
+        return (!in_array($element, $data));
+    });
+
+    return $filterespecialidades;
 }

@@ -54,184 +54,52 @@ if ($id) {
     }
 }
 
-if (isset($course)) {
-    $selectedespecs = mgm_get_course_especialidades($edition);
-    $allespecs = mgm_get_course_available_especialidades($edition);
+if (isset($course) && isset($edition)) {
+    $selectedespecs = mgm_get_course_especialidades($course->id, $edition->id);
+    $allespecs = mgm_get_course_available_especialidades($course->id, $edition->id);
+} else {
+    print_edition_edit_header();
+    print_heading(get_string('edicioncriteria', 'mgm'));
+    echo skip_main_destination();
+    print_box_start('edicionesbox');
+    mgm_print_ediciones_list();
+    print_box_end();
+    admin_externalpage_print_footer();
+    die();
 }
 
-$acourses = $scourses = array();
+$aespecs = $sespecs = array();
 
-if (!empty($selectedcourses)) {
-    foreach($selectedcourses as $selectedcourse) {
-        $scourses[$selectedcourse->id] = $selectedcourse->fullname;
-    }
+if (!empty($selectedespecs)) {
+    $sespecs = $selectedespecs;
 }
 
-if (!empty($allcourses)) {
-    foreach ($allcourses as $allcourse) {
-        $acourses[$allcourse->id] = $allcourse->fullname;
-    }
+if (!empty($allespecs)) {
+    $aespecs = $allespecs;
 }
 
-$edition->scourses = $scourses;
-$edition->acourses = $acourses;
+$criteria = mgm_get_edition_course_criteria($edicionid, $courseid);
+$criteria->courseid = $courseid;
+$criteria->edicionid = $edicionid;
+$criteria->sespecs = $sespecs;
+$criteria->aespecs = $aespecs;
 
-$mform = new mod_mgm_edit_form('edicionedit.php', $edition);
-$mform->set_data($edition);
+$mform = new mgm_course_edit_form('courses.php', $criteria);
+$mform->set_data($criteria);
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot.'/mod/mgm/index.php?editionedit=on');
+    redirect($CFG->wwwroot.'/mod/mgm/courses.php');
 } else if ($data = $mform->get_data()) {
-    $newedition = new stdClass();
-    $newedition->name = $data->name;
-    $newedition->description = $data->description;
-    $newedition->plazas = $data->plazas;
-    $newedition->inicio = $data->inicio;
-    $newedition->fin = $data->fin;
-
-    if (isset($data->theme) && !empty($CFG->allowcategorythemes)) {
-        $newcategory->theme = $data->theme;
-    }
-
-    if (isset($data->id)) {
-        $newedition->id = $data->id;
-
-        // Update an existing edition
-        if (isset($data->acourses)) {
-            // Add courses to edition
-            foreach($data->acourses as $courseid) {
-                mgm_add_course($edition, $courseid);
-            }
-        }
-
-        if (isset($data->scourses)) {
-            // Remove courses from edition
-            foreach($data->scourses as $courseid) {
-                mgm_remove_course($edition, $courseid);
-            }
-        }
-
-        mgm_update_edition($newedition);
-    } else {
-        // Create a new Edition
-        mgm_create_edition($newedition);
-    }
-    redirect('index.php');
+    mgm_set_edition_course_criteria($data);
+    redirect('courses.php?courseid='.$data->courseid.'&edicionid='.$data->edicionid);
 }
 
 // Print the form
-$straddnewedition = get_string('addedicion', 'mgm');
-$stradministration = get_string('administration');
-$streditions = get_string('editions', 'mgm');
-
-require_once($CFG->libdir.'/adminlib.php');
-
-admin_externalpage_setup('edicionesmgmt', mgm_update_edition_button());
-admin_externalpage_print_header();
-print_heading($strtitle);
+print_edition_edit_header();
+print_heading(get_string('edicioncriteria', 'mgm'));
+echo skip_main_destination();
 $mform->display();
 admin_externalpage_print_footer();
-
-
-/*
- *
- *
- *
- *
- * UN BARCO UN BARCO UN BARCO
- *
- *
- *
- *
- *
- */
-
-$id = optional_param('id', 0, PARAM_INT);
-$step = optional_param('step', 'one', PARAM_ALPHANUM);
-$courseid = optional_param('courseid', 0, PARAM_INT);
-$edicionid = optional_param('edicionid', 0, PARAM_INT);
-
-require_login();
-
-if (!mgm_can_do_assigncriteria()) {
-    error('You do not have permission to assign course criteria');
-}
-
-if (!$site = get_site()) {
-    error('Site not found!');
-}
-
-if ($step == 'two') {
-    // Procesa el formulario
-    $criteria = mgm_get_edition_course_criteria($edicionid, $courseid);
-    $mform = new mgm_course_edit_form('courses.php', $criteria);
-    $mform->set_data($criteria);
-
-    if ($mform->is_cancelled()) {
-        redirect($CFG->wwwroot.'/mod/mgm/courses.php');
-    } else if ($data = $mform->get_data()) {
-    }
-} else {
-    if (!$course = get_record('course', 'id', $courseid)) {
-        print_edition_edit_header();
-        print_heading(get_string('edicioncriteria', 'mgm'));
-        echo skip_main_destination();
-        print_box_start('edicionesbox');
-        mgm_print_ediciones_list();
-        print_box_end();
-        admin_externalpage_print_footer();
-    } else {
-        print_edition_edit_header();
-        print_heading(get_string('edicioncriteria', 'mgm'));
-        echo skip_main_destination();
-        $criteria = mgm_get_edition_course_criteria($edicionid, $courseid);
-        $mform = new mgm_course_edit_form('courses.php', $criteria);
-        $mform->set_data($criteria);
-
-        if ($mform->is_cancelled()) {
-            redirect($CFG->wwwroot.'/mod/mgm/courses.php');
-        } else if ($data = $mform->get_data()) {
-        /*$newedition = new stdClass();
-        $newedition->name = $data->name;
-        $newedition->description = $data->description;
-        $newedition->plazas = $data->plazas;
-        $newedition->inicio = $data->inicio;
-        $newedition->fin = $data->fin;
-
-        if (isset($data->theme) && !empty($CFG->allowcategorythemes)) {
-            $newcategory->theme = $data->theme;
-        }
-
-        if (isset($data->id)) {
-            $newedition->id = $data->id;
-
-            // Update an existing edition
-            if (isset($data->acourses)) {
-                // Add courses to edition
-                foreach($data->acourses as $courseid) {
-                    mgm_add_course($edition, $courseid);
-                }
-            }
-
-            if (isset($data->scourses)) {
-                // Remove courses from edition
-                foreach($data->scourses as $courseid) {
-                    mgm_remove_course($edition, $courseid);
-                }
-            }
-
-            mgm_update_edition($newedition);
-        } else {
-            // Create a new Edition
-            mgm_create_edition($newedition);
-        }
-        redirect('index.php');*/
-        }
-
-        $mform->display();
-        admin_externalpage_print_footer();
-    }
-}
 
 function print_edition_edit_header() {
     global $CFG;
