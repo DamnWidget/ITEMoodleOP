@@ -26,4 +26,4 @@
  */
 
 $plugin->version  = 2010111303;  // The current module version (Date: YYYYMMDDXX)
-$plugin->requires = 2007101591;  // Requires this Moodle version
+$plugin->requires = 2007101551;  // Requires this Moodle version
