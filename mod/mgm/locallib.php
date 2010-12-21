@@ -293,7 +293,7 @@ function mgm_get_edition_courses($edition) {
         return array();
     }
 
-    $sql = "SELECT id, fullname FROM ".$CFG->prefix."course
+    $sql = "SELECT * FROM ".$CFG->prefix."course
     		WHERE id IN (
     			SELECT courseid FROM ".$CFG->prefix."edicion_course
     			WHERE edicionid=".$edition->id."
@@ -548,7 +548,8 @@ function mgm_get_edition_plazas($edition) {
 
     $plazas = 0;
     foreach(get_records('edicion_course', 'edicionid', $edition->id) as $course) {
-        if($criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
+        if($criteria = mgm_get_edition_course_criteria($edition->id, $course->courseid)) {
+            //print_object($criteria);
             $plazas += $criteria->plazas;
         }
     }
@@ -574,4 +575,73 @@ function mgm_get_course_available_especialidades($courseid, $editionid) {
     });
 
     return $filterespecialidades;
+}
+
+function mgm_get_course_edition($id) {
+    if (!$row = get_record('edicion_course', 'courseid', $id)) {
+        return null;
+    }
+
+    if (!$edition = get_record('edicion', 'id', $row->edicionid)) {
+        return null;
+    }
+
+    return $edition;
+}
+
+function mgm_get_edition_user_options($edition, $user) {
+    global $CFG;
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_preinscripcion
+    		WHERE edicionid = '".$edition."' AND userid = '".$user."'";
+
+    if (!$data = get_record_sql($sql)) {
+        return false;
+    } else {
+        $data = $data->value;
+    }
+    $choices = array();
+    $options = explode(',', $data);
+    foreach ($options as $option) {
+        $choices[] = $option;
+    }
+
+    return $choices;
+}
+
+function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
+    $strcourses = implode(',', $courses);
+
+    if (!$record = get_record('edicion_preinscripcion', 'edicionid', $edition, 'userid', $user)) {
+        // New record
+        $record = new stdClass();
+        $record->edicionid = $edition;
+        $record->userid = $user;
+        $record->value = $strcourses;
+        $record->timemodified = time();
+        insert_record('edicion_preinscripcion', $record);
+    } else {
+        // Update record
+        $record->value = $strcourses;
+        $record->timemodified = time();
+        update_record('edicion_preinscripcion', $record);
+    }
+}
+
+function mgm_edition_get_solicitudes($edition, $course) {
+    global $CFG;
+
+    if ($record = get_record('edicion_preinscripcion', 'edicionid', $edition->id)) {
+        $solicitudes = explode(",", $record->value);
+        return count(array_filter($solicitudes, function($element) use ($course) {
+            return ($element == $course->id);
+        }));
+    }
+
+    return 0;
+}
+
+function mgm_get_edition_course_preinscripcion_data($edition, $course) {
+    global $CFG;
+
+
 }

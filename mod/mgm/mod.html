@@ -1,0 +1,47 @@
+<?php
+/// First we check that form variables have been initialised
+if (!isset($form->name)) {
+    $form->name = '';
+    $form->location='';
+    $form->layout=0;
+    $form->filename=0;
+    $form->delaytime=0;
+    $form->centred=0;
+    $form->autobgcolor=0;
+    $form->htmlcaptions=0;
+}
+?>
+<form name="form" method="post" action="mod.php">
+<center>
+<table cellpadding="5">
+<!-- More rows go in here... -->
+<?php
+    $question = get_string("cannotaddtocourses", "mgm");
+?>
+    <tr valign="top">
+        <td align="center" nowrap="nowrap">
+            <?php echo $question; ?>
+        </td>    
+    </tr>
+    <tr valign="top">
+        <td align="center">
+        
+        </td>
+    </tr>
+</table>
+
+   
+<!-- These hidden variables are always the same -->
+<input type="hidden" name=course        value="<?php  p($form->course) ?>" />
+<input type="hidden" name="sesskey"     value="<?php  p($form->sesskey) ?>" />
+<input type="hidden" name=coursemodule  value="<?php  p($form->coursemodule) ?>" />
+<input type="hidden" name=section       value="<?php  p($form->section) ?>" />
+<input type="hidden" name=module        value="<?php  p($form->module) ?>" />
+<input type="hidden" name=modulename    value="<?php  p($form->modulename) ?>" />
+<input type="hidden" name=instance      value="<?php  p($form->instance) ?>" />
+<input type="hidden" name=mode          value="<?php  p($form->mode) ?>" />
+<input type="submit" name="yes" value="<?php  print_string("cancel") ?>" />
+</center>
+
+</form>
+<p>
