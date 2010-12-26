@@ -34,6 +34,7 @@ $string['alreadyadded'] = 'MGM ya está presente en la portada';
 $string['asignado'] = 'Asignado';
 $string['cannotaddtocourses'] = 'No puede añadir instancia de MGM a cursos.';
 $string['cavailable'] = 'Cursos disponibles';
+$string['cc'] = 'Código de centro';
 $string['centrosfile'] = 'Archivo CSV con información de los centros';
 $string['createcriteria'] = 'Crear nuevos criterios';
 $string['createedition'] = 'Crear nueva edición';

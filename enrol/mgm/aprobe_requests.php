@@ -74,6 +74,8 @@ $straddedicion     = get_string('addedicion', 'mgm');
 $strasignado       = get_string('asignado', 'mgm');
 $strsolicitudes    = get_string('solicitudes', 'mgm');
 $strinscripcion    = get_string('fechainscripcion', 'mgm');
+$strcc             = get_string('cc', 'mgm');
+$strespecialidades = get_string('especialidades', 'mgm');
 $stradministration = get_string('administration');
 $strdescription    = get_string('description');
 $strcourses        = get_string('courses');
@@ -129,12 +131,12 @@ if ($courseid) {
         $strheading = $strheading.' - '.$course->fullname;
 
         // Table header
-        $editiontable->head = array($strselect, $strname, $strlastname, $strinscripcion);
-        $editiontable->align = array('left', 'left', 'center');
+        $editiontable->head = array($strselect, $strname, $strlastname, $strinscripcion, $strcc, $strespecialidades, $strcourses);
+        $editiontable->align = array('left', 'left', 'left', 'left', 'left', 'left', 'left');
 
         // Table data
         unset($editiontable->data);
-        $editiontable = mgm_get_edition_course_preinscripcion_data($edition, $course);
+        $editiontable->data = mgm_get_edition_course_preinscripcion_data($edition, $course);
     }
 }
 

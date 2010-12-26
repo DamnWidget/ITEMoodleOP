@@ -549,7 +549,6 @@ function mgm_get_edition_plazas($edition) {
     $plazas = 0;
     foreach(get_records('edicion_course', 'edicionid', $edition->id) as $course) {
         if($criteria = mgm_get_edition_course_criteria($edition->id, $course->courseid)) {
-            //print_object($criteria);
             $plazas += $criteria->plazas;
         }
     }
@@ -630,18 +629,164 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
 function mgm_edition_get_solicitudes($edition, $course) {
     global $CFG;
 
-    if ($record = get_record('edicion_preinscripcion', 'edicionid', $edition->id)) {
-        $solicitudes = explode(",", $record->value);
-        return count(array_filter($solicitudes, function($element) use ($course) {
-            return ($element == $course->id);
-        }));
+    $ret = 0;
+    if ($records = get_records('edicion_preinscripcion', 'edicionid', $edition->id)) {
+        foreach($records as $record) {
+            $solicitudes = explode(",", $record->value);
+            $ret += count(array_filter($solicitudes, function($element) use ($course) {
+                return ($element == $course->id);
+            }));
+        }
     }
 
-    return 0;
+    return $ret;
 }
 
 function mgm_get_edition_course_preinscripcion_data($edition, $course) {
     global $CFG;
 
+    // Preinscripcion date first
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
+    		WHERE edicionid = '".$edition->id."' ORDER BY timemodified ASC";
 
+    if (!$preinscripcion = get_records_sql($sql)) {
+        return;
+    }
+
+    $final = array();
+    foreach ($preinscripcion as $data) {
+        $courses = explode(",", $data->value);
+        if (in_array($course->id, $courses)) {
+            $final[] = $data;
+        }
+    }
+
+    if (!count($final)) {
+        return;
+    }
+
+    // Get data and order it by: Course, Date
+    $data = $firstdata = $lastdata = array();
+    foreach ($final as $row) {
+        $user = get_record('user', 'id', $row->userid);
+        $userdata = get_record('edicion_user', 'userid', $user->id);
+        $especs = explode("\n", $userdata->especialidades);
+        $userespecs = '<select name="especialidades">';
+        foreach ($especs as $espec) {
+            $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
+        }
+        $userespecs .= '</select>';
+        $courses = '<select name="courses">';
+        $values = explode(',', $row->value);
+        foreach($values as $courseid) {
+            $ncourse = get_record('course', 'id', $courseid);
+            $courses .= '<option name="'.$courseid.'">'.$ncourse->fullname.'</option>';
+        }
+        $courses .= '</select>';
+        $tmpdata = array(
+        	'<input type="checkbox" name="'.$row->userid.'" value="on"/>',
+            $user->firstname,
+            $user->lastname,
+            date("d/m/Y", $row->timemodified),
+            $userdata->cc,
+            $userespecs,
+            $courses
+        );
+
+        if ($values[0] == $course->id) {
+            if ($criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
+                if ($criteria->opcion1 == "especialidades") {
+                    $found = false;
+                    $kets = array_keys($criteria->espec);
+                    if ($especs[0] == $kets[0]) {
+                        array_unshift($firstdata, $tmpdata);
+                    } else {
+                        $firstdata[] = $tmpdata;
+                    }
+                }
+            } else {
+                array_unshift($firstdata, $tmpdata);
+            }
+        } else {
+            if ($criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
+                if ($criteria->opcion1 == "especialidades") {
+                    $found = false;
+                    $kets = array_keys($criteria->espec);
+                    if ($especs[0] == $kets[0]) {
+                        array_unshift($lastdata, $tmpdata);
+                    } else {
+                        $lastdata[] = $tmpdata;
+                    }
+                }
+            } else {
+                array_unshift($lastdata, $tmpdata);
+            }
+        }
+    }
+
+    foreach ($firstdata as $fd) {
+        $data[] = $fd;
+    }
+    foreach ($lastdata as $ld) {
+        $data[] = $ld;
+    }
+
+    return $data;
+}
+
+function mgm_get_user_cc($userid) {
+    if ($cc = get_record('edicion_user', 'userid', $userid)) {
+        return $cc->cc;
+    }
+
+    return '';
+}
+
+function mgm_get_user_especialidades($userid) {
+    if ($especialidades = get_record('edicion_user', 'userid', $userid)) {
+        $especs = array();
+        foreach (explode("\n", $especialidades->especialidades) as $espec) {
+            $especs[$espec] = mgm_translate_especialidad($espec);
+        }
+
+        return $especs;
+    }
+
+    return array();
+}
+
+function mgm_get_user_available_especialidades($userid) {
+    global $CFG;
+
+    $data = mgm_get_user_especialidades($userid);
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+    		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
+    $especialidades = explode("\n", get_record_sql($sql)->value);
+    $filterespecialidades = array_filter($especialidades, function($element) use ($data) {
+        return (!in_array($element, $data));
+    });
+
+    return $filterespecialidades;
+}
+
+function mgm_set_userdata($userid, $data) {
+    $newdata = new stdClass();
+    $newdata->cc = $data->cc;
+    $newdata->userid = $userid;
+    if (!record_exists('edicion_user', 'userid', $userid)) {
+        $newdata->especialidades = implode("\n", $data->aespecs);
+        insert_record('edicion_user', $newdata);
+    } else {
+        $olddata = get_record('edicion_user', 'userid', $userid);
+        $newdata->id = $olddata->id;
+        if (!isset($data->addsel)) {
+            $especialidades = explode("\n", $olddata->especialidades);
+            $newdata->especialidades = implode("\n", array_filter($especialidades, function($element) use ($data) {
+                return (!in_array($element, $data));
+            }));
+        } else {
+            $newdata->especialidades = $olddata->especialidades;
+        }
+        update_record('edicion_user', $newdata);
+    }
 }
