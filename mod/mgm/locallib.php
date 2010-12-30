@@ -41,12 +41,6 @@ define('MGM_CRITERIA_ESPECIALIDAD', 3);
 define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
 
-if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-    define('MGM_PHP_INLINE', false);
-} else {
-    define('MGM_PHP_INLINE', true);
-}
-
 /**
  * Checks if an user can perform the view action on module access
  * @param object $cm
@@ -575,15 +569,10 @@ function mgm_get_course_available_especialidades($courseid, $editionid) {
     $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
     		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
     $especialidades = explode("\n", get_record_sql($sql)->value);
-    if (MGM_PHP_INLINE) {
-        $filterespecialidades = array_filter($especialidades, function($element) use ($data) {
-            return (!in_array($element, $data));
-        });
-    } else {
-        $strdata = implode(',', $data);
-        $filterespecialidades = array_filter($especialidades, create_function('$element',
+
+    $strdata = implode(',', $data);
+    $filterespecialidades = array_filter($especialidades, create_function('$element',
         '$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));'));
-    }
 
     return $filterespecialidades;
 }
@@ -645,14 +634,9 @@ function mgm_edition_get_solicitudes($edition, $course) {
     if ($records = get_records('edicion_preinscripcion', 'edicionid', $edition->id)) {
         foreach($records as $record) {
             $solicitudes = explode(",", $record->value);
-            if (MGM_PHP_INLINE) {
-                $ret += count(array_filter($solicitudes, function($element) use ($course) {
-                    return ($element == $course->id);
-                }));
-            } else {
-                $ret += count(array_filter($solicitudes, create_function('$element',
+
+            $ret += count(array_filter($solicitudes, create_function('$element',
                 'return ($element == '.$course->id.');')));
-            }
         }
     }
 
@@ -779,15 +763,10 @@ function mgm_get_user_available_especialidades($userid) {
     $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
     		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
     $especialidades = explode("\n", get_record_sql($sql)->value);
-    if (MGM_PHP_INLINE) {
-        $filterespecialidades = array_filter($especialidades, function($element) use ($data) {
-            return (!in_array($element, $data));
-        });
-    } else {
-        $strdata = implode(',', $data);
-        $filterespecialidades = array_filter($especialidades, create_function('$element',
+
+    $strdata = implode(',', $data);
+    $filterespecialidades = array_filter($especialidades, create_function('$element',
         '$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));'));
-    }
 
     return $filterespecialidades;
 }
@@ -804,15 +783,10 @@ function mgm_set_userdata($userid, $data) {
         $newdata->id = $olddata->id;
         if (!isset($data->addsel)) {
             $especialidades = explode("\n", $olddata->especialidades);
-            if (MGM_PHP_INLINE) {
-                $newdata->especialidades = implode("\n", array_filter($especialidades, function($element) use ($data) {
-                    return (!in_array($element, $data));
-                }));
-            } else {
-                $strdata = implode(',', $data);
-                $newdata->especialidades = implode("\n", array_filter($especialidades, create_function('$element',
-        			'$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));')));
-            }
+
+            $strdata = implode(',', $data);
+            $newdata->especialidades = implode("\n", array_filter($especialidades, create_function('$element',
+        		'$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));')));
         } else {
             $newdata->especialidades = $olddata->especialidades;
         }
