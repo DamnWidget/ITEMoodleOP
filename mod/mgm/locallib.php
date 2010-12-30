@@ -42,9 +42,9 @@ define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
 
 if (version_compare(PHP_VERSION, '5.3.0', '<')) {
-    define('MGM_PHP_INLINE', 0);
+    define('MGM_PHP_INLINE', false);
 } else {
-    define('MGM_PHP_INLINE', 1);
+    define('MGM_PHP_INLINE', true);
 }
 
 /**
@@ -580,8 +580,9 @@ function mgm_get_course_available_especialidades($courseid, $editionid) {
             return (!in_array($element, $data));
         });
     } else {
-        $filterespecialidades = array_filter($especialidades, create_function("$element",
-        "return (!in_array($element, $data))"));
+        $strdata = implode(',', $data);
+        $filterespecialidades = array_filter($especialidades, create_function('$element',
+        '$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));'));
     }
 
     return $filterespecialidades;
@@ -649,8 +650,8 @@ function mgm_edition_get_solicitudes($edition, $course) {
                     return ($element == $course->id);
                 }));
             } else {
-                $ret += count(array_filter($solicitudes, create_function("$element",
-                "return ($element == $course->id)")));
+                $ret += count(array_filter($solicitudes, create_function('$element',
+                'return ($element == '.$course->id.');')));
             }
         }
     }
@@ -783,8 +784,9 @@ function mgm_get_user_available_especialidades($userid) {
             return (!in_array($element, $data));
         });
     } else {
-        $filterespecialidades = array_filter($especialidades, create_function("$element",
-        "return (!in_array($element, $data))"));
+        $strdata = implode(',', $data);
+        $filterespecialidades = array_filter($especialidades, create_function('$element',
+        '$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));'));
     }
 
     return $filterespecialidades;
@@ -807,8 +809,9 @@ function mgm_set_userdata($userid, $data) {
                     return (!in_array($element, $data));
                 }));
             } else {
-                $newdata->especialidades = implode("\n", array_filter($especialidades, create_function("$element",
-                "return (!in_array($lement, $data))")));
+                $strdata = implode(',', $data);
+                $newdata->especialidades = implode("\n", array_filter($especialidades, create_function('$element',
+        			'$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));')));
             }
         } else {
             $newdata->especialidades = $olddata->especialidades;
