@@ -870,20 +870,34 @@ function mgm_set_userdata($userid, $data) {
     $newdata->cc = $data->cc;
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {
-        $newdata->especialidades = implode("\n", $data->aespecs);
+        if (isset($data->addsel)) {
+             $newdata->especialidades = implode("\n", $data->aespecs);
+        } else {
+            $newdata->espcialidades = "";
+        }
         insert_record('edicion_user', $newdata);
     } else {
         $olddata = get_record('edicion_user', 'userid', $userid);
         $newdata->id = $olddata->id;
-        if (!isset($data->addsel)) {
-            $especialidades = explode("\n", $olddata->especialidades);
-
-            $strdata = implode(',', $data);
-            $newdata->especialidades = implode("\n", array_filter($especialidades, create_function('$element',
-        		'$data = explode(",", "'.$strdata.'"); return (!in_array($element, $data));')));
+        if (isset($data->addsel)) {
+            $oldespec = explode("\n", $olddata->especialidades);
+            $newespec = array_merge($oldespec, $data->aespecs);
+            $newdata->especialidades = implode("\n", $newespec);
+        } else if (isset($data->removesel)) {
+            $oldespec = explode("\n", $olddata->especialidades);
+            foreach ($data->sespecs as $k=>$v) {
+                if (in_array($v, $oldespec)) {
+                    $idx = array_search($v, $oldespec);
+                    unset($oldespec[array_search($v, $oldespec)]);
+                }
+            }
+            $newespec = implode("\n", $oldespec);
+            $newdata->especialidades = $newespec;
+            print_object($newdata);
         } else {
             $newdata->especialidades = $olddata->especialidades;
         }
+
         update_record('edicion_user', $newdata);
     }
 }
