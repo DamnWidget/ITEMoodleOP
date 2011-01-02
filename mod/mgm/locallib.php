@@ -37,6 +37,7 @@ define('MGM_CRITERIA_PLAZAS', 0);
 define('MGM_CRITERIA_OPCION1', 1);
 define('MGM_CRITERIA_OPCION2', 2);
 define('MGM_CRITERIA_ESPECIALIDAD', 3);
+define('MGM_CRITERIA_CC', 4);
 
 define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
@@ -434,6 +435,10 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
             $criteria->plazas = $c->value;
         }
 
+        if ($c->type == MGM_CRITERIA_CC) {
+            $criteria->ccaas = $c->value;
+        }
+
         if ($c->type == MGM_CRITERIA_OPCION1) {
             $criteria->opcion1 = $c->value;
         }
@@ -460,6 +465,17 @@ function mgm_set_edition_course_criteria($data) {
     // Plazas
     $criteria->type = MGM_CRITERIA_PLAZAS;
     $criteria->value = $data->plazas;
+    if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+        insert_record('edicion_criterios', $criteria);
+    } else {
+        $criteria->id = $criteriaid->id;
+        update_record('edicion_criterios', $criteria);
+        unset($criteria->id);
+    }
+
+    // CC
+    $criteria->type = MGM_CRITERIA_CC;
+    $criteria->value = $data->ccaas;
     if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
         insert_record('edicion_criterios', $criteria);
     } else {
@@ -627,6 +643,48 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
     }
 }
 
+function mgm_inscribe_user_in_edition($edition, $user, $course) {
+    if (!$record = get_record('edicion_inscripcion', 'edicionid', $edition, 'userid', $user)) {
+        // New record
+        $record = new stdClass();
+        $record->edicionid = $edition;
+        $record->userid = $user;
+        $record->value = $course;
+        insert_record('edicion_inscripcion', $record);
+    } else {
+        // Update record
+        $record->value = $course;
+        update_record('edicion_inscripcion', $record);
+    }
+}
+
+function mgm_enrol_edition_course($editionid, $courseid) {
+    global $CFG;
+
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid='".$editionid."' AND value='".$courseid."'";
+    if ($data = get_records_sql($sql)) {
+        $course = get_record('course', 'id', $courseid);
+        foreach($data as $row) {
+            $user = get_record('user', 'id', $row->userid);
+            if (!enrol_into_course($course, $user, 'mgm')) {
+                print_error('couldnotassignrole');
+            }
+
+            // Delete user preinscriptions
+            delete_records('edicion_preinscripcion', 'userid', $user->id);
+        }
+    }
+}
+
+function mgm_check_already_enroled($editionid, $courseid) {
+    global $CFG;
+
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid='".$editionid."' AND value='".$courseid."'";
+    return get_records_sql($sql);
+}
+
 function mgm_edition_get_solicitudes($edition, $course) {
     global $CFG;
 
@@ -643,7 +701,7 @@ function mgm_edition_get_solicitudes($edition, $course) {
     return $ret;
 }
 
-function mgm_get_edition_course_preinscripcion_data($edition, $course) {
+function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=true) {
     global $CFG;
 
     // Preinscripcion date first
@@ -668,38 +726,53 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course) {
 
     // Get data and order it by: Course, Date
     $data = $firstdata = $lastdata = array();
+
     foreach ($final as $row) {
         $user = get_record('user', 'id', $row->userid);
         $userdata = get_record('edicion_user', 'userid', $user->id);
         $especs = explode("\n", $userdata->especialidades);
-        $userespecs = '<select name="especialidades">';
+        $userespecs = '<select name="especialidades" readonly="">';
         foreach ($especs as $espec) {
             $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
         }
         $userespecs .= '</select>';
-        $courses = '<select name="courses">';
+        $courses = '<select name="courses" readonly="">';
         $values = explode(',', $row->value);
+        $realcourses = array();
+        for ($i = 0; $i < count($values); $i++) {
+            if (mgm_check_already_enroled($edition->id, $values[$i])) {
+                continue;
+            }
+            $realcourses[] = $values[$i];
+        }
+
         foreach($values as $courseid) {
             $ncourse = get_record('course', 'id', $courseid);
             $courses .= '<option name="'.$courseid.'">'.$ncourse->fullname.'</option>';
         }
         $courses .= '</select>';
+        $check = '<input type="checkbox" name="users['.$row->userid.']" />';
         $tmpdata = array(
-        	'<input type="checkbox" name="'.$row->userid.'" value="on"/>',
+        	$check,
             $user->firstname,
             $user->lastname,
-            date("d/m/Y", $row->timemodified),
+            date("d/m/Y H:i\"s", $row->timemodified),
             $userdata->cc,
             $userespecs,
             $courses
         );
 
-        if ($values[0] == $course->id) {
+        if ($realcourses[0] == $course->id) {
             if ($criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
                 if ($criteria->opcion1 == "especialidades") {
-                    $found = false;
                     $kets = array_keys($criteria->espec);
                     if ($especs[0] == $kets[0]) {
+                        array_unshift($firstdata, $tmpdata);
+                    } else {
+                        $firstdata[] = $tmpdata;
+                    }
+                } else {
+                    if ($userdata->cc == $criteria->ccaas) {
                         array_unshift($firstdata, $tmpdata);
                     } else {
                         $firstdata[] = $tmpdata;
@@ -718,6 +791,12 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course) {
                     } else {
                         $lastdata[] = $tmpdata;
                     }
+                } else {
+                    if ($userdata->cc == $criteria->ccaas) {
+                        array_unshift($lastdata, $tmpdata);
+                    } else {
+                        $lastdata[] = $tmpdata;
+                    }
                 }
             } else {
                 array_unshift($lastdata, $tmpdata);
@@ -730,6 +809,21 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course) {
     }
     foreach ($lastdata as $ld) {
         $data[] = $ld;
+    }
+
+    if ($docheck) {
+        $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
+        $asigned = 0;
+        foreach ($data as $k=>$row) {
+            $arr = explode('"', $row[0]);
+            $userid = $arr[3];
+            $check = '<input type="checkbox" name="'.$userid.'" checked="true"/>';
+
+            if ($criteria->plazas > $asigned) {
+                $data[$k][0] = $check;
+                $asigned++;
+            }
+        }
     }
 
     return $data;
@@ -792,4 +886,18 @@ function mgm_set_userdata($userid, $data) {
         }
         update_record('edicion_user', $newdata);
     }
+}
+
+function mgm_get_cc_data() {
+    global $CFG;
+
+    $csvdata = array();
+    if (($gestor = fopen($CFG->mgm_centros_file, "r")) !== FALSE) {
+        while (($datos = fgetcsv($gestor, 1000, ",")) !== FALSE) {
+            $csvdata[] = $datos;
+        }
+        fclose($gestor);
+    }
+
+    return $csvdata;
 }

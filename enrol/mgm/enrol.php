@@ -72,7 +72,9 @@ class enrolment_plugin_mgm {
     public function print_entry($course) {
         global $CFG, $USER, $form;
 
-        $edition = mgm_get_course_edition($course->id);
+        if (!$edition = mgm_get_course_edition($course->id)) {
+            error(get_string('noeditioncourse', 'mgm'));
+        }
         $strloginto = get_string('loginto', '', $edition->name);
         $strcourses = get_string('courses');
 
@@ -160,7 +162,7 @@ class enrolment_plugin_mgm {
      * @param object $course
      * @return void
      */
-    public function check_entry($form, $course){
+    public function check_entry($form, $course) {
         // some logic
         // some role_assign();
     }
@@ -191,6 +193,27 @@ class enrolment_plugin_mgm {
      * @return string
      */
     public function get_access_icons($course){
-        return 'put icons here';
+        global $CFG;
+
+        global $strallowguests;
+        global $strrequireskey;
+
+        if (empty($strallowguests)) {
+            $strallowguests = get_string('allowguests');
+            $strrequireskey = get_string('requireskey');
+        }
+
+        $str = '';
+
+        if (!empty($course->guest)) {
+            $str .= '<a title="'.$strallowguests.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
+            $str .= '<img class="accessicon" alt="'.$strallowguests.'" src="'.$CFG->pixpath.'/i/guest.gif" /></a>&nbsp;&nbsp;';
+        }
+        if (!empty($course->password)) {
+            $str .= '<a title="'.$strrequireskey.'" href="'.$CFG->wwwroot.'/course/view.php?id='.$course->id.'">';
+            $str .= '<img class="accessicon" alt="'.$strrequireskey.'" src="'.$CFG->pixpath.'/i/key.gif" /></a>';
+        }
+
+        return $str;
     }
 }

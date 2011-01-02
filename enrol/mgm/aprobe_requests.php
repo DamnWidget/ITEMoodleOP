@@ -41,6 +41,7 @@ if (!$preinscripcion = get_records('edicion_preinscripcion')) {
 
 $id = optional_param('id', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
+$inscribe = optional_param('inscribe', false, PARAM_BOOL);
 
 // Editions
 $editions = get_records('edicion');
@@ -96,6 +97,22 @@ $navlinks[] = array('name' => $strmatricular, 'link' => 'aprobe_requests.php', '
 $editiontable->head  = array($stredicion, $strfechainicio, $strfechafin, $strcourses, $strplazas);
 $editiontable->align = array('left', 'left', 'left', 'center', 'center', 'center');
 
+if ($inscribe) {
+    if (!$courseid || !$id) {
+        error(get_string('nodata', 'mgm'));
+        die();
+    }
+
+    $users = array_keys($_REQUEST['users']);
+    foreach($users as $user) {
+        mgm_inscribe_user_in_edition($id, $user, $courseid);
+    }
+
+    mgm_enrol_edition_course($id, $courseid);
+
+    redirect('aprobe_requests.php');
+}
+
 if ($id) {
     if ($edition = get_record('edicion', 'id', $id)) {
         $navlinks[] = array('name' => $edition->name, 'link' => 'aprobe_requests.php?id='.$edition->id, 'type' => 'misc');
@@ -108,17 +125,24 @@ if ($id) {
         // Table data
         unset($editiontable->data);
         foreach (mgm_get_edition_courses($edition) as $course) {
-            if ($inscripcion = get_records('edicion_inscripcion', 'edicionid', $id)) {
+            $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+            	    WHERE edicionid='".$id."' AND value='".$course->id."'";
+            if ($inscripcion = get_records_sql($sql)) {
                 $asignado = $stryes;
                 $link = '<b>'.$course->fullname.'</b>';
             } else {
                 $asignado = $strno;
                 $link = '<a href="aprobe_requests.php?id='.$edition->id.'&courseid='.$course->id.'">'.$course->fullname.'</a>';
             }
+            if (!$inscripcion) {
+                $plazas = mgm_get_edition_course_criteria($edition->id, $course->id)->plazas;
+            } else {
+                $plazas = count($inscripcion).'/'.mgm_get_edition_course_criteria($edition->id, $course->id)->plazas;
+            }
             $editiontable->data[] = array(
             	$link,
                 $asignado,
-                mgm_get_edition_course_criteria($edition->id, $course->id)->plazas,
+                $plazas,
                 mgm_edition_get_solicitudes($edition, $course)
             );
         }
@@ -144,6 +168,14 @@ $navigation = build_navigation($navlinks);
 
 print_header($strmatricular, $strmatricular, $navigation);
 print_heading($strheading);
-print_table($editiontable);
+
+if ($courseid) {
+    echo '<form name="perico" action="?id='.$id.'&courseid='.$courseid.'&inscribe=1" method="POST">';
+    print_table($editiontable);
+    echo '<br /><center><input type="submit" value="'.get_string('inscribe', 'mgm').'"/></center>';
+    echo '</form>';
+} else {
+    print_table($editiontable);
+}
 
 print_footer();

@@ -47,11 +47,8 @@ class block_mgm extends block_base {
         $this->content->text = '<div>';
 
         $this->content->text .= "\n".'<ul>';
-        if (mgm_can_do_aprobe()) {
-            $this->content->text = '<li><a href="enrol/mgm/aprobe_requests.php">Aprobar Inscripciones</a></li>';
-        }
-        $this->content->text .= '<li><a href="mod/mgm/user.php">Editar información docente</a></li>';
-        $this->content->text .= '<li><a href="enrol/mgm/show_requests.php">Ver Preinscripciones</a></li>';
+        $this->content->text .= '<li><a href="mod/mgm/user.php">'.get_string('mgmuser', 'mgm').'</a></li>';
+        $this->content->text .= '<li><a href="enrol/mgm/show_requests.php">'.get_string('mgmrequest', 'mgm').'</a></li>';
         $this->content->text .= '</ul>'."\n";
         $this->content->text .= '</div>';
 

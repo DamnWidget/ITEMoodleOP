@@ -26,6 +26,7 @@
  */
 
 require_once(dirname(dirname(dirname(__FILE__))).'/config.php');
+require_once(dirname(dirname(dirname(__FILE__))).'/lib/adodb/adodb-csvlib.inc.php');
 require_once(dirname(__FILE__).'/locallib.php');
 require_once(dirname(__FILE__).'/course_edit_form.php');
 
@@ -78,11 +79,22 @@ if (!empty($allespecs)) {
     $aespecs = $allespecs;
 }
 
+$tmpdata = mgm_get_cc_data();
+$ccdata = array();
+foreach ($tmpdata as $k=>$v) {
+    if ($k == 0) {
+        continue;
+    }
+
+    $ccdata[$v[5]] = '('.$v[5].') '.$v[4];
+}
+
 $criteria = mgm_get_edition_course_criteria($edicionid, $courseid);
 $criteria->courseid = $courseid;
 $criteria->edicionid = $edicionid;
 $criteria->sespecs = $sespecs;
 $criteria->aespecs = $aespecs;
+$criteria->ccdata = $ccdata;
 
 $mform = new mgm_course_edit_form('courses.php', $criteria);
 $mform->set_data($criteria);

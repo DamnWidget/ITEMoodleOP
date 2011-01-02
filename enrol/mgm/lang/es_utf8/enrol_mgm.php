@@ -17,27 +17,20 @@
 
 
 /**
- * MGM Admin settings
+ * This is a one-line short description of the file
+ *
+ * You can have a rather longer description of the file as well,
+ * if you like, and it can span multiple lines.
  *
  * @package    mod
  * @subpackage mgm
- * @copyright  2010 Oscar Campos <oscar.campos@open-phoenix.com>
+ * @copyright  2011 Oscar Campos <oscar.campos@open-phoenix.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
-
-$ADMIN->add('root', new admin_category('ediciones', get_string('ediciones','mgm')));
-
-$ADMIN->add(
-	'ediciones', new admin_externalpage('edicionesmgmt', get_string('edicionesmgmt', 'mgm'),
-        $CFG->wwwroot . '/mod/mgm/index.php?editionedit=on', 'mod/mgm:createedicion')
-);
-
-$ADMIN->add(
-    'ediciones', new admin_externalpage('edicionescoursemgmt', get_string('edicionescoursemgmt', 'mgm'),
-        $CFG->wwwroot . '/mod/mgm/courses.php', array('moodle/course:update', 'mod/mgm:assigncriteria'))
-);
-
-$ADMIN->add(
-    'ediciones', new admin_externalpage('edicionesaprobe', get_string('edicionesaprobe', 'mgm'),
-        $CFG->wwwroot . '/enrol/mgm/aprobe_requests.php', 'mod/mgm:aprobe')
-);
+$string['enrolname'] = 'Matriculación y Gestión ITE';
+$string['description'] = 'Matriculación y Gestión ITE:
+<ol>
+<li>El alumno sollicita la matriculación en una edición.</li>
+<li>Un administrador aprueba o rechaza la solicitud.</li>
+<li>El alumno recibe un correo de aviso.</li>
+</ul>';
