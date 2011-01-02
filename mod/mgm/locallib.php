@@ -563,9 +563,11 @@ function mgm_get_edition_plazas($edition) {
     }
 
     $plazas = 0;
-    foreach(get_records('edicion_course', 'edicionid', $edition->id) as $course) {
-        if($criteria = mgm_get_edition_course_criteria($edition->id, $course->courseid)) {
-            $plazas += $criteria->plazas;
+    if (count(get_records('edicion_course', 'edicionid', $edition->id))) {
+        foreach(get_records('edicion_course', 'edicionid', $edition->id) as $course) {
+            if($criteria = mgm_get_edition_course_criteria($edition->id, $course->courseid)) {
+                $plazas += $criteria->plazas;
+            }
         }
     }
 
