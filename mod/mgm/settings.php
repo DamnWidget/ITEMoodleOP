@@ -47,5 +47,5 @@ $settings->add(
 
 $settings->add(
     new admin_setting_configfile('mgm_centros_file', get_string('centrosfile', 'mgm'),
-        get_string('configcentrosfile', 'mgm'), $CFG->dataroot.'/mgm/Centros.cvs')
+        get_string('configcentrosfile', 'mgm'), $CFG->dirroot.'/mod/mgm/Centros.cvs')
 );
