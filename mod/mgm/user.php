@@ -38,10 +38,6 @@ if (!isloggedin() or isguestuser()) {
     error('You need to be logged into the platform!');
 }
 
-if (!$preinscripcion = get_records('edicion_preinscripcion')) {
-    error(get_string('nohaydatos', 'mgm'));
-}
-
 $id = optional_param('id', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 
