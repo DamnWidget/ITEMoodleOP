@@ -79,7 +79,7 @@ class enrol_mgm_ro_form extends moodleform {
 
         foreach ($this->_customdata['choices'] as $k=>$v) {
             $tmpnum = $k+1;
-            $mform->addElement('select', 'option_'.$k, get_string('opcion', 'mgm').' '.$tmpnum, $v, 'disabled');
+            $mform->addElement('select', 'option_'.$k, get_string('opcion', 'mgm').' '.$tmpnum, $v, 'readonly');
         }
     }
 }

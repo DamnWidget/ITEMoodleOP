@@ -895,7 +895,6 @@ function mgm_set_userdata($userid, $data) {
             }
             $newespec = implode("\n", $oldespec);
             $newdata->especialidades = $newespec;
-            print_object($newdata);
         } else {
             $newdata->especialidades = $olddata->especialidades;
         }
