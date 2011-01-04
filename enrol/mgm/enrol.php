@@ -139,6 +139,7 @@ class enrolment_plugin_mgm {
             }
 
             mgm_preinscribe_user_in_edition($edition->id, $USER->id, $courses);
+            notify(get_string('preinscrito', 'mgm'), 'bold', 'center');
         }
 
         $eform->display();

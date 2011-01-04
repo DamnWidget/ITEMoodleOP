@@ -87,6 +87,7 @@ $string['opcionesduplicadas'] = 'Ha seleccionado dos opciones de prioridad dupli
 $string['opcionuno'] = 'Primera opción';
 $string['opciondos'] = 'Segunda opción';
 $string['plazas'] = 'Plazas';
+$string['preinscrito'] = 'Se ha preinscrito a uno o mas cursos';
 $string['prioridadcentro'] = 'Prioridad de centros de territorio ME';
 $string['prioridadespec'] = 'Prioridad de Especialidades';
 $string['removesel'] = 'Eliminar Curso(s)';
