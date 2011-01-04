@@ -75,6 +75,13 @@ class enrolment_plugin_mgm {
         if (!$edition = mgm_get_course_edition($course->id)) {
             error(get_string('noeditioncourse', 'mgm'));
         }
+
+        $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+            	WHERE edicionid='".$edition->id."' AND value='".$course->id."'";
+        if ($inscripcion = get_records_sql($sql)) {
+            error(get_string('fueradeperiodo', 'mgm'));
+        }
+
         $strloginto = get_string('loginto', '', $edition->name);
         $strcourses = get_string('courses');
 

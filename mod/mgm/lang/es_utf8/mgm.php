@@ -63,6 +63,7 @@ $string['especialidades'] = 'Especialidades';
 $string['fechafin'] = 'Fecha de finalización';
 $string['fechainscripcion'] = 'Fecha de Inscripción';
 $string['fechainicio'] = 'Fecha de inicio';
+$string['fueradeperiodo'] = 'No puede pre-inscribirse a una edición ya revisada';
 $string['inscribe'] = 'Inscribir';
 $string['mgm'] = 'Matriculación y Gestión';
 $string['mgm:viewedicion'] = 'Ver Edición';
