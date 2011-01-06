@@ -50,15 +50,12 @@ print_header('', ucfirst($USER->username), $navigation);
 echo '<br />';
 
 foreach(get_records('edicion') as $edition) {
-    print_heading($edition->name.' ('.$edition->description.')');
-    print_simple_box_start('center', '80%');
-
     $choices = array();
     if (!$options = mgm_get_edition_user_options($edition->id, $USER->id)) {
-        foreach (mgm_get_edition_courses($edition) as $course) {
-            $choices[0][$course->id] = $course->fullname;
-        }
+        continue;
     } else {
+        print_heading($edition->name.' ('.$edition->description.')');
+        print_simple_box_start('center', '80%');
         $plus = 0;
         if (mgm_count_courses($edition) > count($options)) {
             $plus = 1;

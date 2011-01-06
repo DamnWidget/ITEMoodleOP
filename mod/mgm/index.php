@@ -75,7 +75,7 @@ if (mgm_update_edition_button()) {
 
 if (!$adminediting) {
     $navlinks = array();
-    $navlinks[] = array('name' => $strediciones, 'type' => 'misc');
+    $navlinks[] = array('name' => $strediciones, 'link' => 'index.php', 'type' => 'misc');
 
     print_header($site->shortname.': '.$strmgm, $strediciones, build_navigation($navlinks),
              '', '', true, mgm_update_edition_button());
@@ -110,7 +110,7 @@ if (isset($editions) && is_array($editions)) {
 // Navigation links
 $navlinks = array();
 $navlinks[] = array('name' => $stradministration, 'link' => '', 'type' => 'misc');
-$navlinks[] = array('name' => $strediciones, 'link' => '', 'type' => 'misc');
+$navlinks[] = array('name' => $strediciones, 'link' => 'index.php', 'type' => 'misc');
 $navlinks[] = array('name' => $stredicionesmgm, 'link' => '', 'type' => 'activity');
 
 // Table header

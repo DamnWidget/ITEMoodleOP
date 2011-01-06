@@ -202,6 +202,12 @@ function mgm_get_edition_link($edition) {
     return '<a title="'.get_string('edit').'" href="edicionedit.php?id='.$edition->id.'">'.$edition->name.'</a>';
 }
 
+/**
+ * Return the edition's actions menu HTML code
+ *
+ * @param object $edition
+ * @return string
+ */
 function mgm_get_edition_menu($edition) {
     global $CFG;
 
@@ -214,6 +220,14 @@ function mgm_get_edition_menu($edition) {
     $menu .= ' | ';
     $menu .= '<a title="'.get_string('delete').'" href="delete.php?id='.$edition->id.'">'.
              '<img src="'.$CFG->pixpath.'/t/delete.gif" class="iconsmall" alt="'.get_string('delete').'" /></a>';
+    $menu .= ' | ';
+    if (mgm_edition_is_active($edition)) {
+        $menu .= '<a title="'.get_string('desactivar', 'mgm').'" href="active.php?id='.$edition->id.'">'.
+             	 '<img src="'.$CFG->pixpath.'/t/stop.gif" class="iconsmall" alt="'.get_string('desactivar', 'mgm').'" /></a>';
+    } else {
+        $menu .= '<a title="'.get_string('activar', 'mgm').'" href="active.php?id='.$edition->id.'">'.
+             	 '<img src="'.$CFG->pixpath.'/t/go.gif" class="iconsmall" alt="'.get_string('activar', 'mgm').'" /></a>';
+    }
 
     return $menu;
 }
@@ -312,6 +326,8 @@ function mgm_get_edition_available_courses($edition) {
 			WHERE id NOT IN (
 				SELECT courseid FROM ".$CFG->prefix."edicion_course
 				WHERE edicionid = ".$edition->id."
+			) AND id NOT IN (
+				SELECT courseid FROM ".$CFG->prefix."edicion_course
 			) AND id != '1'";
     $courses = get_records_sql($sql);
 
@@ -595,12 +611,44 @@ function mgm_get_course_available_especialidades($courseid, $editionid) {
     return $filterespecialidades;
 }
 
+/**
+ * Returns the active edition if any, elsewhere returns false
+ *
+ * @return object bool
+ */
+function mgm_get_active_edition() {
+    if (!$edition = get_record('edicion', 'active', 1)) {
+        return false;
+    }
+
+    return $edition;
+}
+
+/**
+ * Returns true if edition is the active one otherwise returns false
+ * @param object $edition
+ * @return bool
+ */
+function mgm_edition_is_active($edition) {
+    return ($edition->active) ? true : false;
+}
+
+/**
+ * Return the course's edition (Edition will be active)
+ *
+ * @param string $id
+ * @return null object The edition object
+ */
 function mgm_get_course_edition($id) {
     if (!$row = get_record('edicion_course', 'courseid', $id)) {
         return null;
     }
 
     if (!$edition = get_record('edicion', 'id', $row->edicionid)) {
+        return null;
+    }
+
+    if (!$edition->active) {
         return null;
     }
 
@@ -915,4 +963,26 @@ function mgm_get_cc_data() {
     }
 
     return $csvdata;
+}
+
+/**
+ * Activate an edition
+ * @param object $edition
+ */
+function mgm_active_edition($edition) {
+    if ($aedition = mgm_get_active_edition()) {
+        mgm_deactive_edition($aedition);
+    }
+
+    $edition->active = 1;
+    update_record('edicion', $edition);
+}
+
+/**
+ * Deactivate an edition
+ * @param unknown_type $edition
+ */
+function mgm_deactive_edition($edition) {
+    $edition->active = 0;
+    update_record('edicion', $edition);
 }

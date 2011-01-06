@@ -100,7 +100,7 @@ class mod_mgm_edit_form extends moodleform {
         $courses[1]->setMultiple(true);
 
         $grp =& $mform->addElement('group', 'coursesgrp', get_string('courses'), $courses, ' ', false);
-        $grp->setHelpButton(array('lists', get_string('courses'), ''));
+        $grp->setHelpButton(array('lists', get_string('courses'), 'mgm'));
 
         $objs = array();
         $objs[] =& $mform->createElement('submit', 'addsel', get_string('addsel', 'mgm'));

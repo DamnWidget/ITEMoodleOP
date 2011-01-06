@@ -26,6 +26,10 @@
 
 defined('MOODLE_INTERNAL') || die();
 
+$string['activar'] = 'Activar';
+$string['activaedicion'] = '¿Está usted seguro de que desea activar esta edición?<br /><br /><small>(Esto desactivará cualquier otra edición que actualmente esté activa)</small>';
+$string['activededicion'] = '$a ha sido activada satisfacoriamente';
+$string['activing'] = 'Activando $a';
 $string['addedicion'] = 'Añadir nueva edición';
 $string['addsel'] = 'Añadir Curso(s)';
 $string['addespec'] = 'Añadir Especialidad(es)';
@@ -44,10 +48,15 @@ $string['configcentrosfile'] = 'Ruta al archivo CSV donde se definen los centros
 $string['configemailnotification'] = 'Si se habilita, los usuarios recibiran una confirmación de Matriculación en su correo electrónico.';
 $string['configrevisioninformation'] = 'Selecciona los parámetros se mostraran en la columna de <b>información desde el módulo</b> al revisar matriculaciones.';
 $string['controlpanel'] = 'Panel de control ITE';
+$string['deactiving'] = 'Desactivando $a';
+$string['deactivededicion'] = '$a ha sido desactivada satisfacoriamente';
 $string['deleteedicion'] = 'Borrar edición';
 $string['deletededicion'] = '$a ha sido borrado satisfacoriamente';
 $string['deleteedicioncheck'] = '¿Está seguro de que desea borrar esta edición y todo su contenido?';
 $string['deletingedition'] = 'Borrando $a';
+$string['desactivar'] = 'Desactivar';
+$string['desactivaedicion'] = '¿Está seguro de que desea desactivar esta edición?';
+$string['edicionactiva'] = 'No se puede editar una edición activa.';
 $string['edicion'] = 'Edición';
 $string['edicioncursos'] = 'Preinscripción a cursos por prioridad';
 $string['edicioncriteria'] = 'Asignar criterios de inscripción';
@@ -80,7 +89,7 @@ $string['modulenameplural'] = 'mgms';
 $string['modquestion'] = '<b>¿Está seguro de que desea añadir una instancia de Matriculación y Gestión?</b><br />Esto solo debería de hacerse en la portada...';
 $string['newedition'] = 'Crear nueva edición';
 $string['nodata'] = 'No se han proporcionado todos los datos necesarios para realizar la operación.';
-$string['noeditioncourse'] = 'El curso no pertenece a ninguna edición';
+$string['noeditioncourse'] = 'El curso no pertenece a ninguna edición o la edición no está activa.';
 $string['nohaydatos'] = 'No se han encontrado datos de pre-inscripciones a ediciones por su parte en el sistema';
 $string['nocourses'] = 'No se encontraron cursos';
 $string['opcion'] = 'Opción';
@@ -97,4 +106,5 @@ $string['revisioninformation'] = 'Parámetros a mostrar en la Revisión';
 $string['searchmgm'] = 'Buscar Ediciones';
 $string['selectedlist'] = 'Lista de cursos seleccionados...';
 $string['selectedespeclist'] = 'Lista de especialidades seleccionadas...';
+$string['sinprioridad'] = 'Ninguna prioridad';
 $string['solicitudes'] = 'Solicitudes';

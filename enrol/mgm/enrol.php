@@ -78,7 +78,7 @@ class enrolment_plugin_mgm {
 
         $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
             	WHERE edicionid='".$edition->id."' AND value='".$course->id."'";
-        if ($inscripcion = get_records_sql($sql)) {
+        if ($inscripcion = get_records_sql($sql) || time() > $edition->fin) {
             error(get_string('fueradeperiodo', 'mgm'));
         }
 

@@ -63,6 +63,10 @@ if (!empty($allcourses)) {
     }
 }
 
+if (isset($edition) && mgm_edition_is_active($edition)) {
+    redirect('index.php', get_string('edicionactiva', 'mgm'), 5);
+}
+
 $edition->scourses = $scourses;
 $edition->acourses = $acourses;
 

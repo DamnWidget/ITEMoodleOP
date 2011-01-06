@@ -33,7 +33,7 @@ $delete = optional_param('delete', '', PARAM_ALPHANUM);
 
 require_login();
 
-if (!mgm_can_do_edit()) {
+if (!mgm_can_do_create()) {
     error('You do not have the permission to delete this edition.');
 }
 

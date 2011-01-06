@@ -55,6 +55,7 @@ class mgm_course_edit_form extends moodleform {
         $mform->addRule('plazas', get_string('required'), 'required', null);
 
         $choices = array(
+            'ninguna'		 => get_string('sinprioridad', 'mgm'),
             'centros'        => get_string('prioridadcentro', 'mgm'),
             'especialidades' => get_string('prioridadespec', 'mgm')
         );

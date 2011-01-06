@@ -34,6 +34,9 @@ function mgm_opciones(primaria) {
     opt2 = document.getElementById('id_opcion2');
 
     if (opt1.value == opt2.value) {
+        if (opt1.value == 'ninguna' || opt2.value == 'ninguna') {
+            return;
+        }
         if (opt2.value == 'centros') {
             if (primaria) {
                 opt2.value = 'especialidades';
