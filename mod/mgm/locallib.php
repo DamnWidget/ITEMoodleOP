@@ -451,9 +451,10 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
             $criteria->plazas = $c->value;
         }
 
-        if ($c->type == MGM_CRITERIA_CC) {
+        // OBSOLETE v1.0
+        /*if ($c->type == MGM_CRITERIA_CC) {
             $criteria->ccaas = $c->value;
-        }
+        }*/
 
         if ($c->type == MGM_CRITERIA_OPCION1) {
             $criteria->opcion1 = $c->value;
@@ -490,7 +491,8 @@ function mgm_set_edition_course_criteria($data) {
     }
 
     // CC
-    $criteria->type = MGM_CRITERIA_CC;
+    // OBSOLETE v1.0
+    /*$criteria->type = MGM_CRITERIA_CC;
     $criteria->value = $data->ccaas;
     if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
         insert_record('edicion_criterios', $criteria);
@@ -498,7 +500,7 @@ function mgm_set_edition_course_criteria($data) {
         $criteria->id = $criteriaid->id;
         update_record('edicion_criterios', $criteria);
         unset($criteria->id);
-    }
+    }*/
 
     // Opcion1
     $criteria->type = MGM_CRITERIA_OPCION1;
@@ -821,12 +823,14 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
                     } else {
                         $firstdata[] = $tmpdata;
                     }
-                } else {
-                    if ($userdata->cc == $criteria->ccaas) {
+                } else if ($criteria->opcion1 == 'centros') {
+                    if (in_array($userdata->cc, mgm_get_cc_data())) {
                         array_unshift($firstdata, $tmpdata);
                     } else {
                         $firstdata[] = $tmpdata;
                     }
+                } else {
+                    $firstdata[] = $tmpdata;
                 }
             } else {
                 array_unshift($firstdata, $tmpdata);
@@ -841,12 +845,14 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
                     } else {
                         $lastdata[] = $tmpdata;
                     }
-                } else {
-                    if ($userdata->cc == $criteria->ccaas) {
+                } else if ($criteria->opcion1 == 'centros') {
+                    if (in_array($userdata->cc, mgm_get_cc_data())) {
                         array_unshift($lastdata, $tmpdata);
                     } else {
                         $lastdata[] = $tmpdata;
                     }
+                } else {
+                    $lastdata[] = $tmpdata;
                 }
             } else {
                 array_unshift($lastdata, $tmpdata);
@@ -869,7 +875,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
             $userid = $arr[3];
             $check = '<input type="checkbox" name="'.$userid.'" checked="true"/>';
 
-            if ($criteria->plazas > $asigned) {
+            if ($criteria->plazas > $asigned || $criteria->plazas == 0) {
                 $data[$k][0] = $check;
                 $asigned++;
             }

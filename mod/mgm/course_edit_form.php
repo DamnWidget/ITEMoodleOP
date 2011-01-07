@@ -60,11 +60,8 @@ class mgm_course_edit_form extends moodleform {
             'especialidades' => get_string('prioridadespec', 'mgm')
         );
 
-        $ccdata = & $this->_customdata->ccdata;
-
         $mform->addElement('select', 'opcion1', get_string('opcionuno', 'mgm'), $choices, 'onChange="mgm_opciones(true);"');
         $mform->addElement('select', 'opcion2', get_string('opciondos', 'mgm'), $choices, 'onChange="mgm_opciones(false);"');
-        $mform->addElement('select', 'ccaas', get_string('cc', 'mgm'), $ccdata);
 
         $achoices = $schoices = array();
         $aespecs = & $this->_customdata->aespecs;
