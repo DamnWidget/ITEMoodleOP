@@ -104,6 +104,7 @@ class enrolment_plugin_mgm {
 
         $choices = array();
         if (!$options = mgm_get_edition_user_options($edition->id, $USER->id)) {
+            $choices[0][0] = get_string('none');
             foreach (mgm_get_edition_courses($edition) as $course) {
                 $choices[0][$course->id] = $course->fullname;
             }
@@ -115,6 +116,7 @@ class enrolment_plugin_mgm {
 
             for ($i = 0; $i < count($options)+$plus; $i++) {
                 foreach (mgm_get_edition_courses($edition) as $course) {
+                    $choices[$i][0] = get_string('none');
                     $choices[$i][$course->id] = $course->fullname;
                 }
             }

@@ -688,7 +688,19 @@ function mgm_get_edition_user_options($edition, $user) {
 }
 
 function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
-    $strcourses = implode(',', $courses);
+    $rcourses = array();
+    foreach ($courses as $course) {
+        if ($course) {
+            $rcourses[] = $course;
+        }
+    }
+
+    if (!count($rcourses)) {
+        delete_records('edicion_preinscripcion', 'edicionid', $edition, 'userid', $user);
+        return;
+    }
+
+    $strcourses = implode(',', $rcourses);
 
     if (!$record = get_record('edicion_preinscripcion', 'edicionid', $edition, 'userid', $user)) {
         // New record
