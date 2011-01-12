@@ -136,7 +136,7 @@ class enrolment_plugin_mgm {
         if ($eform->get_data()) {
             $courses = array();
             foreach ($form->option as $k=>$option) {
-                if (in_array($option, $courses)) {
+                if (in_array($option, $courses) && $option > 0) {
                     error(get_string('opcionesduplicadas', 'mgm'), '?id='.$course->id);
 
                     print_simple_box_end();
