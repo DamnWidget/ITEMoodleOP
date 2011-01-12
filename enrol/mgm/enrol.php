@@ -112,6 +112,7 @@ class enrolment_plugin_mgm {
             if (mgm_count_courses($edition) > count($options)) {
                 $plus = 1;
             }
+
             for ($i = 0; $i < count($options)+$plus; $i++) {
                 foreach (mgm_get_edition_courses($edition) as $course) {
                     $choices[$i][$course->id] = $course->fullname;
@@ -125,28 +126,27 @@ class enrolment_plugin_mgm {
         if ($options) {
             $data = new stdClass();
             foreach ($options as $k=>$v) {
-                $prop = 'option_'.$k;
+                $prop = 'option['.$k.']';
                 $data->$prop = $v;
             }
             $eform->set_data($data);
         }
         if ($eform->get_data()) {
             $courses = array();
-            for ($i = 0; $i < $form->options; $i++) {
-                $property = 'option_'.$i;
+            foreach ($form->option as $k=>$option) {
+                if (in_array($option, $courses)) {
+                    error(get_string('opcionesduplicadas', 'mgm'), '?id='.$course->id);
 
-                if (in_array($form->$property, $courses)) {
-                    error(get_string('opcionesduplicadas', 'mgm'));
                     print_simple_box_end();
                     print_footer();
                     die();
                 }
 
-                $courses[$i] = $form->$property;
+                $courses[$k] = $option;
             }
 
             mgm_preinscribe_user_in_edition($edition->id, $USER->id, $courses);
-            notify(get_string('preinscrito', 'mgm'), 'bold', 'center');
+            redirect('?id='.$course->id, get_string('preinscrito', 'mgm'), 2);
         }
 
         $eform->display();

@@ -34,6 +34,8 @@ class enrol_mgm_form extends moodleform {
 
     // Form definition
     function definition() {
+        global $USER;
+
         $mform =& $this->_form;
         $course = $this->_customdata['course'];
         $edition = $this->_customdata['edition'];
@@ -51,7 +53,7 @@ class enrol_mgm_form extends moodleform {
 
         foreach ($this->_customdata['choices'] as $k=>$v) {
             $tmpnum = $k+1;
-            $mform->addElement('select', 'option_'.$k, get_string('opcion', 'mgm').' '.$tmpnum, $v);
+            $mform->addElement('select', 'option['.$k.']', get_string('opcion', 'mgm').' '.$tmpnum, $v);
         }
 
         $this->add_action_buttons(false, get_string('savechanges'));
@@ -79,7 +81,7 @@ class enrol_mgm_ro_form extends moodleform {
 
         foreach ($this->_customdata['choices'] as $k=>$v) {
             $tmpnum = $k+1;
-            $mform->addElement('select', 'option_'.$k, get_string('opcion', 'mgm').' '.$tmpnum, $v, 'readonly');
+            $mform->addElement('select', 'option['.$k.']', get_string('opcion', 'mgm').' '.$tmpnum, $v, 'readonly');
         }
     }
 }

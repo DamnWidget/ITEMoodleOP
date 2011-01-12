@@ -181,9 +181,8 @@ function mgm_count_courses($edition) {
         return '';
     }
 
-    $sql = "SELECT COUNT(d.id)
-    			FROM {$CFG->prefix}edicion_course d
-    			WHERE d.edicionid = $edition->id";
+    $sql = "SELECT COUNT(d.id) FROM ".$CFG->prefix."edicion_course d
+    		WHERE d.edicionid = $edition->id";
 
     return get_field_sql($sql);
 }
@@ -430,7 +429,7 @@ function mgm_translate_especialidad($id) {
     		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
     $especialidades = explode("\n", get_record_sql($sql)->value);
 
-    return ($id) ? $especialidades[$id] : '';
+    return ($id !== false) ? $especialidades[$id] : '';
 }
 
 function mgm_get_edition_course_criteria($editionid, $courseid) {
