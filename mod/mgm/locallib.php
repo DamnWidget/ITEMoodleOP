@@ -191,6 +191,11 @@ function mgm_get_edition_course($editionid, $courseid) {
     return get_record('edicion_course', 'edicionid', $editionid, 'courseid', $courseid);
 }
 
+/**
+ * Return an edition HTML link
+ * @param object $edition
+ * @return string
+ */
 function mgm_get_edition_link($edition) {
     global $CFG;
 
@@ -320,8 +325,9 @@ function mgm_get_edition_courses($edition) {
 
 function mgm_get_edition_available_courses($edition) {
     global $CFG;
+    require_once("$CFG->dirroot/enrol/enrol.class.php");
 
-    $sql = "SELECT id, fullname FROM ".$CFG->prefix."course
+    $sql = "SELECT id, fullname, enrol FROM ".$CFG->prefix."course
 			WHERE id NOT IN (
 				SELECT courseid FROM ".$CFG->prefix."edicion_course
 				WHERE edicionid = ".$edition->id."
@@ -329,8 +335,14 @@ function mgm_get_edition_available_courses($edition) {
 				SELECT courseid FROM ".$CFG->prefix."edicion_course
 			) AND id != '1'";
     $courses = get_records_sql($sql);
+    $ret = array();
+    foreach ($courses as $course) {
+        if(enrolment_factory::factory($course->enrol) instanceof enrolment_plugin_mgm) {
+            $ret[] = $course;
+        }
+    }
 
-    return $courses;
+    return $ret;
 }
 
 function mgm_add_course($edition, $courseid) {
