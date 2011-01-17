@@ -441,7 +441,7 @@ function mgm_translate_especialidad($id) {
     		WHERE type = ".MGM_ITE_ESPECIALIDADES."";
     $especialidades = explode("\n", get_record_sql($sql)->value);
 
-    return ($id !== false) ? $especialidades[$id] : '';
+    return ($id !== false && $id != '') ? $especialidades[$id] : '';
 }
 
 function mgm_get_edition_course_criteria($editionid, $courseid) {
@@ -927,7 +927,7 @@ function mgm_order_by_course_preinscription_data(&$data, $course) {
  * @param array $data
  * @return array
  */
-function mgm_parse_preinscription_data($edition, $course, $data) {
+function mgm_parse_preinscription_data_old($edition, $course, $data) {
     // Local variables
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
     $ret = $first = $last = $firstones = $lastones = array();
@@ -985,6 +985,9 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
         }
     }
 
+    // Perform 2nd level ordering in data
+    $firtones = mgm_order_preinscription_first_data($first, $course);
+
     mgm_order_by_course_preinscription_data($last, $course);
 
     foreach ($last as $line) {
@@ -1000,6 +1003,291 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
     foreach ($lastones as $l) $ret[] = $l;
 
     return $ret;
+}
+
+function mgm_get_user_preinscription_realcourses($editionid, $value) {
+    $values = explode(',', $value);
+    $realcourses = array();
+    for ($i = 0; $i < count($values); $i++) {
+        if (mgm_check_already_enroled($editionid, $values[$i])) {
+            continue;
+        }
+        $realcourses[] = $values[$i];
+    }
+
+    return $realcourses;
+}
+
+function mgm_user_preinscription_tmpdata($userid) {
+    if (!$user = get_record('user', 'id', $userid)) {
+        return null;
+    }
+
+    $tmpuser = new stdClass();
+    $tmpuser->user = $user;
+    $tmpuser->userdata = get_record('edicion_user', 'userid', $user->id);
+    $tmpuser->especs = ($tmpuser->userdata) ? explode("\n", $tmpuser->userdata->especialidades) : array();
+
+    return $tmpuser;
+}
+
+function mgm_parse_preinscription_data($edition, $course, $data) {
+    // Local variables
+    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
+    $retdata = array();
+
+    foreach ($data as $sqline) {
+        $lineuser = mgm_user_preinscription_tmpdata($sqline->userid);
+        $lineuser->realcourses = mgm_get_user_preinscription_realcourses($edition->id, $sqline->value);
+        $lineuser->tmpdata = mgm_get_user_preinscription_data($sqline, $edition, $lineuser);
+        $lineuser->sqline = $sqline;
+        $lineuser->data = array(
+        	'opcion1' => array(
+                'especialidades' => array(
+                    'found'	=> false,
+                    'data' => array()
+                ),
+                'centros' => array(
+                    'found'	=> false,
+                    'data' => array(
+                        'found' => array(),
+                        'notfound' => array()
+                    )
+                )
+            ),
+            'opcion2' => array(
+                'especialidades' => array(
+                    'found'	=> false,
+                    'data' => array()
+                ),
+                'centros' => array(
+                    'found'	=> false,
+                    'data' => array(
+                        'found' => array(),
+                        'notfound' => array()
+                    )
+                )
+            )
+        );
+
+        // Store data by course at first option or not
+        if ($course->id == $lineuser->realcourses[0]) {
+            $retdata['first'][] = $lineuser;
+        } else {
+            $retdata['last'][] = $lineuser;
+        }
+    }
+
+    /*
+     * Now we have all the data splited into those ones who choosed the course as first option at
+     * $first and everyone else at $last. We are going to proccess and order the data on every one
+     * of those arrays before return it.
+     */
+    if (isset($criteria->opcion1)) {    // This course is configured with criteria options
+        mgm_order_preinscription_first_data(&$retdata['first'], $criteria, $edition, $course);
+        //mgm_order_preinscription_last_data(&$retdata['last'], $criteria, $edition, $course);
+    } else {    // This course is not configured with criteria options
+        foreach ($retdata as $key=>$value) {
+            foreach ($value as $k=>$v) {
+                $retdata[$key][$k] = $v->tmpdata;
+            }
+        }
+    }
+
+    $tmpdata = array();
+    foreach ($retdata['first'] as $data) {
+        $tmpdata[] = $data;
+    }
+
+    foreach ($retdata['last'] as $data) {
+        $tmpdata[] = $data;
+    }
+
+    return $tmpdata;
+}
+
+function mgm_order_preinscription_first_data_opcion($opcion, $data, $criteria, $edition, $course) {
+    foreach ($data as $linedata) {
+        if ($criteria->$opcion == 'especialidades') {
+            // First option is especialidades
+            $linedata->data[$opcion]['especialidades']['found'] = true;
+            $kets = array_keys($criteria->espec);
+            $found = false;
+            // Each espec on course criteria
+            foreach($kets as $key=>$value) {
+                // Each espec on user criteria
+                foreach ($linedata->especs as $k=>$v) {
+                    // Match
+                    if ($v !== '' && $value == $v) {
+                        $linedata->data[$opcion]['especialidades']['data'][$key][$k] = $linedata;
+                        $found = true;
+                    }
+                }
+            }
+            // If criteria does not match just store it in date order
+            if (!$found) {
+                $linedata->data[$opcion]['especialidades']['data']['notfound'][] = $linedata;
+            }
+        } else if($criteria->$opcion == 'centros') {
+            // First option is centros
+            $linedata->data[$opcion]['centros']['found'] = true;
+
+            if (!empty($linedata->userdata) && mgm_is_cc_on_csv($linedata->userdata->cc)) {
+                $linedata->data[$opcion]['centros']['data']['found'] = $linedata;
+            } else {
+                $linedata->data[$opcion]['centros']['data']['notfound'] = $linedata;
+            }
+        } else if ($criteria->$opcion == 'ninguna') {
+            $linedata->data[$opcion]['ninguna']['found'] = true;
+            $linedata->data[$opcion]['ninguna']['data'] = $linedata;
+        }
+    }
+}
+
+function mgm_abstract_results_opcion($opcion, $data) {
+    // Local variables
+    $tmptdata = array();
+
+    foreach ($data as $linedata) {
+        // If especialidades is the first option
+        if ($linedata->data[$opcion]['especialidades']['found']) {
+            foreach ($linedata->data[$opcion]['especialidades']['data'] as $key=>$value) {
+                foreach ($value as $k=>$v) {
+                    $vdata = new stdClass();
+                    $vdata->sqline = $v->sqline;
+                    $vdata->data = $v->tmpdata;
+                    if ($key !== 'notfound') {
+                        $tmptdata['found'][$k][] = $vdata;
+                    } else {
+                        $tmptdata['notfound'][] = $v;
+                    }
+                }
+            }
+        } else if ($linedata->data[$opcion]['centros']['found']) {
+            foreach ($linedata->data[$opcion]['centros']['data'] as $key=>$value) {
+                if (empty($value)) continue;
+                $vdata = new stdClass();
+                $vdata->sqline = $value->sqline;
+                $vdata->data = $value->tmpdata;
+                if ($key !== 'notfound') {
+                    $tmptdata[$key][0][] = $vdata;
+                } else {
+                    $tmptdata[$key][] = $value;
+                }
+            }
+        } else if ($linedata->data[$opcion]['ninguna']['found']) {
+            $vdata = new stdClass();
+            $vdata->sqline = $linedata->data[$opcion]['ninguna']['data']->sqline;
+            $vdata->data = $linedata->data[$opcion]['ninguna']['data']->tmpdata;
+            $tmptdata['nocriteria'][0][] = $vdata;
+        }
+    }
+
+    return $tmptdata;
+}
+
+function mgm_order_preinscription_first_data($data, $criteria, $edition, $course) {
+    // Local variables
+    $firstdata = $tmptdata = $founddata = $nfdata = $nffounddata = $nfnfdata = $ncdata = $finaldata = array();
+
+    // First pass
+    mgm_order_preinscription_first_data_opcion('opcion1', &$data, $criteria, $edition, $course);
+
+    // Abstract the opcion1 results
+    $tmptdata = mgm_abstract_results_opcion('opcion1', $data);
+
+    $founddata = (array_key_exists('found', $tmptdata)) ? $tmptdata['found'] : array();
+
+    // Seccond pass (Only for not found)
+    if (isset($tmptdata['notfound'])) {
+        mgm_order_preinscription_first_data_opcion('opcion2', &$tmptdata['notfound'], $criteria, $edition, $course);
+        $nfdata = mgm_abstract_results_opcion('opcion2', $tmptdata['notfound']);
+        if (array_key_exists('found', $nfdata)) {
+            foreach ($nfdata['found'] as $nff) {
+                $nffounddata[] = $nff;
+            }
+
+            // Order data by date
+            foreach ($nffounddata as $nff) {
+                usort($nff, 'mgm_order_by_date');
+            }
+        }
+
+        if (array_key_exists('notfound', $nfdata)) {
+            foreach ($nfdata['notfound'] as $nfnf) {
+                $nfnfdata[] = $nfnf;
+            }
+
+            // Order data by date
+            usort($nfnfdata, 'mgm_order_by_date');
+        }
+
+        if (array_key_exists('nocriteria', $nfdata)) {
+            foreach ($nfdata['nocriteria'] as $ncd) {
+                $ncdata[] = $ncd;
+            }
+
+            // Order data by date
+            foreach ($ncdata as $ncd) {
+                usort($ncd, 'mgm_order_by_date');
+            }
+        }
+    }
+
+    if (array_key_exists('nocriteria', $tmptdata)) {
+        $ncdata = $tmptdata['nocriteria'];
+    }
+
+    // Order data by date
+    foreach ($founddata as $found) {
+        usort($found, 'mgm_order_by_date');
+    }
+
+    /**
+     * Create tha final and valid array
+     */
+    foreach ($founddata as $found) {
+        foreach ($found as $finalfound) {
+            $finaldata[] = $finalfound->data;
+        }
+    }
+
+    if (!empty($nffounddata)) {
+        foreach ($nffounddata as $nffound) {
+            foreach ($nffound as $nff) {
+                $finaldata[] = $nff->data;
+            }
+        }
+    }
+
+    if (!empty($nfnfdata)) {
+        foreach ($nfnfdata as $nfnf) {
+            $finaldata[] = $nfnf->tmpdata;
+        }
+    }
+
+    if (!empty($ncdata)) {
+        foreach ($ncdata as $ncd) {
+            foreach ($ncd as $nc) {
+                $finaldata[] = $nc->data;
+            }
+        }
+    }
+
+    print 'Data Count: '.count($data).'<br />';
+    print 'Post Data Count: '.count($finaldata).'<br />';
+    $data = $finaldata;
+}
+
+function mgm_order_preinscription_last_data($data, $edition, $criteria, $course) {
+
+}
+
+function mgm_order_by_date($x, $y) {
+    if ($x->sqline->timemodified == $y->sqline->timemodified) {
+        return 0;
+    }
+    return ($x->sqline->timemodified < $y->sqline->timemodified) ? -1 : 1;
 }
 
 /**
@@ -1036,6 +1324,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
     if ($docheck) {
         $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
         $asigned = 0;
+        print_object($data);
         foreach ($data as $k=>$row) {
             $arr = explode('"', $row[0]);
             $userid = $arr[3];
@@ -1128,6 +1417,21 @@ function mgm_set_userdata($userid, $data) {
     }
 }
 
+
+/**
+ * Return if a given cc is on cc CSV file
+ * @param string $cc
+ * @return boolean
+ */
+function mgm_is_cc_on_csv($cc) {
+    foreach (mgm_get_cc_data() as $ccdata) {
+        if ($ccdata[5] == $cc) {
+            return true;
+        }
+    }
+
+    return false;
+}
 
 /**
  * Return an array with the cc data on CSV file
