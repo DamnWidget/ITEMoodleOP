@@ -820,83 +820,6 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
 }
 
 /**
- * Order preinscription data (1st option)
- * @param object $data
- * @param array $arraydata
- */
-function mgm_order_preinscription_data($data, &$arraydata) {
-    // Local variables
-    $found = false;
-
-    // Get primary order
-    if ($data->criteria->opcion1 == 'especialidades') {
-        // First option is especialidades
-        $kets = array_keys($data->criteria->espec);
-        if ($data->especs[0] == $kets[0]) {
-            // User especs == Course especs
-            $found = true;
-        }
-    } else if ($data->criteria->opcion1 == 'centros') {
-        // First option is cc
-        if (in_array($data->userdata->cc, mgm_get_cc_data())) {
-            $found = true;
-        }
-    } else {
-        // No criteria
-        $found = true;
-    }
-
-    // Fill the tmparray
-    $data->found = $found;
-    if ($found) {
-        array_unshift($arraydata, $data);
-    } else {
-        $arraydata[] = $data;
-    }
-}
-
-/**
- * Order preinscription data (2nd option)
- * @param object $data
- * @param array $arraydata
- */
-function mgm_order_preinscription_data_nd($data, &$arraydata) {
-    // Local variables
-    $found = false;
-
-    // Check if data has been found already
-    if (!$data->found) {
-        // Get seccondary order
-        if ($data->criteria->opcion2 == 'especialidades') {
-            // Seccond option is especialidades
-            $kets = array_keys($data->criteria->espec);
-            if ($data->especs[0] == $kets[0] || in_array($data->userdata->cc, mgm_get_cc_data())) {
-                // User especs == Course especs
-                $found = true;
-            }
-        } else if ($data->criteria->opcion2 == 'centros') {
-            // Seccond option is cc
-            $kets = array_keys($data->criteria->espec);
-            if (in_array($data->userdata->cc, mgm_get_cc_data()) || $data->especs[0] == $kets[0]) {
-                $found = true;
-            }
-        } else {
-            // No criteria
-            $found = false;
-        }
-    } else {
-        $found = true;
-    }
-
-    // Fill the tmparray
-    if ($found) {
-        array_unshift($arraydata, $data->data);
-    } else {
-        $arraydata[] = $data->data;
-    }
-}
-
-/**
  * Reorder by course
  * @param array $file
  * @param object $course
@@ -921,90 +844,10 @@ function mgm_order_by_course_preinscription_data(&$data, $course) {
 }
 
 /**
- * Return an ordered usable preinscription data
- * @param object $edition
- * @param object $course
- * @param array $data
- * @return array
+ * Return not already enroled courses
+ * @param string $editionid
+ * @param string $value
  */
-function mgm_parse_preinscription_data_old($edition, $course, $data) {
-    // Local variables
-    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
-    $ret = $first = $last = $firstones = $lastones = array();
-
-    // Get data and perform simple ordering on it
-    foreach ($data as $line) {
-        // Basic userdata
-        $user = get_record('user', 'id', $line->userid);
-        $userdata = get_record('edicion_user', 'userid', $user->id);
-        $especs = ($userdata) ? explode("\n", $userdata->especialidades) : null;
-        $tmpuser = new stdClass();
-        $tmpuser->user = $user;
-        $tmpuser->userdata = $userdata;
-        $tmpuser->especs = $especs;
-        $tmpdata = mgm_get_user_preinscription_data($line, $edition, $tmpuser);
-        unset($tmpuser);
-
-        $values = explode(',', $line->value);
-        $realcourses = array();
-        for ($i = 0; $i < count($values); $i++) {
-            if (mgm_check_already_enroled($edition->id, $values[$i])) {
-                continue;
-            }
-            $realcourses[] = $values[$i];
-        }
-
-        // Algorithm data
-        $algdata = new stdClass();
-        $algdata->especs = $especs;
-        $algdata->user = $user;
-        $algdata->userdata = $userdata;
-        $algdata->data = $tmpdata;
-
-        // Compare first user choice and course id
-        if ($realcourses[0] == $course->id) {
-            // Is the first choice, get the course criteria
-            if ($criteria) {
-                $algdata->criteria = $criteria;
-                mgm_order_preinscription_data($algdata, $first);
-            } else {
-                // No criteria
-                array_unshift($first, $tmpdata);
-            }
-
-        } else {
-            // Course is not the first choice for the user
-            if ($criteria) {
-                $algdata->criteria = $criteria;
-                $algdata->realcourses = $realcourses;
-                mgm_order_preinscription_data($algdata, $last);
-            } else {
-                // No criteria
-                array_unshift($last, $tmpdata);
-            }
-        }
-    }
-
-    // Perform 2nd level ordering in data
-    $firtones = mgm_order_preinscription_first_data($first, $course);
-
-    mgm_order_by_course_preinscription_data($last, $course);
-
-    foreach ($last as $line) {
-        foreach ($line as $l) {
-            mgm_order_preinscription_data_nd($l, $lastones);
-        }
-
-    }
-
-    foreach ($first as $fo) mgm_order_preinscription_data_nd($fo, $firstones);
-
-    foreach ($firstones as $f) $ret[] = $f;
-    foreach ($lastones as $l) $ret[] = $l;
-
-    return $ret;
-}
-
 function mgm_get_user_preinscription_realcourses($editionid, $value) {
     $values = explode(',', $value);
     $realcourses = array();
@@ -1085,11 +928,24 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
      */
     if (isset($criteria->opcion1)) {    // This course is configured with criteria options
         mgm_order_preinscription_first_data(&$retdata['first'], $criteria, $edition, $course);
-        //mgm_order_preinscription_last_data(&$retdata['last'], $criteria, $edition, $course);
+        mgm_order_by_course_preinscription_data($retdata['last'], $course);
+        $rlastdata = array();
+        foreach ($retdata['last'] as $rdata) {
+            mgm_order_preinscription_last_data(&$rdata, $edition, $criteria, $course);
+            foreach ($rdata as $rd) {
+                $rlastdata[] = $rd;
+            }
+        }
     } else {    // This course is not configured with criteria options
         foreach ($retdata as $key=>$value) {
-            foreach ($value as $k=>$v) {
-                $retdata[$key][$k] = $v->tmpdata;
+            if ($key == 'first') {
+                foreach ($value as $k=>$v) {
+                    $retdata[$key][$k] = $v->tmpdata;
+                }
+            } else {
+                foreach ($value as $k=>$v) {
+                    $rlastdata[$k] = $v->tmpdata;
+                }
             }
         }
     }
@@ -1099,7 +955,7 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
         $tmpdata[] = $data;
     }
 
-    foreach ($retdata['last'] as $data) {
+    foreach ($rlastdata as $data) {
         $tmpdata[] = $data;
     }
 
@@ -1274,13 +1130,98 @@ function mgm_order_preinscription_first_data($data, $criteria, $edition, $course
         }
     }
 
-    print 'Data Count: '.count($data).'<br />';
-    print 'Post Data Count: '.count($finaldata).'<br />';
     $data = $finaldata;
 }
 
 function mgm_order_preinscription_last_data($data, $edition, $criteria, $course) {
+    // Local variables
+    $firstdata = $tmptdata = $founddata = $nfdata = $nffounddata = $nfnfdata = $ncdata = $finaldata = array();
 
+    // First pass
+    mgm_order_preinscription_first_data_opcion('opcion1', &$data, $criteria, $edition, $course);
+
+    // Abstract the opcion1 results
+    $tmptdata = mgm_abstract_results_opcion('opcion1', $data);
+
+    $founddata = (array_key_exists('found', $tmptdata)) ? $tmptdata['found'] : array();
+
+    // Seccond pass (Only for not found)
+    if (isset($tmptdata['notfound'])) {
+        mgm_order_preinscription_first_data_opcion('opcion2', &$tmptdata['notfound'], $criteria, $edition, $course);
+        $nfdata = mgm_abstract_results_opcion('opcion2', $tmptdata['notfound']);
+        if (array_key_exists('found', $nfdata)) {
+            foreach ($nfdata['found'] as $nff) {
+                $nffounddata[] = $nff;
+            }
+
+            // Order data by date
+            foreach ($nffounddata as $nff) {
+                usort($nff, 'mgm_order_by_date');
+            }
+        }
+
+        if (array_key_exists('notfound', $nfdata)) {
+            foreach ($nfdata['notfound'] as $nfnf) {
+                $nfnfdata[] = $nfnf;
+            }
+
+            // Order data by date
+            usort($nfnfdata, 'mgm_order_by_date');
+        }
+
+        if (array_key_exists('nocriteria', $nfdata)) {
+            foreach ($nfdata['nocriteria'] as $ncd) {
+                $ncdata[] = $ncd;
+            }
+
+            // Order data by date
+            foreach ($ncdata as $ncd) {
+                usort($ncd, 'mgm_order_by_date');
+            }
+        }
+    }
+
+    if (array_key_exists('nocriteria', $tmptdata)) {
+        $ncdata = $tmptdata['nocriteria'];
+    }
+
+    // Order data by date
+    foreach ($founddata as $found) {
+        usort($found, 'mgm_order_by_date');
+    }
+
+    /**
+     * Create tha final and valid array
+     */
+    foreach ($founddata as $found) {
+        foreach ($found as $finalfound) {
+            $finaldata[] = $finalfound->data;
+        }
+    }
+
+    if (!empty($nffounddata)) {
+        foreach ($nffounddata as $nffound) {
+            foreach ($nffound as $nff) {
+                $finaldata[] = $nff->data;
+            }
+        }
+    }
+
+    if (!empty($nfnfdata)) {
+        foreach ($nfnfdata as $nfnf) {
+            $finaldata[] = $nfnf->tmpdata;
+        }
+    }
+
+    if (!empty($ncdata)) {
+        foreach ($ncdata as $ncd) {
+            foreach ($ncd as $nc) {
+                $finaldata[] = $nc->data;
+            }
+        }
+    }
+
+    $data = $finaldata;
 }
 
 function mgm_order_by_date($x, $y) {
@@ -1324,7 +1265,6 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
     if ($docheck) {
         $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
         $asigned = 0;
-        print_object($data);
         foreach ($data as $k=>$row) {
             $arr = explode('"', $row[0]);
             $userid = $arr[3];
