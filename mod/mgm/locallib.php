@@ -259,9 +259,9 @@ function mgm_print_ediciones_list() {
                 $table .= '<a class="mod-mgm edition link course" href="'.$CFG->wwwroot.'/mod/mgm/courses.php?courseid='.
                           $course->id.'&edicionid='.$edition->id.'">'.format_string($course->fullname).'</a>';
                 if ($cr = mgm_exists_criteria_for_course($edition, $course)) {
-                    $table .= ' (Criterios Fijados: '.$cr.' )';
+                    $table .= ' <span style="font-size: 9pt;">(Criterios Fijados: '.$cr.' )</span>';
                 } else {
-                    $table .= ' (Criterios no Fijados)';
+                    $table .= ' <span style="font-size: 9pt;">(Criterios no Fijados)</span>';
                 }
                 $table .= '</td>';
                 $table .= '<td class="mod-mgm course info">&nbsp;</td>';
