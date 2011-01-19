@@ -805,6 +805,7 @@ function mgm_exists_criteria_for_course($edition, $course) {
  * @return array
  */
 function mgm_get_user_preinscription_data($line, $edition, $data) {
+    $site = get_site();
     $user = $data->user;
     $userdata = $data->userdata;
     $especs = ($data->especs) ? $data->especs : array();
@@ -831,7 +832,7 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
     $check = '<input type="checkbox" name="users['.$line->userid.']" />';
     $tmpdata = array(
         $check,
-        $user->firstname,
+        '<a href="../../user/view.php?id='.$line->userid.'&amp;course='.$site->id.'">'.$user->firstname.'</a>',
         $user->lastname,
         date("d/m/Y H:i\"s", $line->timemodified),
         ($userdata) ? $userdata->cc : '',
