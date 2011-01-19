@@ -927,11 +927,11 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
      * of those arrays before return it.
      */
     if (isset($criteria->opcion1)) {    // This course is configured with criteria options
-        mgm_order_preinscription_first_data(&$retdata['first'], $criteria, $edition, $course);
+        mgm_order_preinscription_first_data($retdata['first'], $criteria, $edition, $course);
         mgm_order_by_course_preinscription_data($retdata['last'], $course);
         $rlastdata = array();
         foreach ($retdata['last'] as $rdata) {
-            mgm_order_preinscription_last_data(&$rdata, $edition, $criteria, $course);
+            mgm_order_preinscription_last_data($rdata, $edition, $criteria, $course);
             foreach ($rdata as $rd) {
                 $rlastdata[] = $rd;
             }
@@ -962,7 +962,7 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
     return $tmpdata;
 }
 
-function mgm_order_preinscription_first_data_opcion($opcion, $data, $criteria, $edition, $course) {
+function mgm_order_preinscription_first_data_opcion($opcion, &$data, $criteria, $edition, $course) {
     foreach ($data as $linedata) {
         if ($criteria->$opcion == 'especialidades') {
             // First option is especialidades
@@ -1042,12 +1042,12 @@ function mgm_abstract_results_opcion($opcion, $data) {
     return $tmptdata;
 }
 
-function mgm_order_preinscription_first_data($data, $criteria, $edition, $course) {
+function mgm_order_preinscription_first_data(&$data, $criteria, $edition, $course) {
     // Local variables
     $firstdata = $tmptdata = $founddata = $nfdata = $nffounddata = $nfnfdata = $ncdata = $finaldata = array();
 
     // First pass
-    mgm_order_preinscription_first_data_opcion('opcion1', &$data, $criteria, $edition, $course);
+    mgm_order_preinscription_first_data_opcion('opcion1', $data, $criteria, $edition, $course);
 
     // Abstract the opcion1 results
     $tmptdata = mgm_abstract_results_opcion('opcion1', $data);
@@ -1056,7 +1056,7 @@ function mgm_order_preinscription_first_data($data, $criteria, $edition, $course
 
     // Seccond pass (Only for not found)
     if (isset($tmptdata['notfound'])) {
-        mgm_order_preinscription_first_data_opcion('opcion2', &$tmptdata['notfound'], $criteria, $edition, $course);
+        mgm_order_preinscription_first_data_opcion('opcion2', $tmptdata['notfound'], $criteria, $edition, $course);
         $nfdata = mgm_abstract_results_opcion('opcion2', $tmptdata['notfound']);
         if (array_key_exists('found', $nfdata)) {
             foreach ($nfdata['found'] as $nff) {
@@ -1133,12 +1133,12 @@ function mgm_order_preinscription_first_data($data, $criteria, $edition, $course
     $data = $finaldata;
 }
 
-function mgm_order_preinscription_last_data($data, $edition, $criteria, $course) {
+function mgm_order_preinscription_last_data(&$data, $edition, $criteria, $course) {
     // Local variables
     $firstdata = $tmptdata = $founddata = $nfdata = $nffounddata = $nfnfdata = $ncdata = $finaldata = array();
 
     // First pass
-    mgm_order_preinscription_first_data_opcion('opcion1', &$data, $criteria, $edition, $course);
+    mgm_order_preinscription_first_data_opcion('opcion1', $data, $criteria, $edition, $course);
 
     // Abstract the opcion1 results
     $tmptdata = mgm_abstract_results_opcion('opcion1', $data);
@@ -1147,7 +1147,7 @@ function mgm_order_preinscription_last_data($data, $edition, $criteria, $course)
 
     // Seccond pass (Only for not found)
     if (isset($tmptdata['notfound'])) {
-        mgm_order_preinscription_first_data_opcion('opcion2', &$tmptdata['notfound'], $criteria, $edition, $course);
+        mgm_order_preinscription_first_data_opcion('opcion2', $tmptdata['notfound'], $criteria, $edition, $course);
         $nfdata = mgm_abstract_results_opcion('opcion2', $tmptdata['notfound']);
         if (array_key_exists('found', $nfdata)) {
             foreach ($nfdata['found'] as $nff) {
