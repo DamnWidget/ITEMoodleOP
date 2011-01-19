@@ -258,6 +258,11 @@ function mgm_print_ediciones_list() {
                 $table .= '<td valign="top" class="mod-mgm edition name course">';
                 $table .= '<a class="mod-mgm edition link course" href="'.$CFG->wwwroot.'/mod/mgm/courses.php?courseid='.
                           $course->id.'&edicionid='.$edition->id.'">'.format_string($course->fullname).'</a>';
+                if ($cr = mgm_exists_criteria_for_course($edition, $course)) {
+                    $table .= ' (Criterios Fijados: '.$cr.' )';
+                } else {
+                    $table .= ' (Criterios no Fijados)';
+                }
                 $table .= '</td>';
                 $table .= '<td class="mod-mgm course info">&nbsp;</td>';
                 $table .= '</tr>';
@@ -771,6 +776,24 @@ function mgm_edition_get_solicitudes($edition, $course) {
             $ret += count(array_filter($solicitudes, create_function('$element',
                 'return ($element == '.$course->id.');')));
         }
+    }
+
+    return $ret;
+}
+
+/**
+ * Return true if the given course of given edition has criteria set
+ * @param object $edition
+ * @param object $course
+ * @return boolean
+ */
+function mgm_exists_criteria_for_course($edition, $course) {
+    // Local variables
+    $ret = false;
+    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
+
+    if (isset($criteria->opcion1)) {
+        $ret = $criteria->opcion1.', '.$criteria->opcion2;
     }
 
     return $ret;
