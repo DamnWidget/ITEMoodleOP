@@ -723,6 +723,12 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
     }
 }
 
+/**
+ * Inscribe an user into an edition
+ * @param string $edition
+ * @param string $user
+ * @param string $course
+ */
 function mgm_inscribe_user_in_edition($edition, $user, $course) {
     if (!$record = get_record('edicion_inscripcion', 'edicionid', $edition, 'userid', $user)) {
         // New record
@@ -752,7 +758,7 @@ function mgm_enrol_edition_course($editionid, $courseid) {
             }
 
             // Delete user preinscriptions
-            delete_records('edicion_preinscripcion', 'userid', $user->id);
+            //delete_records('edicion_preinscripcion', 'userid', $user->id);
         }
     }
 }

@@ -57,9 +57,9 @@ foreach(get_records('edicion') as $edition) {
         print_heading($edition->name.' ('.$edition->description.')');
         print_simple_box_start('center', '80%');
         $plus = 0;
-        if (mgm_count_courses($edition) > count($options)) {
+        /*if (mgm_count_courses($edition) > count($options)) {
             $plus = 1;
-        }
+        }*/
         for ($i = 0; $i < count($options)+$plus; $i++) {
             foreach (mgm_get_edition_courses($edition) as $course) {
                 $choices[$i][$course->id] = $course->fullname;
@@ -73,9 +73,10 @@ foreach(get_records('edicion') as $edition) {
     if ($options) {
         $data = new stdClass();
         foreach ($options as $k=>$v) {
-            $prop = 'option_'.$k;
+            $prop = 'option['.$k.']';
             $data->$prop = $v;
         }
+
         $eform->set_data($data);
     }
 
