@@ -321,7 +321,8 @@ function mgm_get_edition_courses($edition) {
     		WHERE id IN (
     			SELECT courseid FROM ".$CFG->prefix."edicion_course
     			WHERE edicionid=".$edition->id."
-    	    );";
+    	    )
+    	    ORDER BY fullname;";
 
     $courses = get_records_sql($sql);
 
@@ -338,7 +339,8 @@ function mgm_get_edition_available_courses($edition) {
 				WHERE edicionid = ".$edition->id."
 			) AND id NOT IN (
 				SELECT courseid FROM ".$CFG->prefix."edicion_course
-			) AND id != '1'";
+			) AND id != '1'
+			ORDER BY fullname";
     $courses = get_records_sql($sql);
     $ret = array();
     foreach ($courses as $course) {
