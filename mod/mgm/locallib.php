@@ -737,7 +737,7 @@ function mgm_inscribe_user_in_edition($edition, $user, $course) {
     global $CFG;
 
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
-    		WHERE edicionid='".$edition."' AND userid='".$user."' AND value='".$course."'";
+    		WHERE edicionid='".$edition."' AND userid='".$user."'";
     if (!$record = get_record_sql($sql)) {
         // New record
         $record = new stdClass();
@@ -1472,18 +1472,4 @@ function mgm_active_edition($edition) {
 function mgm_deactive_edition($edition) {
     $edition->active = 0;
     update_record('edicion', $edition);
-}
-
-/**
- * Aprobe inscription request
- * @param array $users
- * @param string $editionid
- * @param string $courseid
- */
-function mgm_aprobe_request($users, $editionid, $courseid) {
-    foreach($users as $user) {
-        mgm_inscribe_user_in_edition($editionid, $user, $courseid);
-    }
-
-    mgm_enrol_edition_course($editionid, $courseid);
 }

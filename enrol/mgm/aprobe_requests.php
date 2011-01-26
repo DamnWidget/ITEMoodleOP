@@ -105,7 +105,11 @@ if ($inscribe) {
         die();
     }
 
-    $users = array_keys($_REQUEST['users']);
+    if (!$force) {
+        $users = array_keys($_REQUEST['users']);
+    } else {
+        $users = explode(',', $_REQUEST['users']);
+    }
 
     // Check if users are <= than places
     $plazas = mgm_get_edition_course_criteria($id, $courseid)->plazas;
@@ -120,14 +124,18 @@ if ($inscribe) {
         print_heading($strheading);
 
         notice_yesno(get_string('noplaces', 'mgm', $a),
-                     '?id='.$id.'&courseid='.$courseid.'&inscribe=1&force=1',
+                     '?id='.$id.'&courseid='.$courseid.'&inscribe=1&force=1&users='.implode(',', $users),
                      '?id='.$id.'&courseid='.$courseid);
 
         print_footer();
         die();
     }
 
-    mgm_aprobe_request($users, $id, $courseid);
+    foreach($users as $user) {
+        mgm_inscribe_user_in_edition($id, $user, $courseid);
+    }
+
+    mgm_enrol_edition_course($id, $courseid);
 
     redirect('aprobe_requests.php');
 }
