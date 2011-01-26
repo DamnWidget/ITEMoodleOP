@@ -972,10 +972,12 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
     if (isset($criteria->opcion1)) {    // This course is configured with criteria options
         mgm_order_preinscription_first_data($retdata['first'], $criteria, $edition, $course);
         mgm_order_by_course_preinscription_data($retdata['last'], $course);
-        foreach ($retdata['last'] as $rdata) {
-            mgm_order_preinscription_last_data($rdata, $edition, $criteria, $course);
-            foreach ($rdata as $rd) {
-                $rlastdata[] = $rd;
+        if (isset($retdata['last'])) {
+            foreach ($retdata['last'] as $rdata) {
+                mgm_order_preinscription_last_data($rdata, $edition, $criteria, $course);
+                foreach ($rdata as $rd) {
+                    $rlastdata[] = $rd;
+                }
             }
         }
     } else {    // This course is not configured with criteria options
