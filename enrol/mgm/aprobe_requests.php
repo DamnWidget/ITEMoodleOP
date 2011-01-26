@@ -42,6 +42,7 @@ if (!$preinscripcion = get_records('edicion_preinscripcion')) {
 $id = optional_param('id', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
 $inscribe = optional_param('inscribe', false, PARAM_BOOL);
+$force = optional_param('force', false, PARAM_BOOL);
 
 // Editions
 $editions = get_records('edicion');
@@ -108,19 +109,25 @@ if ($inscribe) {
 
     // Check if users are <= than places
     $plazas = mgm_get_edition_course_criteria($id, $courseid)->plazas;
-    if (count($users) > $plazas) {
+    if (count($users) > $plazas && !$force) {
         $a = new stdClass();
         $a->alumnos = count($users);
         $a->plazas = $plazas;
-        error(get_string('noplaces', 'mgm', $a), 'aprobe_requests.php?id='.$id.'&courseid='.$courseid);
+
+        $navlinks[] = array('name' => $edition->name, 'link' => 'aprobe_requests.php?id='.$edition->id, 'type' => 'misc');
+        $navigation = build_navigation($navlinks);
+        print_header($strmatricular, $strmatricular, $navigation);
+        print_heading($strheading);
+
+        notice_yesno(get_string('noplaces', 'mgm', $a),
+                     '?id='.$id.'&courseid='.$courseid.'&inscribe=1&force=1',
+                     '?id='.$id.'&courseid='.$courseid);
+
+        print_footer();
         die();
     }
 
-    foreach($users as $user) {
-        mgm_inscribe_user_in_edition($id, $user, $courseid);
-    }
-
-    mgm_enrol_edition_course($id, $courseid);
+    mgm_aprobe_request($users, $id, $courseid);
 
     redirect('aprobe_requests.php');
 }
