@@ -105,6 +105,17 @@ if ($inscribe) {
     }
 
     $users = array_keys($_REQUEST['users']);
+
+    // Check if users are <= than places
+    $plazas = mgm_get_edition_course_criteria($id, $courseid)->plazas;
+    if (count($users) > $plazas) {
+        $a = new stdClass();
+        $a->alumnos = count($users);
+        $a->plazas = $plazas;
+        error(get_string('noplaces', 'mgm', $a), 'aprobe_requests.php?id='.$id.'&courseid='.$courseid);
+        die();
+    }
+
     foreach($users as $user) {
         mgm_inscribe_user_in_edition($id, $user, $courseid);
     }

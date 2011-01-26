@@ -734,7 +734,9 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
  * @param string $course
  */
 function mgm_inscribe_user_in_edition($edition, $user, $course) {
-    if (!$record = get_record('edicion_inscripcion', 'edicionid', $edition, 'userid', $user)) {
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid='".$edition."' AND userid='".$user."' AND value='".$course."'";
+    if (!$record = get_record_sql($sql)) {
         // New record
         $record = new stdClass();
         $record->edicionid = $edition;
@@ -861,6 +863,10 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
 function mgm_order_by_course_preinscription_data(&$data, $course) {
     // Local variables
     $_data = array();
+
+    if (!isset($data)) {
+        return $_data;
+    }
 
     foreach ($data as $line) {
         foreach ($line->realcourses as $k=>$v) {
@@ -1317,7 +1323,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
             }
         }
     }
-    
+
     $count = 1;
     foreach ($data as $k=>$row) {
       $r = $row;
@@ -1325,7 +1331,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
       $data[$k] = $r;
       $count++;
     }
-    
+
     return $data;
 }
 

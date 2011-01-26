@@ -92,6 +92,7 @@ $string['nodata'] = 'No se han proporcionado todos los datos necesarios para rea
 $string['noeditioncourse'] = 'El curso no pertenece a ninguna edición o la edición no está activa.';
 $string['nohaydatos'] = 'No se han encontrado datos de pre-inscripciones a ediciones por su parte en el sistema';
 $string['nocourses'] = 'No se encontraron cursos';
+$string['noplaces'] = 'Está intentando inscribir \'$a->alumnos\' alumnos pero solo hay \'$a->plazas\' plazas disponibles';
 $string['opcion'] = 'Opción';
 $string['opcionesduplicadas'] = 'Ha seleccionado dos opciones de prioridad duplicadas, corrija el problema';
 $string['opcionuno'] = 'Primera opción';
