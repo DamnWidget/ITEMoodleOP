@@ -324,7 +324,9 @@ function mgm_get_edition_courses($edition) {
     	    )
     	    ORDER BY fullname;";
 
-    $courses = get_records_sql($sql);
+    if (!$courses = get_records_sql($sql)) {
+        return array();
+    }
 
     return $courses;
 }
@@ -958,10 +960,10 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
      * $first and everyone else at $last. We are going to proccess and order the data on every one
      * of those arrays before return it.
      */
+    $rlastdata = array();
     if (isset($criteria->opcion1)) {    // This course is configured with criteria options
         mgm_order_preinscription_first_data($retdata['first'], $criteria, $edition, $course);
         mgm_order_by_course_preinscription_data($retdata['last'], $course);
-        $rlastdata = array();
         foreach ($retdata['last'] as $rdata) {
             mgm_order_preinscription_last_data($rdata, $edition, $criteria, $course);
             foreach ($rdata as $rd) {
@@ -995,6 +997,9 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
 }
 
 function mgm_order_preinscription_first_data_opcion($opcion, &$data, $criteria, $edition, $course) {
+    if (!isset($data)) {
+        return;
+    }
     foreach ($data as $linedata) {
         if ($criteria->$opcion == 'especialidades') {
             // First option is especialidades
@@ -1035,6 +1040,10 @@ function mgm_order_preinscription_first_data_opcion($opcion, &$data, $criteria, 
 function mgm_abstract_results_opcion($opcion, $data) {
     // Local variables
     $tmptdata = array();
+
+    if (!isset($data)) {
+        return $tmptdata;
+    }
 
     foreach ($data as $linedata) {
         // If especialidades is the first option
@@ -1308,7 +1317,15 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
             }
         }
     }
-
+    
+    $count = 1;
+    foreach ($data as $k=>$row) {
+      $r = $row;
+      array_unshift($r,$count);
+      $data[$k] = $r;
+      $count++;
+    }
+    
     return $data;
 }
 
