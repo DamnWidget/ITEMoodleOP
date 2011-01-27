@@ -97,6 +97,7 @@ $string['opcion'] = 'Opción';
 $string['opcionesduplicadas'] = 'Ha seleccionado dos opciones de prioridad duplicadas, corrija el problema';
 $string['opcionuno'] = 'Primera opción';
 $string['opciondos'] = 'Segunda opción';
+$string['pageprint'] = 'Imprimir';
 $string['plazas'] = 'Plazas';
 $string['posalumno'] = 'Posición';
 $string['preinscrito'] = 'Se ha preinscrito a uno o mas cursos';

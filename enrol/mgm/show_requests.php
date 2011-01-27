@@ -57,19 +57,18 @@ foreach(get_records('edicion') as $edition) {
         print_heading($edition->name.' ('.$edition->description.')');
         print_simple_box_start('center', '80%');
         $plus = 0;
-        /*if (mgm_count_courses($edition) > count($options)) {
-            $plus = 1;
-        }*/
         for ($i = 0; $i < count($options)+$plus; $i++) {
             foreach (mgm_get_edition_courses($edition) as $course) {
                 $choices[$i][$course->id] = $course->fullname;
             }
         }
     }
+    $date = mgm_get_preinscription_timemodified($edition->id, $USER->id);
+    $date = date("d/m/Y H:i\"s", $date->timemodified);
 
     // Print form
     require_once($CFG->dirroot.'/enrol/mgm/enrol_form.php');
-    $eform = new enrol_mgm_ro_form('enrol.php', compact('course', 'edition', 'choices'));
+    $eform = new enrol_mgm_ro_form('enrol.php', compact('course', 'edition', 'choices', 'date'));
     if ($options) {
         $data = new stdClass();
         foreach ($options as $k=>$v) {
@@ -84,5 +83,10 @@ foreach(get_records('edicion') as $edition) {
 
     print_simple_box_end();
 }
+
+print_simple_box_start('center', '80%');
+print_single_button('javascript: window.print();', '', get_string('pageprint', 'mgm', 'get'));
+print_simple_box_end();
+
 
 print_footer();

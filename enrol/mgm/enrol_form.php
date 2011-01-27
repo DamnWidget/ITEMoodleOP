@@ -68,7 +68,7 @@ class enrol_mgm_ro_form extends moodleform {
         $course = $this->_customdata['course'];
         $edition = $this->_customdata['edition'];
 
-        $mform->addElement('header', 'general', get_string('edicioncursos', 'mgm'));
+        $mform->addElement('header', 'general', get_string('edicioncursos', 'mgm').' '.$this->_customdata['date']);
 
         $mform->addElement('hidden', 'id', $course->id);
         $mform->setType('id', PARAM_INT);

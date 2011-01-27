@@ -1473,3 +1473,21 @@ function mgm_deactive_edition($edition) {
     $edition->active = 0;
     update_record('edicion', $edition);
 }
+
+/**
+ * Get preinscription uer timemodified data
+ * @param string $edition
+ * @param string $user
+ */
+function mgm_get_preinscription_timemodified($edition, $user) {
+    global $CFG;
+
+    $sql = "SELECT timemodified FROM ".$CFG->prefix."edicion_preinscripcion
+    		WHERE edicionid = '".$edition."' AND userid = '".$user."'";
+
+    if (!$record = get_record_sql($sql)) {
+        return null;
+    }
+
+    return $record;
+}
