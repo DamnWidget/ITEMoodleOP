@@ -995,8 +995,10 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
     }
 
     $tmpdata = array();
-    foreach ($retdata['first'] as $data) {
-        $tmpdata[] = $data;
+    if (isset($retdata['first'])) {
+        foreach ($retdata['first'] as $data) {
+            $tmpdata[] = $data;
+        }
     }
 
     foreach ($rlastdata as $data) {
