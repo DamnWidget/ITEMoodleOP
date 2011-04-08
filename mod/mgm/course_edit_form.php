@@ -53,6 +53,15 @@ class mgm_course_edit_form extends moodleform {
 
         $mform->addElement('text', 'plazas', get_string('plazas', 'mgm'));
         $mform->addRule('plazas', get_string('required'), 'required', null);
+        $mform->addRule('plazas', get_string('numeric', 'mgm'), 'numeric');
+
+        $mform->addElement('text', 'mingroup', get_string('mingroup', 'mgm'));
+        $mform->addRule('mingroup', get_string('required'), 'required', null);
+        $mform->addRule('mingroup', get_string('numeric', 'mgm'), 'numeric');
+
+        $mform->addElement('text', 'maxgroup', get_string('maxgroup', 'mgm'));
+        $mform->addRule('maxgroup', get_string('required'), 'required', null);
+        $mform->addRule('maxgroup', get_string('numeric', 'mgm'), 'numeric');
 
         $choices = array(
             'ninguna'		 => get_string('sinprioridad', 'mgm'),

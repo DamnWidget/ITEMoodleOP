@@ -41,8 +41,11 @@ if (!$preinscripcion = get_records('edicion_preinscripcion')) {
 
 $id = optional_param('id', 0, PARAM_INT);
 $courseid = optional_param('courseid', 0, PARAM_INT);
+$borrador = optional_param('borrador', false, PARAM_BOOL);
 $inscribe = optional_param('inscribe', false, PARAM_BOOL);
+$rollback = optional_param('rollback', false, PARAM_BOOL);
 $force = optional_param('force', false, PARAM_BOOL);
+$pepe = optional_param('pepe', false, PARAM_BOOL);
 
 // Editions
 $editions = get_records('edicion');
@@ -89,7 +92,9 @@ $stryes            = get_string('yes');
 $strno             = get_string('no');
 $strmatricular     = get_string('mgm:aprobe', 'mgm');
 $strheading        = $strmatricular;
-$strposalumno       = get_string('posalumno','mgm');
+$strposalumno      = get_string('posalumno','mgm');
+
+$savebutton        = '<br /><center><input type="submit" value="'.get_string('borrador', 'mgm').'"/></center>';
 
 $navlinks = array();
 $navlinks[] = array('name' => $strediciones, 'type' => 'misc');
@@ -99,16 +104,29 @@ $navlinks[] = array('name' => $strmatricular, 'link' => 'aprobe_requests.php', '
 $editiontable->head  = array($stredicion, $strfechainicio, $strfechafin, $strcourses, $strplazas);
 $editiontable->align = array('left', 'left', 'left', 'center', 'center', 'center');
 
+// PLEASE DELETE ME!!!
+if ($pepe) {
+    mgm_create_enrolment_groups($id, $courseid);
+    die();
+}
+
 if ($inscribe) {
     if (!$courseid || !$id) {
         error(get_string('nodata', 'mgm'));
         die();
     }
 
-    if (!$force) {
+    if (!$force && array_key_exists('users', $_REQUEST)) {
         $users = array_keys($_REQUEST['users']);
-    } else {
+    } else if (array_key_exists('users', $_REQUEST)) {
         $users = explode(',', $_REQUEST['users']);
+    } else {
+        $users = array();
+    }
+
+    if ($rollback) {
+        mgm_rollback_borrador($id, $courseid);
+        redirect('aprobe_requests.php?id='.$id);
     }
 
     // Check if users are <= than places
@@ -123,8 +141,9 @@ if ($inscribe) {
         print_header($strmatricular, $strmatricular, $navigation);
         print_heading($strheading);
 
+        $bm = $borrador ? 1 : 0;
         notice_yesno(get_string('noplaces', 'mgm', $a),
-                     '?id='.$id.'&courseid='.$courseid.'&inscribe=1&force=1&users='.implode(',', $users),
+                     '?id='.$id.'&courseid='.$courseid.'&borrador='.$bm.'&inscribe=1&force=1&users='.implode(',', $users),
                      '?id='.$id.'&courseid='.$courseid);
 
         print_footer();
@@ -132,12 +151,17 @@ if ($inscribe) {
     }
 
     foreach($users as $user) {
-        mgm_inscribe_user_in_edition($id, $user, $courseid);
+        mgm_inscribe_user_in_edition($id, $user, $courseid, $borrador);
     }
 
-    mgm_enrol_edition_course($id, $courseid);
+    if ($borrador) {
+        mgm_enrol_edition_course($id, $courseid);
+        mgm_create_enrolment_groups($id, $courseid);
+        redirect('configure_groups.php?id='.$id.'&courseid='.$courseid);
+        die();
+    }
 
-    redirect('aprobe_requests.php');
+    redirect('aprobe_requests.php?id='.$id);
 }
 
 if ($id) {
@@ -153,13 +177,19 @@ if ($id) {
         unset($editiontable->data);
         foreach (mgm_get_edition_courses($edition) as $course) {
             $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
-            	    WHERE edicionid='".$id."' AND value='".$course->id."'";
+            	    WHERE edicionid='".$id."' AND value='".$course->id."' AND released='1'";
             if ($inscripcion = get_records_sql($sql)) {
                 $asignado = $stryes;
                 $link = '<b>'.$course->fullname.'</b>';
             } else {
                 $asignado = $strno;
-                $link = '<a href="aprobe_requests.php?id='.$edition->id.'&courseid='.$course->id.'">'.$course->fullname.'</a>';
+                $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+            	    WHERE edicionid='".$id."' AND value='".$course->id."' AND released='0'";
+                if ($borrador = get_records_sql($sql)) {
+                    $link = '(Borrador) <a href="aprobe_requests.php?id='.$edition->id.'&courseid='.$course->id.'" style="color: red;" alt="Borrador">'.$course->fullname.'</a>';
+                } else {
+                    $link = '<a href="aprobe_requests.php?id='.$edition->id.'&courseid='.$course->id.'">'.$course->fullname.'</a>';
+                }
             }
             if (!$inscripcion) {
                 $plazas = mgm_get_edition_course_criteria($edition->id, $course->id)->plazas;
@@ -174,20 +204,31 @@ if ($id) {
             );
         }
     }
+
 }
 
 if ($courseid) {
     if ($course = get_record('course', 'id', $courseid)) {
         $navlinks[] = array('name' => $course->fullname, 'type' => 'misc');
-        $strheading = $strheading.' - '.$course->fullname;
-
-        // Table header
-        $editiontable->head = array($strposalumno,$strselect, $strname, $strlastname, $strinscripcion, $strcc, $strespecialidades, $strcourses);
-        $editiontable->align = array('left','left', 'left', 'left', 'left', 'left', 'left', 'left');
 
         // Table data
         unset($editiontable->data);
-        $editiontable->data = mgm_get_edition_course_preinscripcion_data($edition, $course);
+        if (mgm_is_borrador($edition, $course)) {
+            // Table header
+            $editiontable->head = array($strname, $strlastname);
+            $editiontable->align = array('left','left');
+
+            $editiontable->data = mgm_get_edition_course_inscription_data($edition, $course);
+            $strheading = $strheading.' - '.$course->fullname.' '.get_string('borrador_txt', 'mgm');
+            $savebutton = '<br /><center><input type="submit" value="'.get_string('confirmar_borrador', 'mgm').'"/></center>';
+        } else {
+            // Table header
+            $editiontable->head = array($strposalumno,$strselect, $strname, $strlastname, $strinscripcion, $strcc, $strespecialidades, $strcourses);
+            $editiontable->align = array('left','left', 'left', 'left', 'left', 'left', 'left', 'left');
+
+            $editiontable->data = mgm_get_edition_course_preinscripcion_data($edition, $course);
+            $strheading = $strheading.' - '.$course->fullname;
+        }
     }
 }
 
@@ -197,9 +238,16 @@ print_header($strmatricular, $strmatricular, $navigation);
 print_heading($strheading);
 
 if ($courseid) {
-    echo '<form name="perico" action="?id='.$id.'&courseid='.$courseid.'&inscribe=1" method="POST">';
+    if (mgm_is_borrador($edition, $course = get_record('course', 'id', $courseid))) {
+        echo '<form name="inscribe" action="?id='.$id.'&courseid='.$courseid.'&inscribe=1&borrador=1" method="POST">';
+    } else {
+        echo '<form name="inscribe" action="?id='.$id.'&courseid='.$courseid.'&inscribe=1" method="POST">';
+    }
     print_table($editiontable);
-    echo '<br /><center><input type="submit" value="'.get_string('inscribe', 'mgm').'"/></center>';
+    echo $savebutton;
+    if (mgm_is_borrador($edition, $course = get_record('course', 'id', $courseid))) {
+        echo '<center><input type="button" value="'.get_string('rollback_borrador', 'mgm').'" onclick="document.location.href=\'?id='.$id.'&courseid='.$courseid.'&inscribe=1&borrador=1&rollback=1\'"/></center>';
+    }
     echo '</form>';
 } else {
     print_table($editiontable);

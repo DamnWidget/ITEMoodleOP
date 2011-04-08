@@ -27,6 +27,7 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 require_once($CFG->dirroot.'/course/lib.php');
+require_once($CFG->dirroot.'/group/lib.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -38,6 +39,8 @@ define('MGM_CRITERIA_OPCION1', 1);
 define('MGM_CRITERIA_OPCION2', 2);
 define('MGM_CRITERIA_ESPECIALIDAD', 3);
 define('MGM_CRITERIA_CC', 4);
+define('MGM_CRITERIA_MINGROUP', 5);
+define('MGM_CRITERIA_MAXGROUP', 6);
 
 define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
@@ -487,6 +490,14 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
         if ($c->type == MGM_CRITERIA_ESPECIALIDAD) {
             $criteria->espec[$c->value] = mgm_translate_especialidad($c->value);
         }
+
+        if ($c->type == MGM_CRITERIA_MINGROUP) {
+            $criteria->mingroup = $c->value;
+        }
+
+        if ($c->type == MGM_CRITERIA_MAXGROUP) {
+            $criteria->maxgroup = $c->value;
+        }
     }
 
     return $criteria;
@@ -536,6 +547,28 @@ function mgm_set_edition_course_criteria($data) {
     // Opcion2
     $criteria->type = MGM_CRITERIA_OPCION2;
     $criteria->value = $data->opcion2;
+    if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+        insert_record('edicion_criterios', $criteria);
+    } else {
+        $criteria->id = $criteriaid->id;
+        update_record('edicion_criterios', $criteria);
+        unset($criteria->id);
+    }
+
+    // Mingroup
+    $criteria->type = MGM_CRITERIA_MINGROUP;
+    $criteria->value = $data->mingroup;
+    if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+        insert_record('edicion_criterios', $criteria);
+    } else {
+        $criteria->id = $criteriaid->id;
+        update_record('edicion_criterios', $criteria);
+        unset($criteria->id);
+    }
+
+    // Maxgroup
+    $criteria->type = MGM_CRITERIA_MAXGROUP;
+    $criteria->value = $data->maxgroup;
     if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
         insert_record('edicion_criterios', $criteria);
     } else {
@@ -733,7 +766,7 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
  * @param string $user
  * @param string $course
  */
-function mgm_inscribe_user_in_edition($edition, $user, $course) {
+function mgm_inscribe_user_in_edition($edition, $user, $course, $released=false) {
     global $CFG;
 
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
@@ -744,10 +777,13 @@ function mgm_inscribe_user_in_edition($edition, $user, $course) {
         $record->edicionid = $edition;
         $record->userid = $user;
         $record->value = $course;
+        $record->released = $released;
         insert_record('edicion_inscripcion', $record);
     } else {
         // Update record
         $record->value = $course;
+        $record->released = $released;
+        $record->timemodified = time();
         update_record('edicion_inscripcion', $record);
     }
 }
@@ -764,10 +800,61 @@ function mgm_enrol_edition_course($editionid, $courseid) {
             if (!enrol_into_course($course, $user, 'mgm')) {
                 print_error('couldnotassignrole');
             }
-
-            // Delete user preinscriptions
-            //delete_records('edicion_preinscripcion', 'userid', $user->id);
         }
+    }
+}
+
+function mgm_create_enrolment_groups($editionid, $courseid) {
+    global $CFG;
+
+    if(!$inscripcion = mgm_check_already_enroled($editionid, $courseid)) {
+        die('Error, there is no inscription for the edition and course ids given');
+    }
+
+    $groups = array();
+    foreach ($inscripcion as $row) {
+        $user = get_record('user', 'id', $row->userid);
+        if (!$user->ite_data = get_record('edicion_user', 'userid', $row->userid)) {
+            $groups['none'][] = $user;
+        } else {
+            if (!$user->ite_data->cc) {
+                $groups['none'][] = $user;
+            } else {
+                $groups[$user->ite_data->cc][] = $user;
+            }
+        }
+    }
+
+    if (!$criteria = mgm_get_edition_course_criteria($editionid, $courseid)) {
+        die('Error, there is no criteria for the edition and course ids given');
+    }
+
+    $finalgroups = array('none' => $groups['none']);
+    foreach ($groups as $k=>$v) {
+        if ($k != 'none') {
+            if (count($v) >= $criteria->mingroup && count($v) <= $criteria->maxgroup) {
+                $finalgroups[$k] = $v;
+            } else {
+                $finalgroups['none'][] = $v;
+            }
+        }
+    }
+
+    $x = 65;
+    foreach ($finalgroups as $fg) {
+        $group = new object();
+        $group->courseid = $courseid;
+        $group->name = 'Grupo '.chr($x);
+        if (!$gid=groups_create_group($group)) {
+            error('Error creating the '.$group->name.' group');
+        }
+        foreach ($fg as $user) {
+            if (!groups_add_member($gid, $user->id)) {
+                error('Error adding user '.$user->username.' to group '.$group->name);
+            }
+            print_object($user);
+        }
+        $x++;
     }
 }
 
@@ -924,6 +1011,9 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
     foreach ($data as $sqline) {
         $lineuser = mgm_user_preinscription_tmpdata($sqline->userid);
         $lineuser->realcourses = mgm_get_user_preinscription_realcourses($edition->id, $sqline->value);
+        if (empty($lineuser->realcourses)) {
+            $lineuser->realcourses[0] = '';
+        }
         $lineuser->tmpdata = mgm_get_user_preinscription_data($sqline, $edition, $lineuser);
         $lineuser->sqline = $sqline;
         $lineuser->data = array(
@@ -1285,6 +1375,36 @@ function mgm_order_by_date($x, $y) {
 }
 
 /**
+ * Get edition inscription data and return it
+ *
+ * @param object $edition
+ * @param object $course
+ * @param boolean $docheck
+ */
+function mgm_get_edition_course_inscription_data($edition, $course, $docheck=true) {
+    global $CFG;
+
+    // Inscription data
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid = '".$edition->id."' AND value='".$course->id."'
+    		ORDER BY timemodified ASC";
+    if (!$inscripcion = get_records_sql($sql)) {
+        return;
+    }
+
+    $data = array();
+    foreach ($inscripcion as $line) {
+        $tmpdata = mgm_user_preinscription_tmpdata($line->userid);
+        $data[] = array(
+            '<a href="../../user/view.php?id='.$tmpdata->user->id.'&amp;course=1">'.$tmpdata->user->firstname.'</a>',
+            $tmpdata->user->lastname.'<input type="hidden" name="users['.$tmpdata->user->id.']" value="1"></input>'
+        );
+    }
+
+    return $data;
+}
+
+/**
  * Get edition preinscrition data and return it
  *
  * @param object $edition
@@ -1420,7 +1540,6 @@ function mgm_set_userdata($userid, $data) {
     }
 }
 
-
 /**
  * Return if a given cc is on cc CSV file
  * @param string $cc
@@ -1492,4 +1611,30 @@ function mgm_get_preinscription_timemodified($edition, $user) {
     }
 
     return $record;
+}
+
+function mgm_is_borrador($edition, $course) {
+    global $CFG;
+
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+            WHERE edicionid='".$edition->id."' AND value='".$course->id."' AND released='0'";
+    if ($borrador = get_records_sql($sql)) {
+        return true;
+    }
+
+    return false;
+}
+
+function mgm_is_inscription_active($id, $course) {
+
+}
+
+function mgm_rollback_borrador($editionid, $courseid) {
+    global $CFG;
+
+    $sql = "DELETE FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid='".$editionid."' AND value='".$courseid."'
+    		AND released='0'";
+
+    execute_sql($sql);
 }

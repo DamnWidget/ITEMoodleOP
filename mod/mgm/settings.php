@@ -24,7 +24,7 @@
  *
  * @package    mod
  * @subpackage mgm
- * @copyright  2010 Oscar Campos <oscar.campos@open-phoenix.com>
+ * @copyright  2010 - 2011 Oscar Campos <oscar.campos@open-phoenix.com>
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -33,7 +33,7 @@ require_once($CFG->dirroot.'/mod/mgm/locallib.php');
 /*
  * Module Configuration
  */
-$settings->add(
+/*$settings->add(
     new admin_setting_configcheckbox('mgm_email_notification', get_string('emailnotification', 'mgm'),
         get_string('configemailnotification', 'mgm'), 0)
 );
@@ -43,7 +43,7 @@ $choices = array('ccaa', 'especialidad', 'escuela20');
 $settings->add(
     new admin_setting_configmultiselect('mgm_revision_information', get_string('revisioninformation', 'mgm'),
         get_string('configrevisioninformation', 'mgm'), array(), $choices)
-);
+);*/
 
 $settings->add(
     new admin_setting_configfile('mgm_centros_file', get_string('centrosfile', 'mgm'),
