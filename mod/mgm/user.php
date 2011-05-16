@@ -84,7 +84,7 @@ if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot.'/mod/mgm/index.php');
 } else if ($data = $mform->get_data()) {
     mgm_set_userdata($USER->id, $data);
-    redirect('user.php');
+    redirect('user.php', get_string('codemessage', 'mgm'), 10);
 }
 
 print_header($strmatricular, $strmatricular, $navigation);

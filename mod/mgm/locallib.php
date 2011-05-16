@@ -1638,3 +1638,33 @@ function mgm_rollback_borrador($editionid, $courseid) {
 
     execute_sql($sql);
 }
+
+function mgm_edition_set_user_address($userid, $address) {
+    if (!$euser = get_record('edicion_user', 'userid', $userid)) {
+        error('Use doesn\'t exists!');
+    } else {
+        if (!empty($addres)) {
+            $euser->alt_address = true;
+            $euser->address = $address;
+        } else {
+            $euser->alt_address = false;
+            $euser->address = '';
+        }
+    }
+}
+
+function mgm_get_edition_out($edition) {
+    global $CFG;
+
+    $sql = "SELECT COUNT(id) AS count FROM ".$CFG->prefix."edicion_preinscripcion
+    		WHERE edicionid='".$edition->id."' AND userid
+    		IN ( SELECT userid FROM ".$CFG->prefix."edicion_preinscripcion
+    			 WHERE edicionid='".$edition->id."' ) AND userid
+    		NOT IN ( SELECT userid FROM ".$CFG->prefix."edicion_inscripcion
+    				 WHERE edicionid='".$edition->id."' )";
+    if (!$count = get_record_sql($sql)) {
+        return 0;
+    }
+
+    return $count->count;
+}

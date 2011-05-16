@@ -41,3 +41,13 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('edicionesaprobe', get_string('edicionesaprobe', 'mgm'),
         $CFG->wwwroot . '/enrol/mgm/aprobe_requests.php', 'mod/mgm:aprobe')
 );
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('edicionesaddress', get_string('edicionesaddress', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/user_extend.php', 'mod/mgm:aprobe')
+);
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('reviewnotaprobed', get_string('reviewnotaprobed', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/review.php', 'mod/mgm:aprobe')
+);
