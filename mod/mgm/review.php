@@ -138,13 +138,14 @@ if ($id) {
             '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
             $record->cc,
             (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
-            $courses
+            $courses,
+            date("d/m/Y H:i\"s", $alumno->fecha),
         );
     }
 
     // Table header
-    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('cc', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'));
-    $alumnostable->align = array('left', 'left', 'left', 'left', 'left');
+    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('cc', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'), get_string('date'));
+    $alumnostable->align = array('left', 'left', 'left', 'left', 'left', 'left');
 } else {
     if (isset($editions) && is_array($editions)) {
         foreach($editions as $edition) {
