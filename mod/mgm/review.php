@@ -45,6 +45,7 @@ if (!$site = get_site()) {
 $strmgm            = get_string('mgm', 'mgm');
 $stredicion        = get_string('edicion', 'mgm');
 $strediciones      = get_string('ediciones', 'mgm');
+$stralumnos        = get_string('alumnos', 'mgm');
 $stredicionesmgm   = get_string('reviewnotaprobed', 'mgm');
 $strplazas         = get_string('plazas', 'mgm');
 $strfechainicio    = get_string('fechainicio', 'mgm');
@@ -71,7 +72,7 @@ $strusergroupmembership = get_string('usergroupmembership', 'group');
 // Navigation links
 $navlinks = array();
 $navlinks[] = array('name' => $stradministration, 'link' => '', 'type' => 'misc');
-$navlinks[] = array('name' => $strediciones, 'link' => 'index.php', 'type' => 'misc');
+$navlinks[] = array('name' => $strediciones, 'link' => 'review.php', 'type' => 'misc');
 $navlinks[] = array('name' => $stredicionesmgm, 'link' => '', 'type' => 'activity');
 $navigation = build_navigation($navlinks);
 
@@ -92,6 +93,7 @@ if ($id) {
     foreach ($rows as $row) {
         $alumno = get_record('user', 'id', $row->userid);
         $record = new object();
+        $record->id = $alumno->id;
         $record->nombre = $alumno->firstname.' '.$alumno->lastname;
         $record->correo = $alumno->email;
         $sql2 = "SELECT * FROM ".$CFG->prefix."course
@@ -104,7 +106,7 @@ if ($id) {
         }
         if($alumnodata = get_record('edicion_user', 'userid', $alumno->id)) {
             $record->cc = $alumnodata->cc;
-            $record->especialidades = $alumnodata->especialidades;
+            $record->especialidades = explode("\n", $alumnodata->especialidades);
         } else {
             $record->cc = 0;
             $record->especialidades = array();
@@ -113,7 +115,36 @@ if ($id) {
         $record->fecha = $row->timemodified;
         $alumnos[] = $record;
     }
-    print_object($alumnos);
+
+    // Table data
+    foreach($alumnos as $alumno) {
+        // Especialidades
+        $especs = $alumno->especialidades;
+        $userespecs = '<select name="especialidades" readonly="">';
+        foreach ($especs as $espec) {
+            $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
+        }
+        $userespecs .= '</select>';
+
+        // Courses
+        $courses = '<select name="courses" readonly="">';
+        foreach($alumno->cursos as $course) {
+            $courses .= '<option name="'.$course->id.'">'.$course->fullname.'</option>';
+        }
+        $courses .= '</select>';
+
+        $alumnostable->data[] = array(
+            '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>',
+            '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
+            $record->cc,
+            (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
+            $courses
+        );
+    }
+
+    // Table header
+    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('cc', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'));
+    $alumnostable->align = array('left', 'left', 'left', 'left', 'left');
 } else {
     if (isset($editions) && is_array($editions)) {
         foreach($editions as $edition) {
@@ -124,11 +155,11 @@ if ($id) {
 
             $editiontable->data[] = array(
             	'<a title="'.$edition->description.'" href="review.php?id='.$edition->id.'">'.$edition->name.'</a>',
-                date('d/m/Y', $edition->inicio),
-                date('d/m/Y', $edition->fin),
-                mgm_count_courses($edition),
-                mgm_get_edition_plazas($edition),
-                mgm_get_edition_out($edition)
+            date('d/m/Y', $edition->inicio),
+            date('d/m/Y', $edition->fin),
+            mgm_count_courses($edition),
+            mgm_get_edition_plazas($edition),
+            mgm_get_edition_out($edition)
             );
         }
     }
@@ -139,10 +170,13 @@ if ($id) {
 }
 
 // Output the page
-print_heading($strediciones);
 
 if (isset($editiontable)) {
+    print_heading($strediciones);
     print_table($editiontable);
+} else {
+    print_heading($stralumnos);
+    print_table($alumnostable);
 }
 
 print_footer();
