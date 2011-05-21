@@ -1668,3 +1668,15 @@ function mgm_get_edition_out($edition) {
 
     return $count->count;
 }
+
+function mgm_get_user_inscription_by_edition($user, $edition) {
+    global $CFG;
+
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid = '".$edition->id."' AND userid='".$user->id."'";
+    if (!$inscripcion = get_record_sql($sql)) {
+        return false;
+    }
+
+    return $inscripcion;
+}

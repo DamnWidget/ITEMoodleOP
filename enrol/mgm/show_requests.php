@@ -81,6 +81,14 @@ foreach(get_records('edicion') as $edition) {
 
     $eform->display();
 
+    if ($inscripcion = mgm_get_user_inscription_by_edition($USER, $edition)) {
+        $ctemp = get_record('course', 'id', $inscripcion->value);
+        echo get_string('cconcedido', 'mgm').$ctemp->fullname;
+    } else {
+        echo get_string('cconcedidono', 'mgm');
+    }
+
+
     print_simple_box_end();
 }
 
