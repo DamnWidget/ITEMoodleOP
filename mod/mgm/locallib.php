@@ -44,6 +44,7 @@ define('MGM_CRITERIA_MAXGROUP', 6);
 
 define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
+define('MGM_ITE_SCALA', 3);
 
 /**
  * Checks if an user can perform the view action on module access
@@ -1679,4 +1680,29 @@ function mgm_get_user_inscription_by_edition($user, $edition) {
     }
 
     return $inscripcion;
+}
+
+function mgm_get_certification_scala() {
+    global $CFG;
+
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+    		WHERE type = ".MGM_ITE_SCALA."";
+    if($scala = get_record_sql($sql)) {
+        return $scala;
+    } else {
+        return false;
+    }
+}
+
+function mgm_set_certification_scala($scala) {
+    if (!$nscala = mgm_get_certification_scala()) {
+        $nscala = new stdClass();
+        $nscala->type = MGM_ITE_SCALA;
+        $nscala->name = 'Scala';
+        $nscala->value = $scala;
+        insert_record('edicion_ite', $nscala);
+    } else {
+        $nscala->value = $scala;
+        update_record('edicion_ite', $nscala);
+    }
 }

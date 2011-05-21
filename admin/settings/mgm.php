@@ -51,3 +51,8 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('reviewnotaprobed', get_string('reviewnotaprobed', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/review.php', 'mod/mgm:aprobe')
 );
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('edicionesscala', get_string('edicionesscala', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/edicionesscala.php', 'mod/mgm:createedicion')
+);
