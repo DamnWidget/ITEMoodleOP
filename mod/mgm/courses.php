@@ -79,11 +79,17 @@ if (!empty($allespecs)) {
     $aespecs = $allespecs;
 }
 
+$dependencias = mgm_get_courses($course);
+
 $criteria = mgm_get_edition_course_criteria($edicionid, $courseid);
+if (!isset($criteria->depends)) {
+    $criteria->depends = 0;
+}
 $criteria->courseid = $courseid;
 $criteria->edicionid = $edicionid;
 $criteria->sespecs = $sespecs;
 $criteria->aespecs = $aespecs;
+$criteria->dependencias = $dependencias;
 
 $mform = new mgm_course_edit_form('courses.php', $criteria);
 $mform->set_data($criteria);
@@ -100,9 +106,22 @@ if ($mform->is_cancelled()) {
 
 // Print the form
 print_edition_edit_header();
-print_heading(get_string('edicioncriteria', 'mgm'));
+print_heading(get_string('edicioncriteria', 'mgm').' - '.$course->fullname);
 echo skip_main_destination();
 $mform->display();
+?>
+<script type="text/javascript">
+var dcheck = document.getElementById('id_dcheck');
+var dlist = document.getElementById('id_dpendsgroup_dlist');
+<?php if ($criteria->depends) {
+    echo "dcheck.checked = true;";
+    echo "dlist.selectedIndex = ".mgm_get_check_index($criteria);
+} else {
+    echo "dcheck.checked = false;";
+}
+?>
+</script>
+<?php
 admin_externalpage_print_footer();
 
 function print_edition_edit_header() {

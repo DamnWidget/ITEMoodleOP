@@ -41,6 +41,7 @@ define('MGM_CRITERIA_ESPECIALIDAD', 3);
 define('MGM_CRITERIA_CC', 4);
 define('MGM_CRITERIA_MINGROUP', 5);
 define('MGM_CRITERIA_MAXGROUP', 6);
+define('MGM_CRITERIA_DEPEND', 7);
 
 define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
@@ -499,6 +500,11 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
         if ($c->type == MGM_CRITERIA_MAXGROUP) {
             $criteria->maxgroup = $c->value;
         }
+
+        if ($c->type == MGM_CRITERIA_DEPEND) {
+            $criteria->depends = true;
+            $criteria->dlist = $c->value;
+        }
     }
 
     return $criteria;
@@ -576,6 +582,19 @@ function mgm_set_edition_course_criteria($data) {
         $criteria->id = $criteriaid->id;
         update_record('edicion_criterios', $criteria);
         unset($criteria->id);
+    }
+
+    // Dependencies
+    if (isset($data->dpendsgroup)) {
+        $criteria->type = MGM_CRITERIA_DEPEND;
+        $criteria->value = $data->dpendsgroup['dlist'];
+        if (!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+            insert_record('edicion_criterios', $criteria);
+        } else {
+            $criteria->id = $criteriaid->id;
+            update_record('edicion_criterios', $criteria);
+            unset($criteria->id);
+        }
     }
 
     // Add especialidad
@@ -1705,4 +1724,72 @@ function mgm_set_certification_scala($scala) {
         $nscala->value = $scala;
         update_record('edicion_ite', $nscala);
     }
+}
+
+function mgm_get_courses($course) {
+    global $CFG;
+
+    $sql = "SELECT * FROM ".$CFG->prefix."course
+    		WHERE id !='".$course->id."'";
+
+    if (!$data = get_records_sql($sql)) {
+        return array();
+    }
+
+    $retdata = array();
+    foreach($data as $v) {
+        $retdata[$v->id] = $v->fullname;
+    }
+
+    return $retdata;
+}
+
+function mgm_get_course_dependencies($edition, $course, $user) {
+    global $CFG;
+
+    if(!$criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
+        return true;
+    }
+
+    if(!isset($criteria->depends) || !$criteria->depends) {
+        return true;
+    }
+
+    if(!$ctask = mgm_get_certification_task($criteria->dlist)) {
+        return false;
+    }
+
+    $sql = "SELECT * FROM ".$CFG->prefix."grade_grades
+    		WHERE itemid ='".$ctask->id."'
+    		AND userid ='".$user->id."'";
+
+    if (!$grade = get_record_sql($sql)) {
+        return false;
+    }
+
+    return $grade->finalgrade == $grade->rawgrademax;
+}
+
+function mgm_get_certification_task($course) {
+    global $CFG;
+
+    $scala = mgm_get_certification_scala();
+
+    $sql = "SELECT * FROM ".$CFG->prefix."grade_items
+    		WHERE scaleid ='".$scala->value."'
+    		AND courseid ='".$course."'";
+
+    return get_record_sql($sql);
+}
+
+function mgm_get_check_index($criteria) {
+    $x = 0;
+    foreach($criteria->dependencias as $k => $v) {
+        if ($criteria->dlist == $k) {
+            return $x;
+        }
+        $x++;
+    }
+
+    return $x;
 }

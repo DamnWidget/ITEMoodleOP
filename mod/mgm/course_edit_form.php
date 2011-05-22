@@ -118,6 +118,18 @@ class mgm_course_edit_form extends moodleform {
             $mform->setDefault('courseid', $criteria->courseid);
         }
 
+        $dpends = array();
+        $dchoices = & $this->_customdata->dependencias;
+
+        $dpends[] =& $mform->createElement('checkbox', 'depends', '',
+                           '', 'id="dcheck" onclick="if(this.checked) {
+                           		getElementById(\'id_dpendsgroup_dlist\').disabled=false;
+    					   } else {
+    					   		getElementById(\'id_dpendsgroup_dlist\').disabled=true;
+    					   }"');
+        $dpends[] =& $mform->createElement('select', 'dlist', '', $dchoices, ($this->_customdata->depends) ? 'enabled' : 'disabled');
+        $grp =& $mform->addElement('group', 'dpendsgroup', get_string('cdepend', 'mgm'), $dpends);
+
         $this->add_action_buttons(true);
     }
 }
