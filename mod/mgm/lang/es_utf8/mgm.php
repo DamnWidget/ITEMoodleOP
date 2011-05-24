@@ -66,6 +66,7 @@ $string['deleteedicioncheck'] = '¿Está seguro de que desea borrar esta edició
 $string['deletingedition'] = 'Borrando $a';
 $string['desactivar'] = 'Desactivar';
 $string['desactivaedicion'] = '¿Está seguro de que desea desactivar esta edición?';
+$string['dni'] = 'DNI';
 $string['edicionactiva'] = 'No se puede editar una edición activa.';
 $string['edicion'] = 'Edición';
 $string['edicionesaddress'] = 'Editar datos extendidos de Alumnos';

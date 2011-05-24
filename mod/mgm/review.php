@@ -105,9 +105,11 @@ if ($id) {
             $curso->plazas = $criteria->plazas;
         }
         if($alumnodata = get_record('edicion_user', 'userid', $alumno->id)) {
+            $record->dni = $alumnodata->dni;
             $record->cc = $alumnodata->cc;
             $record->especialidades = explode("\n", $alumnodata->especialidades);
         } else {
+            $record->dni = '00000000H';
             $record->cc = 0;
             $record->especialidades = array();
         }
@@ -136,6 +138,7 @@ if ($id) {
         $alumnostable->data[] = array(
             '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>',
             '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
+            $record->dni,
             $record->cc,
             (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
             $courses,
@@ -144,8 +147,8 @@ if ($id) {
     }
 
     // Table header
-    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('cc', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'), get_string('date'));
-    $alumnostable->align = array('left', 'left', 'left', 'left', 'left', 'left');
+    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('dni', 'mgm'), get_string('cc', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'), get_string('date'));
+    $alumnostable->align = array('left', 'left', 'left', 'left', 'left', 'left', 'left');
 } else {
     if (isset($editions) && is_array($editions)) {
         foreach($editions as $edition) {
@@ -156,11 +159,11 @@ if ($id) {
 
             $editiontable->data[] = array(
             	'<a title="'.$edition->description.'" href="review.php?id='.$edition->id.'">'.$edition->name.'</a>',
-            date('d/m/Y', $edition->inicio),
-            date('d/m/Y', $edition->fin),
-            mgm_count_courses($edition),
-            mgm_get_edition_plazas($edition),
-            mgm_get_edition_out($edition)
+                date('d/m/Y', $edition->inicio),
+                date('d/m/Y', $edition->fin),
+                mgm_count_courses($edition),
+                mgm_get_edition_plazas($edition),
+                mgm_get_edition_out($edition)
             );
         }
     }

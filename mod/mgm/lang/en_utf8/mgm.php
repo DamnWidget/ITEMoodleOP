@@ -53,6 +53,7 @@ $string['deleteedicion'] = 'Delete edición';
 $string['deletededicion'] = '$a deleted';
 $string['deleteedicioncheck'] = 'Are you sure do you want to delete this edition and all it\'s content?';
 $string['deletingedition'] = 'Deleting $a';
+$string['dni'] = 'DNI';
 $string['edicion'] = 'Edition';
 $string['edicionesaddress'] = 'Editar datos extendidos de Alumnos';
 $string['edicioncriteria'] = 'Assign enrolment criteria';

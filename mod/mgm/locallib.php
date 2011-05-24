@@ -1496,6 +1496,20 @@ function mgm_get_user_cc($userid) {
     return '';
 }
 
+/**
+ * Return the user's DNI
+ * @param string $userid
+ * @return string
+ */
+function mgm_get_user_dni($userid) {
+    if ($dni = get_record('edicion_user', 'userid', $userid)) {
+        return $dni->dni;
+    }
+
+    return '';
+}
+
+
 function mgm_get_user_especialidades($userid) {
     if ($especialidades = get_record('edicion_user', 'userid', $userid)) {
         $especs = array();
@@ -1526,6 +1540,7 @@ function mgm_get_user_available_especialidades($userid) {
 
 function mgm_set_userdata($userid, $data) {
     $newdata = new stdClass();
+    $newdata->dni = $data->dni;
     $newdata->cc = $data->cc;
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {

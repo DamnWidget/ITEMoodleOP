@@ -74,6 +74,7 @@ if (!empty($allespecs)) {
 
 $userdata = new stdClass();
 $userdata->cc = mgm_get_user_cc($USER->id);
+$userdata->dni = mgm_get_user_dni($USER->id);
 $userdata->sespecs = $sespecs;
 $userdata->aespecs = $aespecs;
 

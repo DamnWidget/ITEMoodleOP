@@ -45,6 +45,8 @@ class mod_mgm_user_form extends moodleform {
         $strsubmit = get_string('savechanges');
 
         $mform->addElement('header', 'general', get_string('general'));
+        $mform->addElement('text', 'dni', get_string('dni', 'mgm'), array('size' => '9'));
+        $mform->addRule('dni', get_string('required'), 'required', null);
         $mform->addElement('text', 'cc', get_string('cc', 'mgm'), array('size'=>'30'));
         $mform->addRule('cc', get_string('required'), 'required', null);
 
