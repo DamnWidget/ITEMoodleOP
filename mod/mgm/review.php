@@ -115,6 +115,16 @@ if ($id) {
         }
 
         $record->fecha = $row->timemodified;
+        $cc_type = mgm_get_cc_type($record->cc);
+        if ($cc_type == MGM_PUBLIC_CENTER) {
+            $record->cc_type = get_string('cc_public', 'mgm');
+        } else if ($cc_type == MGM_MIXIN_CENTER) {
+            $record->cc_type == get_string('cc_mixin', 'mgm');
+        } else if ($cc_type == MGM_PRIVATE_CENTER) {
+            $record->cc_type = get_string('cc_private', 'mgm');
+        } else {
+            $record->cc_type = get_string('cc_noidea', 'mgm');
+        }
         $alumnos[] = $record;
     }
 
@@ -138,8 +148,9 @@ if ($id) {
         $alumnostable->data[] = array(
             '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>',
             '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
-            $record->dni,
-            $record->cc,
+            $alumno->dni,
+            $alumno->cc,
+            $alumno->cc_type,
             (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
             $courses,
             date("d/m/Y H:i\"s", $alumno->fecha),
@@ -147,8 +158,8 @@ if ($id) {
     }
 
     // Table header
-    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('dni', 'mgm'), get_string('cc', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'), get_string('date'));
-    $alumnostable->align = array('left', 'left', 'left', 'left', 'left', 'left', 'left');
+    $alumnostable->head = array(get_string('name'), get_string('configsectionmail', 'admin'), get_string('dni', 'mgm'), get_string('cc', 'mgm'), get_string('cc_type', 'mgm'), get_string('especialidades', 'mgm'), get_string('courses'), get_string('date'));
+    $alumnostable->align = array('left', 'left', 'left', 'left', 'left', 'left', 'left', 'left');
 } else {
     if (isset($editions) && is_array($editions)) {
         foreach($editions as $edition) {

@@ -45,7 +45,7 @@ $borrador = optional_param('borrador', false, PARAM_BOOL);
 $inscribe = optional_param('inscribe', false, PARAM_BOOL);
 $rollback = optional_param('rollback', false, PARAM_BOOL);
 $force = optional_param('force', false, PARAM_BOOL);
-$pepe = optional_param('pepe', false, PARAM_BOOL);
+//$pepe = optional_param('pepe', false, PARAM_BOOL);
 
 // Editions
 $editions = get_records('edicion');
@@ -105,10 +105,10 @@ $editiontable->head  = array($stredicion, $strfechainicio, $strfechafin, $strcou
 $editiontable->align = array('left', 'left', 'left', 'center', 'center', 'center');
 
 // PLEASE DELETE ME!!!
-if ($pepe) {
+/*if ($pepe) {
     mgm_create_enrolment_groups($id, $courseid);
     die();
-}
+}*/
 
 if ($inscribe) {
     if (!$courseid || !$id) {

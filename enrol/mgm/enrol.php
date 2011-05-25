@@ -86,6 +86,13 @@ class enrolment_plugin_mgm {
             error(get_string('nodependencias', 'mgm'));
         }
 
+        $ret = null;
+        mgm_check_user_cc(mgm_get_user_cc($USER->id, &$ret));
+
+        if ($ret == MGM_DATA_CC_ERROR) {
+            error(get_string('cc_no_error', 'mgm'), '/mod/mgm/user.php');
+        }
+
         $strloginto = get_string('loginto', '', $edition->name);
         $strcourses = get_string('courses');
 
@@ -151,7 +158,7 @@ class enrolment_plugin_mgm {
                 $courses[$k] = $option;
             }
 
-            mgm_preinscribe_user_in_edition($edition->id, $USER->id, $courses);
+            mgm_preinscribe_user_in_edition($edition->id, $USER->id, $courses, $ret);
             redirect('?id='.$course->id, get_string('preinscrito', 'mgm'), 2);
         }
 

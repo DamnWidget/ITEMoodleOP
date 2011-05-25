@@ -47,6 +47,14 @@ define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
 define('MGM_ITE_SCALA', 3);
 
+define('MGM_DATA_NO_ERROR', 0);
+define('MGM_DATA_CC_ERROR', 1);
+define('MGM_DATA_CC_ERROR_PRIVATE', 2);
+
+define('MGM_PUBLIC_CENTER', 0);
+define('MGM_MIXIN_CENTER', 1);
+define('MGM_PRIVATE_CENTER', 2);
+
 /**
  * Checks if an user can perform the view action on module access
  * @param object $cm
@@ -749,7 +757,7 @@ function mgm_get_edition_user_options($edition, $user) {
     return $choices;
 }
 
-function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
+function mgm_preinscribe_user_in_edition($edition, $user, $courses, $ret) {
     $rcourses = array();
     foreach ($courses as $course) {
         if ($course) {
@@ -771,11 +779,21 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses) {
         $record->userid = $user;
         $record->value = $strcourses;
         $record->timemodified = time();
+        if ($ret == MGM_DATA_CC_ERROR_PRIVATE) {
+            $record->private = true;
+        } else {
+            $record->private = false;
+        }
         insert_record('edicion_preinscripcion', $record);
     } else {
         // Update record
         $record->value = $strcourses;
         $record->timemodified = time();
+        if ($ret == MGM_DATA_CC_ERROR_PRIVATE) {
+            $record->private = true;
+        } else {
+            $record->private = false;
+        }
         update_record('edicion_preinscripcion', $record);
     }
 }
@@ -890,7 +908,10 @@ function mgm_edition_get_solicitudes($edition, $course) {
     global $CFG;
 
     $ret = 0;
-    if ($records = get_records('edicion_preinscripcion', 'edicionid', $edition->id)) {
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
+    		WHERE edicionid='".$edition->id."'
+    		AND private!=1";
+    if ($records = get_records_sql($sql)) {
         foreach($records as $record) {
             $solicitudes = explode(",", $record->value);
 
@@ -1437,6 +1458,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
     // Preinscripcion date first
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
     		WHERE edicionid = '".$edition->id."' AND
+    		private != 1 AND
     		userid NOT IN (select userid FROM ".$CFG->prefix."edicion_inscripcion
     		WHERE edicionid = '".$edition->id."') ORDER BY timemodified ASC";
     if (!$preinscripcion = get_records_sql($sql)) {
@@ -1538,10 +1560,26 @@ function mgm_get_user_available_especialidades($userid) {
     return $filterespecialidades;
 }
 
+/**
+ * Check if the user cc is a valid cc
+ * @param string $code
+ * @param string $ret
+ * @return string
+ */
+function mgm_check_user_cc($code, $ret) {
+    if (!mgm_is_cc_on_csv($code)) {
+        $ret = MGM_DATA_CC_ERROR;
+        return '';
+    }
+
+    return $code;
+}
+
 function mgm_set_userdata($userid, $data) {
+    $ret = MGM_DATA_NO_ERROR;
     $newdata = new stdClass();
     $newdata->dni = $data->dni;
-    $newdata->cc = $data->cc;
+    $newdata->cc = mgm_check_user_cc($data->cc, &$ret);
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {
         if (isset($data->addsel)) {
@@ -1573,6 +1611,8 @@ function mgm_set_userdata($userid, $data) {
 
         update_record('edicion_user', $newdata);
     }
+
+    return $ret;
 }
 
 /**
@@ -1588,6 +1628,37 @@ function mgm_is_cc_on_csv($cc) {
     }
 
     return false;
+}
+
+function mgm_get_cc_type($cc) {
+    if (!$cc) {
+        return -1;
+    }
+
+    foreach(mgm_get_cc_data() as $ccdata) {
+        if ($ccdata[5] == $cc) {
+            return $ccdata[7];
+        }
+    }
+
+    return -1;
+}
+
+/**
+ * Checks if a gicen cc is valid or not
+ * @param string $cc
+ * @return boolean
+ */
+function mgm_is_cc_valid($cc) {
+    foreach (mgm_get_cc_data() as $ccdata) {
+        if ($ccdata[5] == $cc) {
+            if ($ccdata[7] == MGM_PRIVATE_CENTER) {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 /**
