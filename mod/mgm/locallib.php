@@ -899,7 +899,7 @@ function mgm_edition_get_solicitudes($edition, $course) {
 
     $ret = 0;
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
-    		WHERE edicionid='".$edition->id."";
+    		WHERE edicionid='".$edition->id."'";
     if ($records = get_records_sql($sql)) {
         foreach($records as $record) {
             $solicitudes = explode(",", $record->value);
