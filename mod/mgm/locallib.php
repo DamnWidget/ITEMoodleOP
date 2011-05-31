@@ -1554,7 +1554,7 @@ function mgm_get_user_available_especialidades($userid) {
  * @param string $ret
  * @return string
  */
-function mgm_check_user_cc($code, $ret) {
+function mgm_check_user_cc($code, &$ret) {
     if (!mgm_is_cc_on_csv($code)) {
         $ret = MGM_DATA_CC_ERROR;
         return '';
@@ -1567,7 +1567,7 @@ function mgm_set_userdata($userid, $data) {
     $ret = MGM_DATA_NO_ERROR;
     $newdata = new stdClass();
     $newdata->dni = $data->dni;
-    $newdata->cc = mgm_check_user_cc($data->cc, &$ret);
+    $newdata->cc = mgm_check_user_cc($data->cc, $ret);
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {
         if (isset($data->addsel)) {
