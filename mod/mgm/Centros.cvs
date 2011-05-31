@@ -1,217 +1,217 @@
-"Id","Pais","Localidad","Denominación Genérica","Denominación Específica","Código","Naturaleza","Tipo"
-1,"ESPAÑA","CEUTA","Colegio de Educación Infantil y Primaria ","PABLO RUIZ PICASSO ",51000021,"Centro público",0
-2,"ESPAÑA","CEUTA ","Centro de Educación Especial ","SAN ANTONIO ",51000511,"Centro público",0
-3,"ESPAÑA","CEUTA ","Centro Público de Educación de Personas Adultas ","EDRISSIS ",51000626,"Centro público",0
-4,"ESPAÑA","CEUTA ","Centro Público de Educación de Personas Adultas ","MIGUEL HERNANDEZ ",51000471,"Centro público",0
-5,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","ANDRÉS MANJÓN ",51000213,"Centro público",0
-6,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","FEDERICO GARCÍA LORCA ",51000171,"Centro público",0
-7,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","JOSÉ ORTEGA Y GASSET ",51000365,"Centro público",0
-8,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","LOPE DE VEGA ",51000195,"Centro público",0
-9,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","MAESTRO JOSÉ ACOSTA ",51000249,"Centro público",0
-10,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","MAESTRO JUAN MOREJÓN ",51000237,"Centro público",0
-11,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","MARE NOSTRUM ",51000501,"Centro público",0
-12,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","PRINCIPE FELIPE ",51000353,"Centro público",0
-13,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","RAMÓN MARÍA DEL VALLE INCLÁN ",51000225,"Centro público",0
-14,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","REINA SOFÍA ",51000420,"Centro público",0
-15,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","REY JUAN CARLOS I ",51000456,"Centro público",0
-16,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","ROSALIA DE CASTRO ",51000377,"Centro público",0
-17,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","SANTA AMELIA ",51000183,"Centro público",0
-18,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","SANTIAGO RAMÓN Y CAJAL ",51000201,"Centro público",0
-19,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","VICENTE ALEIXANDRE ",51000262,"Centro público",0
-20,"ESPAÑA","CEUTA ","Conservatorio Profesional de Música ","CONSERVATORIO PROFESIONAL MUNICIPAL DE CEUTA ",51000444,"Centro público",0
-21,"ESPAÑA","CEUTA ","Escuela Oficial de Idiomas ","E.O.I. DE CEUTA ",51000641,"Centro público",0
-22,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","ABYLA ",51000286,"Centro público",0
-23,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","ALMINA ",51000304,"Centro público",0
-24,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","CLARA CAMPOAMOR ",51004671,"Centro público",0
-25,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","LUIS DE CAMOENS ",51000638,"Centro público",0
-26,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","PUERTAS DEL CAMPO ",51000331,"Centro público",0
-27,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","SIETE COLINAS ",51000298,"Centro público",0
-28,"ESPAÑA","MELILLA  ","Centro de Educación Especial   ","REINA SOFÍA ",52004743,"Centro público",0
-29,"ESPAÑA","MELILLA ","Centro Privado Autorizado de Enseñanzas Deportivas ","FEDERACIÓN MELILLENSE DE FÚTBOL ",52004834,"Centro privado",2
-30,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","CRUZ ROJA ",52004846,"Centro privado",2
-31,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","DIVINA INFANTITA ",52000130,"Centro privado",2
-32,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","MERLÍN ",52004810,"Centro privado",2
-33,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","SAAVEDRA ",52000737,"Centro privado",2
-34,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","SANTA LUISA DE MARILLAC ",52000683,"Centro privado",2
-35,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil Primaria y Secundaria ","LA SALLE-EL CARMEN ",52000142,"Centro privado",2
-36,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil Primaria y Secundaria ","NTRA.SRA.DEL BUEN CONSEJO ",52000129,"Centro privado",2
-37,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil y Primaria ","ENRIQUE SOLER ",52000671,"Centro privado",2
-38,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil y Primaria ","LICEO SEFARDÍ ",52004792,"Centro privado",2
-39,"ESPAÑA","MELILLA ","Centro Privado de Preescolar ","CENTRO SOCIOCULTURAL Mª INMACULADA ",52004779,"Centro privado",2
-40,"ESPAÑA","MELILLA ","Centro Privado de Preescolar ","CRUZ ROJA ",52004767,"Centro privado",2
-41,"ESPAÑA","MELILLA ","Centro Público de Educación de Personas Adultas ","CARMEN CONDE ABELLÁN ",52000646,"Centro público",0
-42,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","ANSELMO PARDO ALCAIDE ",52000051,"Centro público",0
-43,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","C.E.I.P. Nº 13 ",52004809,"Centro público",0
-44,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","CONSTITUCIÓN ",52000634,"Centro público",0
-45,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","ESPAÑA ",52000014,"Centro público",0
-46,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","HIPÓDROMO ",52000725,"Centro público",0
-47,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","JUAN CARO ROMERO ",52000038,"Centro público",0
-48,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","LEÓN SOLÁ ",52000361,"Centro público",0
-49,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","MEDITERRÁNEO ",52000351,"Centro público",0
-50,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","PINTOR EDUARDO MORILLAS ",52004780,"Centro público",0
-51,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","REAL ",52000041,"Centro público",0
-52,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","REYES CATÓLICOS ",52000063,"Centro público",0
-53,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","VELÁZQUEZ ",52000026,"Centro público",0
-54,"ESPAÑA","MELILLA ","Conservatorio Profesional de Música ","DE MELILLA ",52000506,"Centro público",0
-55,"ESPAÑA","MELILLA ","Escuela de Arte ","MIGUEL EMILIO MARMOLEJO FERNANDEZ ",52000373,"Centro público",0
-56,"ESPAÑA","MELILLA ","Escuela Infantil ","SAN FRANCISCO ",52004755,"Centro público",0
-57,"ESPAÑA","MELILLA ","Escuela Infantil ","VIRGEN DE LA VICTORIA ",52004731,"Centro público",0
-58,"ESPAÑA","MELILLA ","Escuela Oficial de Idiomas ","E.O.I.DE MELILLA ",52000610,"Centro público",0
-59,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","ENRIQUE NIETO ",52000415,"Centro público",0
-60,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","JUAN ANTONIO FERNANDEZ PEREZ ",52000661,"Centro público",0
-61,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","LEOPOLDO QUEIPO ",52000397,"Centro público",0
-62,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","MIGUEL FERNANDEZ ",52000658,"Centro público",0
-63,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","REINA VICTORIA EUGENIA ",52000403,"Centro público",0
-64,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","RUSADIR ",52000701,"Centro público",0
-65,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","VIRGEN DE LA VICTORIA ",52000211,"Centro público",0
-66,"ALEMANIA  ","BAD NENNDORF (BAJA SAJONIA)  ","Sección Española en Centros Extranjeros   ","SECCIÓN EN BAD NENNDORF ",60005485,"Centro público",0
-67,"ALEMANIA ","BERLIN ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000748,"Centro público",0
-68,"ALEMANIA ","BERLIN ","Sección Española en Centros Extranjeros ","SECCIÓN EN BERLÍN ",60000323,"Centro público",0
-69,"ALEMANIA ","FRANKFURT ","Escuelas Europeas ","ESCUELA EUROPEA DE FRANKFURT ",60005692,"Centro público",0
-70,"ALEMANIA ","HAMBURGO ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE DE HAMBURGO ",60005734,"Centro público",0
-71,"ALEMANIA ","HAMBURGO ","Sección Española en Centros Extranjeros ","SECCIÓN EN HAMBURGO ",60000311,"Centro público",0
-72,"ALEMANIA ","KARLSRUHE ","Escuelas Europeas ","ESCUELA EUROPEA DE KARLSRUHE ",60000694,"Centro público",0
-73,"ALEMANIA ","MANNHEIN ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN MANNHEIM ",60005758,"Centro público",0
-74,"ALEMANIA ","MUNICH ","Escuelas Europeas ","ESCUELA EUROPEA DE MUNICH ",60000724,"Centro público",0
-75,"ALEMANIA ","STUTTGART ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN STTUTGART ",60005783,"Centro público",0
-76,"ANDORRA ","ANDORRA LA VELLA ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA ",60000037,"Centro público",0
-77,"ANDORRA ","ENCAMP ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA DE EDUCACIÓN PRIMARIA DE LA VALL D'ORIENT ",60005461,"Centro público",0
-78,"ANDORRA ","LA MARGINEDA ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL DE ANDORRA ",60000025,"Centro público",0
-79,"ANDORRA ","LES ESCALDES ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA ",60000062,"Centro público",0
-80,"ANDORRA ","SANT JULIA DE LORIA ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA ",60000104,"Centro público",0
-81,"AUSTRALIA ","SYDNEY ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000751,"Centro público",0
-82,"BELGICA ","BRUSELAS ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000761,"Centro público",0
-83,"BELGICA ","BRUSELAS ","Escuelas Europeas ","ESCUELA EUROPEA BRUSELAS I ",60000669,"Centro público",0
-84,"BELGICA ","BRUSELAS ","Escuelas Europeas ","ESCUELA EUROPEA BRUSELAS II ",60000670,"Centro público",0
-85,"BELGICA ","BRUSELAS ","Escuelas Europeas ","ESCUELA EUROPEA BRUSELAS III ",60001081,"Centro público",0
-86,"BELGICA ","MOL ","Escuelas Europeas ","ESCUELA EUROPEA DE MOL /GEEL ",60000712,"Centro público",0
-87,"BULGARIA ","BURGAS ","Sección Bilingüe ","INSTITUTO BILINGÜE G.S.RAKOVSKI ",60001121,"Centro público",0
-88,"BULGARIA ","DUPNITZA ","Sección Bilingüe ","INSTITUTO BILINGÜE ""SAN PAISII HILENDARSKI"" ",60001133,"Centro público",0
-89,"BULGARIA ","PLEVEN ","Sección Bilingüe ","INSTITUTO DE IDIOMAS ",60005503,"Centro público",0
-90,"BULGARIA ","PLOVDIV ","Sección Bilingüe ","INSTITUTO BILINGÜE IVAN VAZOV ",60001145,"Centro público",0
-91,"BULGARIA ","RUSSE ","Sección Bilingüe ","I. B. ""SAN KONSTANTIN-KIRIL FILÓSOFO"" ",60005515,"Centro público",0
-92,"BULGARIA ","SILISTRA ","Sección Bilingüe ","I.B. ""PEYO YÁVOROV"" ",60001157,"Centro público",0
-93,"BULGARIA ","SOFIA ","Sección Bilingüe ","INSTITUTO BILINGÜE Nº 22 GUEORGUI S.RAKOVSKI ",60001170,"Centro público",0
-94,"BULGARIA ","SOFIA ","Sección Bilingüe ","INSTITUTO BILINGÜE MIGUEL DE CERVANTES ",60001169,"Centro público",0
-95,"BULGARIA ","SOFIA ","Sección Bilingüe ","INSTITUTO BILINGÜE Nº 157 ""CESAR VALLEJO"" ",60005527,"Centro público",0
-96,"BULGARIA ","STARA ZAGORA ","Sección Bilingüe ","INSTITUTO BILINGÜE MAXIM GORKI ",60001182,"Centro público",0
-97,"BULGARIA ","VARNA ","Sección Bilingüe ","INSTITUTO BILINGÜE IV F.JOLIOT CURIE ",60001194,"Centro público",0
-98,"BULGARIA ","VELIKO TARNOVO ","Sección Bilingüe ","INSTITUTO BILINGÜE ""PROF. DOCTOR ASEN ZLATOROV"""" ",60005849,"Centro público",0
-99,"COLOMBIA ","SANTA FE DE BOGOTA ","Centro Público Español en el Extranjero ","CENTRO CULTURAL Y EDUCATIVO ESPAÑOL REYES CATÓLICOS ",60000116,"Centro público",0
-100,"ESLOVAQUIA ","BANSKÁ BYSTICA ","Sección Bilingüe ","GYMNÁZIUM ""MIKULÁS KOVÁC"" ",60001200,"Centro público",0
-101,"ESLOVAQUIA ","KOSICE ","Sección Bilingüe ","GYMNÁZIUM ""PARK MLÁDEZE"" ",60001224,"Centro público",0
-102,"ESLOVAQUIA ","NOVÉMESTO NAD VADHOM ","Sección Bilingüe ","GYMNÁZIUM ""BILINGVÁLNE SLOVENSKO-SPANIELSKE"" ",60005539,"Centro público",0
-103,"ESLOVAQUIA ","TRSTENA ","Sección Bilingüe ","GYMNAZIUM ""MARTINA HATTALU"" ",60001236,"Centro público",0
-104,"ESLOVAQUIA ","ZILINA ","Sección Bilingüe ","GYMNÁZIUM ""BILINGVÁLNE"" ",60001251,"Centro público",0
-105,"ESLOVAQUIA (RPT) ","BRATISLAVA ","Sección Bilingüe ","GYMNAZIUM ""FEDERICO GARCÍA LORCA"" ",60000396,"Centro público",0
-106,"ESLOVAQUIA (RPT) ","NITRA ","Sección Bilingüe ","GYMNÁZIUM ""PÁROVSKÁ"" ",60000414,"Centro público",0
-107,"ESPAÑA ","ALICANTE ","Escuelas Europeas ","ESCUELA EUROPEA DE ALICANTE ",60001111,"Centro público",0
-108,"ESTADOS UNIDOS ","MIAMI ","Sección Española en Centros Extranjeros ","SECCIÓN EN MIAMI ",60000347,"Centro público",0
-109,"ESTADOS UNIDOS ","NEW YORK ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000773,"Centro público",0
-110,"ESTADOS UNIDOS ","NEW YORK ","Sección Española en Centros Extranjeros ","SECCIÓN EN NEW YORK ",60000335,"Centro público",0
-111,"FRANCIA ","BREST CEDEX ","Sección Española en Centros Extranjeros ","SECCIÓN EN BREST ",60005953,"Centro público",0
-112,"FRANCIA ","BURDEOS ","Sección Española en Centros Extranjeros ","SECCIÓN EN BURDEOS ",60000384,"Centro público",0
-113,"FRANCIA ","ESTRASBURGO ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN ESTRASBURGO ",60005801,"Centro público",0
-114,"FRANCIA ","ESTRASBURGO ","Sección Española en Centros Extranjeros ","SECCIÓN EN ESTRASBURGO ",60000402,"Centro público",0
-115,"FRANCIA ","FERNEY-VOLTAIRE ","Sección Española en Centros Extranjeros ","SECCIÓN EN FERNEY-VOLTAIRE ",60000438,"Centro público",0
-116,"FRANCIA ","GRENOBLE ","Sección Española en Centros Extranjeros ","SECCIÓN EN GRENOBLE ",60000441,"Centro público",0
-117,"FRANCIA ","LYON ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN LYON ",60005813,"Centro público",0
-118,"FRANCIA ","LYON ","Sección Española en Centros Extranjeros ","SECCIÓN EN LYON ",60000475,"Centro público",0
-119,"FRANCIA ","MARSELLA ","Sección Española en Centros Extranjeros ","SECCIÓN EN MARSELLA ",60000499,"Centro público",0
-120,"FRANCIA ","MONTPELLIER ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN MONTPELLIER ",60005825,"Centro público",0
-121,"FRANCIA ","MONTPELLIER ","Sección Española en Centros Extranjeros ","SECCIÓN EN MONTPELLIER ",60000359,"Centro público",0
-122,"FRANCIA ","NEUILLY-SUR-SEINE ","Centro Público Español en el Extranjero ","LICEO ESPAÑOL LUIS BUÑUEL ",60000128,"Centro público",0
-123,"FRANCIA ","PARIS ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000785,"Centro público",0
-124,"FRANCIA ","PARIS ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL FEDERICO GARCÍA LORCA ",60000131,"Centro público",0
-125,"FRANCIA ","PARIS ","Sección Española en Centros Extranjeros ","SECCIÓN EN PARÍS ",60000529,"Centro público",0
-126,"FRANCIA ","ST GERMAIN EN LAYE ","Sección Española en Centros Extranjeros ","SECCIÓN EN ST.GERMAIN-EN-LAYE ",60000530,"Centro público",0
-127,"FRANCIA ","ST JEAN DE LUZ-HENDAYA ","Sección Española en Centros Extranjeros ","SECCIÓN EN SAN JUAN DE LUZ-HENDAYA ",60000451,"Centro público",0
-128,"FRANCIA ","TOULOUSE ","Sección Española en Centros Extranjeros ","SECCIÓN EN TOULOUSE ",60001078,"Centro público",0
-129,"FRANCIA ","VALBONNE ","Sección Española en Centros Extranjeros ","SECCIÓN EN VALBONNE-NIZA ",60000517,"Centro público",0
-130,"HOLANDA ","AMSTERDAM ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000797,"Centro público",0
-131,"HOLANDA ","AMSTERDAM ","Sección Española en Centros Extranjeros ","SECCIÓN EN AMSTERDAM ",60000554,"Centro público",0
-132,"HOLANDA ","BERGEN ","Escuelas Europeas ","ESCUELA EUROPEA DE BERGEN /PETTEN ",60000657,"Centro público",0
-133,"HUNGRIA ","BUDAPEST ","Sección Bilingüe ","INTITUTO BILINGÜE ""KAROLYI MIHALY"" ",60001261,"Centro público",0
-134,"HUNGRIA ","DEBRECEN ","Sección Bilingüe ","GIMNAZIUM ""FAZEKAS MIHALY"" ",60001273,"Centro público",0
-135,"HUNGRIA ","KECSKEMÉT ","Sección Bilingüe ","GYMNÁZIUM ""BOLYAI JÁNOS"" ",60005916,"Centro público",0
-136,"HUNGRIA ","MISKOLC ","Sección Bilingüe ","GIMNAZIUM ""HERMANN OTTÓ"" ",60001285,"Centro público",0
-137,"HUNGRIA ","PECS ","Sección Bilingüe ","GIMNAZIUM ""KODÁLY ZOLTÁN"" ",60001297,"Centro público",0
-138,"HUNGRIA ","SZEGED ","Sección Bilingüe ","GIMNÁZIUM ""TÖMÖRKÉNY ISTVAN"" ",60005850,"Centro público",0
-139,"HUNGRIA ","VESZPRÉM ","Sección Bilingüe ","GIMNÁZIUM ""VETÉSI ALBERT"" ",60006131,"Centro público",0
-140,"ITALIA ","CAGLIARI ","Sección Española en Centros Extranjeros ","SECCIÓN EN CAGLIARI ",60000621,"Centro público",0
-141,"ITALIA ","IVREA ","Sección Española en Centros Extranjeros ","SECCIÓN EN IVREA(TURIN) ",60000633,"Centro público",0
-142,"ITALIA ","MAGLIE ","Sección Española en Centros Extranjeros ","SECCIÓN EN MAGLIE ",60005497,"Centro público",0
-143,"ITALIA ","PALERMO ","Sección Española en Centros Extranjeros ","SECCIÓN EN PALERMO ",60000591,"Centro público",0
-144,"ITALIA ","ROMA ","Centro Público Español en el Extranjero ","LICEO ESPAÑOL CERVANTES ",60000165,"Centro público",0
-145,"ITALIA ","ROMA ","Sección Española en Centros Extranjeros ","SECCIÓN EN ROMA ",60000360,"Centro público",0
-146,"ITALIA ","SASSARI ","Sección Española en Centros Extranjeros ","SECCIÓN EN SASSARI ",60000608,"Centro público",0
-147,"ITALIA ","TURIN ","Sección Española en Centros Extranjeros ","SECCIÓN EN TURÍN ",60000611,"Centro público",0
-148,"ITALIA ","TURIN ","Sección Española en Centros Extranjeros ","SECCIÓN ESPAÑOLA EN TURÍN (II) ",60006179,"Centro público",0
-149,"ITALIA ","VARESE ","Escuelas Europeas ","ESCUELA EUROPEA DE VARESE /ISPRA ",60000736,"Centro público",0
-150,"LUXEMBURGO ","LUXEMBURGO ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AULAS DE LCE ",60000803,"Centro público",0
-151,"LUXEMBURGO ","LUXEMBURGO ","Escuelas Europeas ","ESCUELA EUROPEA DE LUXEMBURGO I ",60000700,"Centro público",0
-152,"LUXEMBURGO ","LUXEMBURGO ","Escuelas Europeas ","ESCUELA EUROPEA DE LUXEMBURGO II ",60005837,"Centro público",0
-153,"MARRUECOS ","ALHUCEMAS ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL MELCHOR DE JOVELLANOS ",60000177,"Centro público",0
-154,"MARRUECOS ","CASABLANCA ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL JUAN RAMÓN JIMÉNEZ ",60000189,"Centro público",0
-155,"MARRUECOS ","LARACHE ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL LUÍS VIVES ",60000232,"Centro público",0
-156,"MARRUECOS ","NADOR ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL LOPE DE VEGA ",60000190,"Centro público",0
-157,"MARRUECOS ","RABAT ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL ",60001066,"Centro público",0
-158,"MARRUECOS ","TANGER ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL RAMÓN Y CAJAL ",60000244,"Centro público",0
-159,"MARRUECOS ","TANGER ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL SEVERO OCHOA ",60000207,"Centro público",0
-160,"MARRUECOS ","TETUAN ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL JACINTO BENAVENTE ",60000256,"Centro público",0
-161,"MARRUECOS ","TETUAN ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL JUAN DE LA CIERVA ",60000220,"Centro público",0
-162,"MARRUECOS ","TETUAN ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL NTRA. SRA. DEL PILAR ",60000219,"Centro público",0
-163,"POLONIA ","BIALYSTOK ","Sección Bilingüe ","LICEUM III ""KRYSZTOF KAMIL BACZYNSKI"" ",60006091,"Centro público",0
-164,"POLONIA ","BYDGOSZCZ ","Sección Bilingüe ","LICEUM Nº 1 ""CYPRIAN KAMIL NORWID"" ",60005862,"Centro público",0
-165,"POLONIA ","CRACOVIA ","Sección Bilingüe ","LICEUM Nº VI ""ADAM MICKIEWICZ"" ",60000505,"Centro público",0
-166,"POLONIA ","GDANSK ","Sección Bilingüe ","GIMNAZJUM Nº 3 ""JUAN PABLO II"" ",60005540,"Centro público",0
-167,"POLONIA ","GDANSK ","Sección Bilingüe ","LICEUM Nº III ""BOHATERÓW WESTERPLATTE"" ",60005928,"Centro público",0
-168,"POLONIA ","GDANSK ","Sección Bilingüe ","LICEUM Nº XV ""EUROPA UNIDA"" ",60005552,"Centro público",0
-169,"POLONIA ","KATOWICE ","Sección Bilingüe ","LICEUM Nº II ""MARIA KONOPNICKA"" ",60005874,"Centro público",0
-170,"POLONIA ","LÓDZ ","Sección Bilingüe ","LICEUM Nº XXXII ""HALINA POSWIATOWSKA"""" ",60005564,"Centro público",0
-171,"POLONIA ","LUBLIN ","Sección Bilingüe ","GYMNÁZIUM Nº XIX ""JOZEF CZECHOWICZ"" ",60005576,"Centro público",0
-172,"POLONIA ","LUBLIN ","Sección Bilingüe ","LICEUM Nº IX ""NICOLÁS COPÉRNICO"" ",60006167,"Centro público",0
-173,"POLONIA ","POZNAN ","Sección Bilingüe ","LICEUM Nº XVII ""JOZEF TISCHNER"", GIMNAZJUM Nº 26 ",60005588,"Centro público",0
-174,"POLONIA ","RADOM ","Sección Bilingüe ","LICEUM Nº IV ""TYTUS CHALUBINSKI"" ",60005606,"Centro público",0
-175,"POLONIA ","SZCZECIN ","Sección Bilingüe ","LICEUM Nº XIV Y GIMNAZJUM Nº 32 ",60005931,"Centro público",0
-176,"POLONIA ","VARSOVIA ","Sección Bilingüe ","LICEUM Nº XXII ""JOSÉ MARTÍ"" ",60005618,"Centro público",0
-177,"POLONIA ","VARSOVIA ","Sección Bilingüe ","LICEUM XXXIV ""MIGUEL DE CERVANTES"" ",60000487,"Centro público",0
-178,"POLONIA ","WROCLAW ","Sección Bilingüe ","LICEO Nº IX ""JULIUSZ SLOWACKI"", GIMNAZJUM Nº 10 ",60005621,"Centro público",0
-179,"PORTUGAL ","LISBOA ","Centro Público Español en el Extranjero ","GINER DE LOS RIOS ",60000271,"Centro público",0
-180,"REINO UNIDO ","CULHAM ","Escuelas Europeas ","ESCUELA EUROPEA DE CULHAM ",60000682,"Centro público",0
-181,"REINO UNIDO ","LIVERPOOL ","Sección Española en Centros Extranjeros ","SECCIÓN EN LIVERPOOL ",60005965,"Centro público",0
-182,"REINO UNIDO ","LONDRES ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000815,"Centro público",0
-183,"REINO UNIDO ","LONDRES ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL VICENTE CAÑADA BLANCH ",60000281,"Centro público",0
-184,"REPUBLICA CHECA ","BRNO ","Sección Bilingüe ","GYMNÁZIUM BRNO-BYSTRC"" ",60000463,"Centro público",0
-185,"REPUBLICA CHECA ","CESKÉ BUDEJOVICE ","Sección Bilingüe ","GYMNÁZIUM ""BISKUPSKÉ"" ",60005886,"Centro público",0
-186,"REPUBLICA CHECA ","OLOMOUC ","Sección Bilingüe ","GYMNAZIUM ""CAJKOVSKÉHO"" ",60001303,"Centro público",0
-187,"REPUBLICA CHECA ","OSTRAVA ","Sección Bilingüe ","GYMNAZIUM ""HLADNOV"" ",60005631,"Centro público",0
-188,"REPUBLICA CHECA ","PILSEN ","Sección Bilingüe ","GYMNÁZIUM ""LUDKA PIKA"" ",60006106,"Centro público",0
-189,"REPUBLICA CHECA ","PRAGA ","Sección Bilingüe ","GYMNAZIUM ""BUDEJOVICKÁ"" ",60000426,"Centro público",0
-190,"RUMANIA ","BRASOV ","Sección Bilingüe ","COLEGIUL NATIONAL UNIREA ",60005941,"Centro público",0
-191,"RUMANIA ","BUCAREST ","Sección Bilingüe ","COLEGIUL NATIONAL ""IULIA HASDEU"" ",60005898,"Centro público",0
-192,"RUMANIA ","BUCAREST ","Sección Bilingüe ","LICEO BILINGV ""MIGUEL DE CERVANTES"" ",60001327,"Centro público",0
-193,"RUMANIA ","BUCAREST ","Sección Bilingüe ","LICEO TEORETIC ""MIHAIL SADOVEANU"" ",60001315,"Centro público",0
-194,"RUMANIA ","CLUJ NAPOCA ","Sección Bilingüe ","LICEUL TEORETIC ""EUGEN PORA"" ",60006118,"Centro público",0
-195,"RUMANIA ","CRAIOVA ","Sección Bilingüe ","COLEGIUL NATIONAL ""CAROL I"" ",60005643,"Centro público",0
-196,"RUMANIA ","IASI ","Sección Bilingüe ","LICEUL TEORETIC ""DIMITRIE CANTEMIR"" ",60005904,"Centro público",0
-197,"RUMANIA ","ORADEA ","Sección Bilingüe ","COLEGIUL NATIONAL ""IOSIF VULCAN"" ",60006143,"Centro público",0
-198,"RUMANIA ","PLOIESTI ","Sección Bilingüe ","COLEGIUL NATIONAL ""JEAN MONET"" ",60005655,"Centro público",0
-199,"RUMANIA ","TIMISOARA ","Sección Bilingüe ","LICEUL TEORETIC ""JEAN LOUIS CALDERÓN"" ",60006121,"Centro público",0
-200,"RUSIA ","MOSCU ","Sección Bilingüe ","CES Nº 1237 ""PABLO NERUDA"" ",60005679,"Centro público",0
-201,"RUSIA ","MOSCU ","Sección Bilingüe ","CES Nº 110 ""MIGUEL HERNÁNDEZ"" ",60005667,"Centro público",0
-202,"RUSIA ","MOSCU ","Sección Bilingüe ","CES Nº 1252 ""MIGUEL DE CERVANTES"" ",60001340,"Centro público",0
-203,"RUSIA ","MOSCU ","Sección Bilingüe ","GIMNASIO Nº 1558 ""ROSALÍA DE CASTRO"" ",60001339,"Centro público",0
-204,"RUSIA ","SAN PETERSBURGO ","Sección Bilingüe ","GIMNASIO Nº 205 ",60005680,"Centro público",0
-205,"SAHARA OCCIDENTAL ","EL AAIUN ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL LA PAZ ",60000268,"Centro público",0
-206,"SUIZA ","BASILEA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE DE BASILEA ",60005709,"Centro público",0
-207,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000372,"Centro público",0
-208,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000839,"Centro público",0
-209,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000827,"Centro público",0
-210,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60006155,"Centro público",0
-211,"SUIZA ","GINEBRA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE DE GINEBRA ",60005722,"Centro público",0
-212,"SUIZA ","LAUSANA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN LAUSANA ",60005746,"Centro público",0
-213,"SUIZA ","ST. GALLEN ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN ST. GALLEN ",60005771,"Centro público",0
-214,"SUIZA ","ZURICH ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN ZURICH ",60005795,"Centro público",0
-215,"ARGENTINA  ","ROSARIO  ","Centro de Titularidad Mixta   ","COLEGIO PARQUE DE ESPAÑA ",60000293,"Centro mixto",1
-216,"BRASIL","SAO PAULO ","Centro de Titularidad Mixta ","COLEGIO HISPANO BRASILEÑO MIGUEL DE CERVANTES ",60000301,"Centro mixto",1
+"Id","Pais","Localidad","Denominación Genérica","Denominación Específica","Código","Naturaleza"
+1,"ESPAÑA","CEUTA","Colegio de Educación Infantil y Primaria ","PABLO RUIZ PICASSO ",51000021,"Centro público"
+2,"ESPAÑA","CEUTA ","Centro de Educación Especial ","SAN ANTONIO ",51000511,"Centro público"
+3,"ESPAÑA","CEUTA ","Centro Público de Educación de Personas Adultas ","EDRISSIS ",51000626,"Centro público"
+4,"ESPAÑA","CEUTA ","Centro Público de Educación de Personas Adultas ","MIGUEL HERNANDEZ ",51000471,"Centro público"
+5,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","ANDRÉS MANJÓN ",51000213,"Centro público"
+6,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","FEDERICO GARCÍA LORCA ",51000171,"Centro público"
+7,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","JOSÉ ORTEGA Y GASSET ",51000365,"Centro público"
+8,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","LOPE DE VEGA ",51000195,"Centro público"
+9,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","MAESTRO JOSÉ ACOSTA ",51000249,"Centro público"
+10,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","MAESTRO JUAN MOREJÓN ",51000237,"Centro público"
+11,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","MARE NOSTRUM ",51000501,"Centro público"
+12,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","PRINCIPE FELIPE ",51000353,"Centro público"
+13,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","RAMÓN MARÍA DEL VALLE INCLÁN ",51000225,"Centro público"
+14,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","REINA SOFÍA ",51000420,"Centro público"
+15,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","REY JUAN CARLOS I ",51000456,"Centro público"
+16,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","ROSALIA DE CASTRO ",51000377,"Centro público"
+17,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","SANTA AMELIA ",51000183,"Centro público"
+18,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","SANTIAGO RAMÓN Y CAJAL ",51000201,"Centro público"
+19,"ESPAÑA","CEUTA ","Colegio de Educación Infantil y Primaria ","VICENTE ALEIXANDRE ",51000262,"Centro público"
+20,"ESPAÑA","CEUTA ","Conservatorio Profesional de Música ","CONSERVATORIO PROFESIONAL MUNICIPAL DE CEUTA ",51000444,"Centro público"
+21,"ESPAÑA","CEUTA ","Escuela Oficial de Idiomas ","E.O.I. DE CEUTA ",51000641,"Centro público"
+22,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","ABYLA ",51000286,"Centro público"
+23,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","ALMINA ",51000304,"Centro público"
+24,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","CLARA CAMPOAMOR ",51004671,"Centro público"
+25,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","LUIS DE CAMOENS ",51000638,"Centro público"
+26,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","PUERTAS DEL CAMPO ",51000331,"Centro público"
+27,"ESPAÑA","CEUTA ","Instituto de Educación Secundaria ","SIETE COLINAS ",51000298,"Centro público"
+28,"ESPAÑA","MELILLA  ","Centro de Educación Especial   ","REINA SOFÍA ",52004743,"Centro público"
+29,"ESPAÑA","MELILLA ","Centro Privado Autorizado de Enseñanzas Deportivas ","FEDERACIÓN MELILLENSE DE FÚTBOL ",52004834,"Centro privado"
+30,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","CRUZ ROJA ",52004846,"Centro privado"
+31,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","DIVINA INFANTITA ",52000130,"Centro privado"
+32,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","MERLÍN ",52004810,"Centro privado"
+33,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","SAAVEDRA ",52000737,"Centro privado"
+34,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil ","SANTA LUISA DE MARILLAC ",52000683,"Centro privado"
+35,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil Primaria y Secundaria ","LA SALLE-EL CARMEN ",52000142,"Centro privado"
+36,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil Primaria y Secundaria ","NTRA.SRA.DEL BUEN CONSEJO ",52000129,"Centro privado"
+37,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil y Primaria ","ENRIQUE SOLER ",52000671,"Centro privado"
+38,"ESPAÑA","MELILLA ","Centro Privado de Educación Infantil y Primaria ","LICEO SEFARDÍ ",52004792,"Centro privado"
+39,"ESPAÑA","MELILLA ","Centro Privado de Preescolar ","CENTRO SOCIOCULTURAL Mª INMACULADA ",52004779,"Centro privado"
+40,"ESPAÑA","MELILLA ","Centro Privado de Preescolar ","CRUZ ROJA ",52004767,"Centro privado"
+41,"ESPAÑA","MELILLA ","Centro Público de Educación de Personas Adultas ","CARMEN CONDE ABELLÁN ",52000646,"Centro público"
+42,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","ANSELMO PARDO ALCAIDE ",52000051,"Centro público"
+43,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","C.E.I.P. Nº 13 ",52004809,"Centro público"
+44,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","CONSTITUCIÓN ",52000634,"Centro público"
+45,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","ESPAÑA ",52000014,"Centro público"
+46,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","HIPÓDROMO ",52000725,"Centro público"
+47,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","JUAN CARO ROMERO ",52000038,"Centro público"
+48,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","LEÓN SOLÁ ",52000361,"Centro público"
+49,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","MEDITERRÁNEO ",52000351,"Centro público"
+50,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","PINTOR EDUARDO MORILLAS ",52004780,"Centro público"
+51,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","REAL ",52000041,"Centro público"
+52,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","REYES CATÓLICOS ",52000063,"Centro público"
+53,"ESPAÑA","MELILLA ","Colegio de Educación Infantil y Primaria ","VELÁZQUEZ ",52000026,"Centro público"
+54,"ESPAÑA","MELILLA ","Conservatorio Profesional de Música ","DE MELILLA ",52000506,"Centro público"
+55,"ESPAÑA","MELILLA ","Escuela de Arte ","MIGUEL EMILIO MARMOLEJO FERNANDEZ ",52000373,"Centro público"
+56,"ESPAÑA","MELILLA ","Escuela Infantil ","SAN FRANCISCO ",52004755,"Centro público"
+57,"ESPAÑA","MELILLA ","Escuela Infantil ","VIRGEN DE LA VICTORIA ",52004731,"Centro público"
+58,"ESPAÑA","MELILLA ","Escuela Oficial de Idiomas ","E.O.I.DE MELILLA ",52000610,"Centro público"
+59,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","ENRIQUE NIETO ",52000415,"Centro público"
+60,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","JUAN ANTONIO FERNANDEZ PEREZ ",52000661,"Centro público"
+61,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","LEOPOLDO QUEIPO ",52000397,"Centro público"
+62,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","MIGUEL FERNANDEZ ",52000658,"Centro público"
+63,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","REINA VICTORIA EUGENIA ",52000403,"Centro público"
+64,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","RUSADIR ",52000701,"Centro público"
+65,"ESPAÑA","MELILLA ","Instituto de Educación Secundaria ","VIRGEN DE LA VICTORIA ",52000211,"Centro público"
+66,"ALEMANIA  ","BAD NENNDORF (BAJA SAJONIA)  ","Sección Española en Centros Extranjeros   ","SECCIÓN EN BAD NENNDORF ",60005485,"Centro público"
+67,"ALEMANIA ","BERLIN ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000748,"Centro público"
+68,"ALEMANIA ","BERLIN ","Sección Española en Centros Extranjeros ","SECCIÓN EN BERLÍN ",60000323,"Centro público"
+69,"ALEMANIA ","FRANKFURT ","Escuelas Europeas ","ESCUELA EUROPEA DE FRANKFURT ",60005692,"Centro público"
+70,"ALEMANIA ","HAMBURGO ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE DE HAMBURGO ",60005734,"Centro público"
+71,"ALEMANIA ","HAMBURGO ","Sección Española en Centros Extranjeros ","SECCIÓN EN HAMBURGO ",60000311,"Centro público"
+72,"ALEMANIA ","KARLSRUHE ","Escuelas Europeas ","ESCUELA EUROPEA DE KARLSRUHE ",60000694,"Centro público"
+73,"ALEMANIA ","MANNHEIN ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN MANNHEIM ",60005758,"Centro público"
+74,"ALEMANIA ","MUNICH ","Escuelas Europeas ","ESCUELA EUROPEA DE MUNICH ",60000724,"Centro público"
+75,"ALEMANIA ","STUTTGART ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN STTUTGART ",60005783,"Centro público"
+76,"ANDORRA ","ANDORRA LA VELLA ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA ",60000037,"Centro público"
+77,"ANDORRA ","ENCAMP ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA DE EDUCACIÓN PRIMARIA DE LA VALL D'ORIENT ",60005461,"Centro público"
+78,"ANDORRA ","LA MARGINEDA ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL DE ANDORRA ",60000025,"Centro público"
+79,"ANDORRA ","LES ESCALDES ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA ",60000062,"Centro público"
+80,"ANDORRA ","SANT JULIA DE LORIA ","Centro Público Español en el Extranjero ","ESCUELA ESPAÑOLA ",60000104,"Centro público"
+81,"AUSTRALIA ","SYDNEY ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000751,"Centro público"
+82,"BELGICA ","BRUSELAS ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000761,"Centro público"
+83,"BELGICA ","BRUSELAS ","Escuelas Europeas ","ESCUELA EUROPEA BRUSELAS I ",60000669,"Centro público"
+84,"BELGICA ","BRUSELAS ","Escuelas Europeas ","ESCUELA EUROPEA BRUSELAS II ",60000670,"Centro público"
+85,"BELGICA ","BRUSELAS ","Escuelas Europeas ","ESCUELA EUROPEA BRUSELAS III ",60001081,"Centro público"
+86,"BELGICA ","MOL ","Escuelas Europeas ","ESCUELA EUROPEA DE MOL /GEEL ",60000712,"Centro público"
+87,"BULGARIA ","BURGAS ","Sección Bilingüe ","INSTITUTO BILINGÜE G.S.RAKOVSKI ",60001121,"Centro público"
+88,"BULGARIA ","DUPNITZA ","Sección Bilingüe ","INSTITUTO BILINGÜE ""SAN PAISII HILENDARSKI"" ",60001133,"Centro público"
+89,"BULGARIA ","PLEVEN ","Sección Bilingüe ","INSTITUTO DE IDIOMAS ",60005503,"Centro público"
+90,"BULGARIA ","PLOVDIV ","Sección Bilingüe ","INSTITUTO BILINGÜE IVAN VAZOV ",60001145,"Centro público"
+91,"BULGARIA ","RUSSE ","Sección Bilingüe ","I. B. ""SAN KONSTANTIN-KIRIL FILÓSOFO"" ",60005515,"Centro público"
+92,"BULGARIA ","SILISTRA ","Sección Bilingüe ","I.B. ""PEYO YÁVOROV"" ",60001157,"Centro público"
+93,"BULGARIA ","SOFIA ","Sección Bilingüe ","INSTITUTO BILINGÜE Nº 22 GUEORGUI S.RAKOVSKI ",60001170,"Centro público"
+94,"BULGARIA ","SOFIA ","Sección Bilingüe ","INSTITUTO BILINGÜE MIGUEL DE CERVANTES ",60001169,"Centro público"
+95,"BULGARIA ","SOFIA ","Sección Bilingüe ","INSTITUTO BILINGÜE Nº 157 ""CESAR VALLEJO"" ",60005527,"Centro público"
+96,"BULGARIA ","STARA ZAGORA ","Sección Bilingüe ","INSTITUTO BILINGÜE MAXIM GORKI ",60001182,"Centro público"
+97,"BULGARIA ","VARNA ","Sección Bilingüe ","INSTITUTO BILINGÜE IV F.JOLIOT CURIE ",60001194,"Centro público"
+98,"BULGARIA ","VELIKO TARNOVO ","Sección Bilingüe ","INSTITUTO BILINGÜE ""PROF. DOCTOR ASEN ZLATOROV"""" ",60005849,"Centro público"
+99,"COLOMBIA ","SANTA FE DE BOGOTA ","Centro Público Español en el Extranjero ","CENTRO CULTURAL Y EDUCATIVO ESPAÑOL REYES CATÓLICOS ",60000116,"Centro público"
+100,"ESLOVAQUIA ","BANSKÁ BYSTICA ","Sección Bilingüe ","GYMNÁZIUM ""MIKULÁS KOVÁC"" ",60001200,"Centro público"
+101,"ESLOVAQUIA ","KOSICE ","Sección Bilingüe ","GYMNÁZIUM ""PARK MLÁDEZE"" ",60001224,"Centro público"
+102,"ESLOVAQUIA ","NOVÉMESTO NAD VADHOM ","Sección Bilingüe ","GYMNÁZIUM ""BILINGVÁLNE SLOVENSKO-SPANIELSKE"" ",60005539,"Centro público"
+103,"ESLOVAQUIA ","TRSTENA ","Sección Bilingüe ","GYMNAZIUM ""MARTINA HATTALU"" ",60001236,"Centro público"
+104,"ESLOVAQUIA ","ZILINA ","Sección Bilingüe ","GYMNÁZIUM ""BILINGVÁLNE"" ",60001251,"Centro público"
+105,"ESLOVAQUIA (RPT) ","BRATISLAVA ","Sección Bilingüe ","GYMNAZIUM ""FEDERICO GARCÍA LORCA"" ",60000396,"Centro público"
+106,"ESLOVAQUIA (RPT) ","NITRA ","Sección Bilingüe ","GYMNÁZIUM ""PÁROVSKÁ"" ",60000414,"Centro público"
+107,"ESPAÑA ","ALICANTE ","Escuelas Europeas ","ESCUELA EUROPEA DE ALICANTE ",60001111,"Centro público"
+108,"ESTADOS UNIDOS ","MIAMI ","Sección Española en Centros Extranjeros ","SECCIÓN EN MIAMI ",60000347,"Centro público"
+109,"ESTADOS UNIDOS ","NEW YORK ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000773,"Centro público"
+110,"ESTADOS UNIDOS ","NEW YORK ","Sección Española en Centros Extranjeros ","SECCIÓN EN NEW YORK ",60000335,"Centro público"
+111,"FRANCIA ","BREST CEDEX ","Sección Española en Centros Extranjeros ","SECCIÓN EN BREST ",60005953,"Centro público"
+112,"FRANCIA ","BURDEOS ","Sección Española en Centros Extranjeros ","SECCIÓN EN BURDEOS ",60000384,"Centro público"
+113,"FRANCIA ","ESTRASBURGO ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN ESTRASBURGO ",60005801,"Centro público"
+114,"FRANCIA ","ESTRASBURGO ","Sección Española en Centros Extranjeros ","SECCIÓN EN ESTRASBURGO ",60000402,"Centro público"
+115,"FRANCIA ","FERNEY-VOLTAIRE ","Sección Española en Centros Extranjeros ","SECCIÓN EN FERNEY-VOLTAIRE ",60000438,"Centro público"
+116,"FRANCIA ","GRENOBLE ","Sección Española en Centros Extranjeros ","SECCIÓN EN GRENOBLE ",60000441,"Centro público"
+117,"FRANCIA ","LYON ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN LYON ",60005813,"Centro público"
+118,"FRANCIA ","LYON ","Sección Española en Centros Extranjeros ","SECCIÓN EN LYON ",60000475,"Centro público"
+119,"FRANCIA ","MARSELLA ","Sección Española en Centros Extranjeros ","SECCIÓN EN MARSELLA ",60000499,"Centro público"
+120,"FRANCIA ","MONTPELLIER ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN MONTPELLIER ",60005825,"Centro público"
+121,"FRANCIA ","MONTPELLIER ","Sección Española en Centros Extranjeros ","SECCIÓN EN MONTPELLIER ",60000359,"Centro público"
+122,"FRANCIA ","NEUILLY-SUR-SEINE ","Centro Público Español en el Extranjero ","LICEO ESPAÑOL LUIS BUÑUEL ",60000128,"Centro público"
+123,"FRANCIA ","PARIS ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000785,"Centro público"
+124,"FRANCIA ","PARIS ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL FEDERICO GARCÍA LORCA ",60000131,"Centro público"
+125,"FRANCIA ","PARIS ","Sección Española en Centros Extranjeros ","SECCIÓN EN PARÍS ",60000529,"Centro público"
+126,"FRANCIA ","ST GERMAIN EN LAYE ","Sección Española en Centros Extranjeros ","SECCIÓN EN ST.GERMAIN-EN-LAYE ",60000530,"Centro público"
+127,"FRANCIA ","ST JEAN DE LUZ-HENDAYA ","Sección Española en Centros Extranjeros ","SECCIÓN EN SAN JUAN DE LUZ-HENDAYA ",60000451,"Centro público"
+128,"FRANCIA ","TOULOUSE ","Sección Española en Centros Extranjeros ","SECCIÓN EN TOULOUSE ",60001078,"Centro público"
+129,"FRANCIA ","VALBONNE ","Sección Española en Centros Extranjeros ","SECCIÓN EN VALBONNE-NIZA ",60000517,"Centro público"
+130,"HOLANDA ","AMSTERDAM ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000797,"Centro público"
+131,"HOLANDA ","AMSTERDAM ","Sección Española en Centros Extranjeros ","SECCIÓN EN AMSTERDAM ",60000554,"Centro público"
+132,"HOLANDA ","BERGEN ","Escuelas Europeas ","ESCUELA EUROPEA DE BERGEN /PETTEN ",60000657,"Centro público"
+133,"HUNGRIA ","BUDAPEST ","Sección Bilingüe ","INTITUTO BILINGÜE ""KAROLYI MIHALY"" ",60001261,"Centro público"
+134,"HUNGRIA ","DEBRECEN ","Sección Bilingüe ","GIMNAZIUM ""FAZEKAS MIHALY"" ",60001273,"Centro público"
+135,"HUNGRIA ","KECSKEMÉT ","Sección Bilingüe ","GYMNÁZIUM ""BOLYAI JÁNOS"" ",60005916,"Centro público"
+136,"HUNGRIA ","MISKOLC ","Sección Bilingüe ","GIMNAZIUM ""HERMANN OTTÓ"" ",60001285,"Centro público"
+137,"HUNGRIA ","PECS ","Sección Bilingüe ","GIMNAZIUM ""KODÁLY ZOLTÁN"" ",60001297,"Centro público"
+138,"HUNGRIA ","SZEGED ","Sección Bilingüe ","GIMNÁZIUM ""TÖMÖRKÉNY ISTVAN"" ",60005850,"Centro público"
+139,"HUNGRIA ","VESZPRÉM ","Sección Bilingüe ","GIMNÁZIUM ""VETÉSI ALBERT"" ",60006131,"Centro público"
+140,"ITALIA ","CAGLIARI ","Sección Española en Centros Extranjeros ","SECCIÓN EN CAGLIARI ",60000621,"Centro público"
+141,"ITALIA ","IVREA ","Sección Española en Centros Extranjeros ","SECCIÓN EN IVREA(TURIN) ",60000633,"Centro público"
+142,"ITALIA ","MAGLIE ","Sección Española en Centros Extranjeros ","SECCIÓN EN MAGLIE ",60005497,"Centro público"
+143,"ITALIA ","PALERMO ","Sección Española en Centros Extranjeros ","SECCIÓN EN PALERMO ",60000591,"Centro público"
+144,"ITALIA ","ROMA ","Centro Público Español en el Extranjero ","LICEO ESPAÑOL CERVANTES ",60000165,"Centro público"
+145,"ITALIA ","ROMA ","Sección Española en Centros Extranjeros ","SECCIÓN EN ROMA ",60000360,"Centro público"
+146,"ITALIA ","SASSARI ","Sección Española en Centros Extranjeros ","SECCIÓN EN SASSARI ",60000608,"Centro público"
+147,"ITALIA ","TURIN ","Sección Española en Centros Extranjeros ","SECCIÓN EN TURÍN ",60000611,"Centro público"
+148,"ITALIA ","TURIN ","Sección Española en Centros Extranjeros ","SECCIÓN ESPAÑOLA EN TURÍN (II) ",60006179,"Centro público"
+149,"ITALIA ","VARESE ","Escuelas Europeas ","ESCUELA EUROPEA DE VARESE /ISPRA ",60000736,"Centro público"
+150,"LUXEMBURGO ","LUXEMBURGO ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AULAS DE LCE ",60000803,"Centro público"
+151,"LUXEMBURGO ","LUXEMBURGO ","Escuelas Europeas ","ESCUELA EUROPEA DE LUXEMBURGO I ",60000700,"Centro público"
+152,"LUXEMBURGO ","LUXEMBURGO ","Escuelas Europeas ","ESCUELA EUROPEA DE LUXEMBURGO II ",60005837,"Centro público"
+153,"MARRUECOS ","ALHUCEMAS ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL MELCHOR DE JOVELLANOS ",60000177,"Centro público"
+154,"MARRUECOS ","CASABLANCA ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL JUAN RAMÓN JIMÉNEZ ",60000189,"Centro público"
+155,"MARRUECOS ","LARACHE ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL LUÍS VIVES ",60000232,"Centro público"
+156,"MARRUECOS ","NADOR ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL LOPE DE VEGA ",60000190,"Centro público"
+157,"MARRUECOS ","RABAT ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL ",60001066,"Centro público"
+158,"MARRUECOS ","TANGER ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL RAMÓN Y CAJAL ",60000244,"Centro público"
+159,"MARRUECOS ","TANGER ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL SEVERO OCHOA ",60000207,"Centro público"
+160,"MARRUECOS ","TETUAN ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL JACINTO BENAVENTE ",60000256,"Centro público"
+161,"MARRUECOS ","TETUAN ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL JUAN DE LA CIERVA ",60000220,"Centro público"
+162,"MARRUECOS ","TETUAN ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL NTRA. SRA. DEL PILAR ",60000219,"Centro público"
+163,"POLONIA ","BIALYSTOK ","Sección Bilingüe ","LICEUM III ""KRYSZTOF KAMIL BACZYNSKI"" ",60006091,"Centro público"
+164,"POLONIA ","BYDGOSZCZ ","Sección Bilingüe ","LICEUM Nº 1 ""CYPRIAN KAMIL NORWID"" ",60005862,"Centro público"
+165,"POLONIA ","CRACOVIA ","Sección Bilingüe ","LICEUM Nº VI ""ADAM MICKIEWICZ"" ",60000505,"Centro público"
+166,"POLONIA ","GDANSK ","Sección Bilingüe ","GIMNAZJUM Nº 3 ""JUAN PABLO II"" ",60005540,"Centro público"
+167,"POLONIA ","GDANSK ","Sección Bilingüe ","LICEUM Nº III ""BOHATERÓW WESTERPLATTE"" ",60005928,"Centro público"
+168,"POLONIA ","GDANSK ","Sección Bilingüe ","LICEUM Nº XV ""EUROPA UNIDA"" ",60005552,"Centro público"
+169,"POLONIA ","KATOWICE ","Sección Bilingüe ","LICEUM Nº II ""MARIA KONOPNICKA"" ",60005874,"Centro público"
+170,"POLONIA ","LÓDZ ","Sección Bilingüe ","LICEUM Nº XXXII ""HALINA POSWIATOWSKA"""" ",60005564,"Centro público"
+171,"POLONIA ","LUBLIN ","Sección Bilingüe ","GYMNÁZIUM Nº XIX ""JOZEF CZECHOWICZ"" ",60005576,"Centro público"
+172,"POLONIA ","LUBLIN ","Sección Bilingüe ","LICEUM Nº IX ""NICOLÁS COPÉRNICO"" ",60006167,"Centro público"
+173,"POLONIA ","POZNAN ","Sección Bilingüe ","LICEUM Nº XVII ""JOZEF TISCHNER"", GIMNAZJUM Nº 26 ",60005588,"Centro público"
+174,"POLONIA ","RADOM ","Sección Bilingüe ","LICEUM Nº IV ""TYTUS CHALUBINSKI"" ",60005606,"Centro público"
+175,"POLONIA ","SZCZECIN ","Sección Bilingüe ","LICEUM Nº XIV Y GIMNAZJUM Nº 32 ",60005931,"Centro público"
+176,"POLONIA ","VARSOVIA ","Sección Bilingüe ","LICEUM Nº XXII ""JOSÉ MARTÍ"" ",60005618,"Centro público"
+177,"POLONIA ","VARSOVIA ","Sección Bilingüe ","LICEUM XXXIV ""MIGUEL DE CERVANTES"" ",60000487,"Centro público"
+178,"POLONIA ","WROCLAW ","Sección Bilingüe ","LICEO Nº IX ""JULIUSZ SLOWACKI"", GIMNAZJUM Nº 10 ",60005621,"Centro público"
+179,"PORTUGAL ","LISBOA ","Centro Público Español en el Extranjero ","GINER DE LOS RIOS ",60000271,"Centro público"
+180,"REINO UNIDO ","CULHAM ","Escuelas Europeas ","ESCUELA EUROPEA DE CULHAM ",60000682,"Centro público"
+181,"REINO UNIDO ","LIVERPOOL ","Sección Española en Centros Extranjeros ","SECCIÓN EN LIVERPOOL ",60005965,"Centro público"
+182,"REINO UNIDO ","LONDRES ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000815,"Centro público"
+183,"REINO UNIDO ","LONDRES ","Centro Público Español en el Extranjero ","INSTITUTO ESPAÑOL VICENTE CAÑADA BLANCH ",60000281,"Centro público"
+184,"REPUBLICA CHECA ","BRNO ","Sección Bilingüe ","GYMNÁZIUM BRNO-BYSTRC"" ",60000463,"Centro público"
+185,"REPUBLICA CHECA ","CESKÉ BUDEJOVICE ","Sección Bilingüe ","GYMNÁZIUM ""BISKUPSKÉ"" ",60005886,"Centro público"
+186,"REPUBLICA CHECA ","OLOMOUC ","Sección Bilingüe ","GYMNAZIUM ""CAJKOVSKÉHO"" ",60001303,"Centro público"
+187,"REPUBLICA CHECA ","OSTRAVA ","Sección Bilingüe ","GYMNAZIUM ""HLADNOV"" ",60005631,"Centro público"
+188,"REPUBLICA CHECA ","PILSEN ","Sección Bilingüe ","GYMNÁZIUM ""LUDKA PIKA"" ",60006106,"Centro público"
+189,"REPUBLICA CHECA ","PRAGA ","Sección Bilingüe ","GYMNAZIUM ""BUDEJOVICKÁ"" ",60000426,"Centro público"
+190,"RUMANIA ","BRASOV ","Sección Bilingüe ","COLEGIUL NATIONAL UNIREA ",60005941,"Centro público"
+191,"RUMANIA ","BUCAREST ","Sección Bilingüe ","COLEGIUL NATIONAL ""IULIA HASDEU"" ",60005898,"Centro público"
+192,"RUMANIA ","BUCAREST ","Sección Bilingüe ","LICEO BILINGV ""MIGUEL DE CERVANTES"" ",60001327,"Centro público"
+193,"RUMANIA ","BUCAREST ","Sección Bilingüe ","LICEO TEORETIC ""MIHAIL SADOVEANU"" ",60001315,"Centro público"
+194,"RUMANIA ","CLUJ NAPOCA ","Sección Bilingüe ","LICEUL TEORETIC ""EUGEN PORA"" ",60006118,"Centro público"
+195,"RUMANIA ","CRAIOVA ","Sección Bilingüe ","COLEGIUL NATIONAL ""CAROL I"" ",60005643,"Centro público"
+196,"RUMANIA ","IASI ","Sección Bilingüe ","LICEUL TEORETIC ""DIMITRIE CANTEMIR"" ",60005904,"Centro público"
+197,"RUMANIA ","ORADEA ","Sección Bilingüe ","COLEGIUL NATIONAL ""IOSIF VULCAN"" ",60006143,"Centro público"
+198,"RUMANIA ","PLOIESTI ","Sección Bilingüe ","COLEGIUL NATIONAL ""JEAN MONET"" ",60005655,"Centro público"
+199,"RUMANIA ","TIMISOARA ","Sección Bilingüe ","LICEUL TEORETIC ""JEAN LOUIS CALDERÓN"" ",60006121,"Centro público"
+200,"RUSIA ","MOSCU ","Sección Bilingüe ","CES Nº 1237 ""PABLO NERUDA"" ",60005679,"Centro público"
+201,"RUSIA ","MOSCU ","Sección Bilingüe ","CES Nº 110 ""MIGUEL HERNÁNDEZ"" ",60005667,"Centro público"
+202,"RUSIA ","MOSCU ","Sección Bilingüe ","CES Nº 1252 ""MIGUEL DE CERVANTES"" ",60001340,"Centro público"
+203,"RUSIA ","MOSCU ","Sección Bilingüe ","GIMNASIO Nº 1558 ""ROSALÍA DE CASTRO"" ",60001339,"Centro público"
+204,"RUSIA ","SAN PETERSBURGO ","Sección Bilingüe ","GIMNASIO Nº 205 ",60005680,"Centro público"
+205,"SAHARA OCCIDENTAL ","EL AAIUN ","Centro Público Español en el Extranjero ","COLEGIO ESPAÑOL LA PAZ ",60000268,"Centro público"
+206,"SUIZA ","BASILEA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE DE BASILEA ",60005709,"Centro público"
+207,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000372,"Centro público"
+208,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000839,"Centro público"
+209,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60000827,"Centro público"
+210,"SUIZA ","BERNA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIONES DE LCE ",60006155,"Centro público"
+211,"SUIZA ","GINEBRA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE DE GINEBRA ",60005722,"Centro público"
+212,"SUIZA ","LAUSANA ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN LAUSANA ",60005746,"Centro público"
+213,"SUIZA ","ST. GALLEN ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN ST. GALLEN ",60005771,"Centro público"
+214,"SUIZA ","ZURICH ","Agrupaciones y Aulas de Lengua y Cultura Españolas ","AGRUPACIÓN DE LCE EN ZURICH ",60005795,"Centro público"
+215,"ARGENTINA  ","ROSARIO  ","Centro de Titularidad Mixta   ","COLEGIO PARQUE DE ESPAÑA ",60000293,"Centro mixto"
+216,"BRASIL","SAO PAULO ","Centro de Titularidad Mixta ","COLEGIO HISPANO BRASILEÑO MIGUEL DE CERVANTES ",60000301,"Centro mixto"

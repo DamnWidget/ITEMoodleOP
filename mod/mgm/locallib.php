@@ -779,21 +779,11 @@ function mgm_preinscribe_user_in_edition($edition, $user, $courses, $ret) {
         $record->userid = $user;
         $record->value = $strcourses;
         $record->timemodified = time();
-        if ($ret == MGM_DATA_CC_ERROR_PRIVATE) {
-            $record->private = true;
-        } else {
-            $record->private = false;
-        }
         insert_record('edicion_preinscripcion', $record);
     } else {
         // Update record
         $record->value = $strcourses;
         $record->timemodified = time();
-        if ($ret == MGM_DATA_CC_ERROR_PRIVATE) {
-            $record->private = true;
-        } else {
-            $record->private = false;
-        }
         update_record('edicion_preinscripcion', $record);
     }
 }
@@ -909,8 +899,7 @@ function mgm_edition_get_solicitudes($edition, $course) {
 
     $ret = 0;
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
-    		WHERE edicionid='".$edition->id."'
-    		AND private!=1";
+    		WHERE edicionid='".$edition->id."";
     if ($records = get_records_sql($sql)) {
         foreach($records as $record) {
             $solicitudes = explode(",", $record->value);
@@ -1458,7 +1447,6 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
     // Preinscripcion date first
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
     		WHERE edicionid = '".$edition->id."' AND
-    		private != 1 AND
     		userid NOT IN (select userid FROM ".$CFG->prefix."edicion_inscripcion
     		WHERE edicionid = '".$edition->id."') ORDER BY timemodified ASC";
     if (!$preinscripcion = get_records_sql($sql)) {
