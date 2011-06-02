@@ -861,9 +861,11 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
     foreach ($groups as $k=>$v) {
         if ($k != 'none') {
             if (count($v) >= $criteria->mingroup && count($v) <= $criteria->maxgroup) {
-                $finalgroups[$k] = $v;
+                array_push($finalgroups, array($k => $v));
             } else {
-                $finalgroups['none'][] = $v;
+                foreach($v as $vgr) {
+                    array_push($finalgroups['none'], $vgr);
+                }
             }
         }
     }
@@ -880,7 +882,6 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
             if (!groups_add_member($gid, $user->id)) {
                 error('Error adding user '.$user->username.' to group '.$group->name);
             }
-            print_object($user);
         }
         $x++;
     }
