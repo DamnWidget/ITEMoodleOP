@@ -87,7 +87,7 @@ if ($mform->is_cancelled()) {
     $sdata = mgm_set_userdata($USER->id, $data);
 
     if ($sdata == MGM_DATA_CC_ERROR) {
-        error(get_string('cc_no_error', 'mgm'));
+        error(get_string('cc_no_error', 'mgm'), $CFG->dirroot.'/mod/mgm/user.php');
     }
 
     redirect('user.php', get_string('codemessage', 'mgm'), 10);

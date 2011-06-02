@@ -90,71 +90,73 @@ if ($id) {
     				 WHERE edicionid='".$edition->id."' )";
     $rows = get_records_sql($sql);
     $alumnos = array();
-    foreach ($rows as $row) {
-        $alumno = get_record('user', 'id', $row->userid);
-        $record = new object();
-        $record->id = $alumno->id;
-        $record->nombre = $alumno->firstname.' '.$alumno->lastname;
-        $record->correo = $alumno->email;
-        $sql2 = "SELECT * FROM ".$CFG->prefix."course
-        		 WHERE id IN (".$row->value.")";
-        $courses = get_records_sql($sql2);
-        $record->cursos = $courses;
-        foreach ($record->cursos as $curso) {
-            $criteria = mgm_get_edition_course_criteria($edition->id, $curso->id);
-            $curso->plazas = $criteria->plazas;
-        }
-        if($alumnodata = get_record('edicion_user', 'userid', $alumno->id)) {
-            $record->dni = $alumnodata->dni;
-            $record->cc = $alumnodata->cc;
-            $record->especialidades = explode("\n", $alumnodata->especialidades);
-        } else {
-            $record->dni = '00000000H';
-            $record->cc = 0;
-            $record->especialidades = array();
+    if (!empty($rows)) {
+        foreach ($rows as $row) {
+            $alumno = get_record('user', 'id', $row->userid);
+            $record = new object();
+            $record->id = $alumno->id;
+            $record->nombre = $alumno->firstname.' '.$alumno->lastname;
+            $record->correo = $alumno->email;
+            $sql2 = "SELECT * FROM ".$CFG->prefix."course
+            		 WHERE id IN (".$row->value.")";
+            $courses = get_records_sql($sql2);
+            $record->cursos = $courses;
+            foreach ($record->cursos as $curso) {
+                $criteria = mgm_get_edition_course_criteria($edition->id, $curso->id);
+                $curso->plazas = $criteria->plazas;
+            }
+            if($alumnodata = get_record('edicion_user', 'userid', $alumno->id)) {
+                $record->dni = $alumnodata->dni;
+                $record->cc = $alumnodata->cc;
+                $record->especialidades = explode("\n", $alumnodata->especialidades);
+            } else {
+                $record->dni = '00000000H';
+                $record->cc = 0;
+                $record->especialidades = array();
+            }
+
+            $record->fecha = $row->timemodified;
+            $cc_type = mgm_get_cc_type($record->cc);
+            if ($cc_type == MGM_PUBLIC_CENTER) {
+                $record->cc_type = get_string('cc_public', 'mgm');
+            } else if ($cc_type == MGM_MIXIN_CENTER) {
+                $record->cc_type == get_string('cc_mixin', 'mgm');
+            } else if ($cc_type == MGM_PRIVATE_CENTER) {
+                $record->cc_type = get_string('cc_private', 'mgm');
+            } else {
+                $record->cc_type = get_string('cc_noidea', 'mgm');
+            }
+            $alumnos[] = $record;
         }
 
-        $record->fecha = $row->timemodified;
-        $cc_type = mgm_get_cc_type($record->cc);
-        if ($cc_type == MGM_PUBLIC_CENTER) {
-            $record->cc_type = get_string('cc_public', 'mgm');
-        } else if ($cc_type == MGM_MIXIN_CENTER) {
-            $record->cc_type == get_string('cc_mixin', 'mgm');
-        } else if ($cc_type == MGM_PRIVATE_CENTER) {
-            $record->cc_type = get_string('cc_private', 'mgm');
-        } else {
-            $record->cc_type = get_string('cc_noidea', 'mgm');
-        }
-        $alumnos[] = $record;
-    }
+        // Table data
+        foreach($alumnos as $alumno) {
+            // Especialidades
+            $especs = $alumno->especialidades;
+            $userespecs = '<select name="especialidades" readonly="">';
+            foreach ($especs as $espec) {
+                $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
+            }
+            $userespecs .= '</select>';
 
-    // Table data
-    foreach($alumnos as $alumno) {
-        // Especialidades
-        $especs = $alumno->especialidades;
-        $userespecs = '<select name="especialidades" readonly="">';
-        foreach ($especs as $espec) {
-            $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
-        }
-        $userespecs .= '</select>';
+            // Courses
+            $courses = '<select name="courses" readonly="">';
+            foreach($alumno->cursos as $course) {
+                $courses .= '<option name="'.$course->id.'">'.$course->fullname.'</option>';
+            }
+            $courses .= '</select>';
 
-        // Courses
-        $courses = '<select name="courses" readonly="">';
-        foreach($alumno->cursos as $course) {
-            $courses .= '<option name="'.$course->id.'">'.$course->fullname.'</option>';
+            $alumnostable->data[] = array(
+                '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>',
+                '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
+                $alumno->dni,
+                $alumno->cc,
+                $alumno->cc_type,
+                (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
+                $courses,
+                date("d/m/Y H:i\"s", $alumno->fecha),
+            );
         }
-        $courses .= '</select>';
-
-        $alumnostable->data[] = array(
-            '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>',
-            '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
-            $alumno->dni,
-            $alumno->cc,
-            $alumno->cc_type,
-            (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
-            $courses,
-            date("d/m/Y H:i\"s", $alumno->fecha),
-        );
     }
 
     // Table header
