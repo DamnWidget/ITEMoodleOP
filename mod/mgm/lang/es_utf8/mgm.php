@@ -119,6 +119,7 @@ $string['nohaydatos'] = 'No se han encontrado datos de pre-inscripciones a edici
 $string['nocourses'] = 'No se encontraron cursos';
 $string['noplaces'] = 'Está intentando inscribir \'$a->alumnos\' alumnos pero solo hay \'$a->plazas\' plazas disponibles.<br /><br />¿Desea Continuar con la inscripción?';
 $string['numeric'] = 'Debe introducir un valor numérico';
+$string['numgroups'] = 'Número de grupos';
 $string['opcion'] = 'Opción';
 $string['opcionesduplicadas'] = 'Ha seleccionado dos opciones de prioridad duplicadas, corrija el problema';
 $string['opcionuno'] = 'Primera opción';

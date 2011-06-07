@@ -91,6 +91,7 @@ $string['newedition'] = 'Create new edition';
 $string['nocourses'] = 'Courses not found';
 $string['nodependencias'] = 'You can not enrol this course because you dont have the required dependencies.';
 $string['numeric'] = 'You must use a numeric value here.';
+$string['numgroups'] = 'Groups number';
 $string['opcionesduplicadas'] = 'Ha seleccionado dos opciones de prioridad duplicadas, corrija el problema';
 $string['opcionuno'] = 'First option';
 $string['opciondos'] = 'Seccond option';
