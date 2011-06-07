@@ -140,6 +140,168 @@ function xmldb_mgm_upgrade($oldversion=0) {
         $result = insert_record('log_display', $rec);
     }
 
+    if ($result && $oldversion < 2011060700) {
+
+    /// Define field codagrupacion to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codagrupacion');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '5', XMLDB_UNSIGNED, null, null, null, null, '1', 'courseid');
+
+    /// Launch add field codagrupacion
+        $result = $result && add_field($table, $field);
+
+    /// Define field codmodalidad to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codmodalidad');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '2', null, null, null, XMLDB_ENUM, array('10', '20', '30', 'A0'), '10', 'codagrupacion');
+
+    /// Launch add field codmodalidad
+        $result = $result && add_field($table, $field);
+
+    /// Define field codprovincia to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codprovincia');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '3', null, null, null, null, null, null, 'codmodalidad');
+
+    /// Launch add field codprovincia
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codpais to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codpais');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '3', null, null, null, null, null, '724', 'codprovincia');
+
+    /// Launch add field codpais
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codmateria to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codmateria');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '4', null, null, null, null, null, null, 'codpais');
+
+    /// Launch add field codmateria
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codniveleducativo to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codniveleducativo');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '2', null, null, null, null, null, null, 'codmateria');
+
+    /// Launch add field codniveleducativo
+        $result = $result && add_field($table, $field);
+        
+    /// Define field numhoras to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('numhoras');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '4', XMLDB_UNSIGNED, null, null, null, null, null, 'codniveleducativo');
+
+    /// Launch add field numhoras
+        $result = $result && add_field($table, $field);
+        
+    /// Define field numcreditos to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('numcreditos');
+        $field->setAttributes(XMLDB_TYPE_NUMBER, '3, 1', XMLDB_UNSIGNED, null, null, null, null, null, 'numhoras');
+
+    /// Launch add field numcreditos
+        $result = $result && add_field($table, $field);
+        
+    /// Define field fechainicio to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('fechainicio');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, null, 'numcreditos');
+
+    /// Launch add field fechainicio
+        $result = $result && add_field($table, $field);
+        
+    /// Define field fechafin to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('fechafin');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, null, 'fechainicio');
+
+    /// Launch add field fechafin
+        $result = $result && add_field($table, $field);
+        
+    /// Define field localidad to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('localidad');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '35', null, null, null, null, null, null, 'fechafin');
+
+    /// Launch add field localidad
+        $result = $result && add_field($table, $field);
+        
+    /// Define field fechainimodalidad to be added to edicion_course
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('fechainimodalidad');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '10', null, null, null, null, null, null, 'localidad');
+
+    /// Launch add field fechainimodalidad
+        $result = $result && add_field($table, $field);
+
+    /// Define field alt_address to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('alt_address');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'especialidades');
+
+    /// Launch add field alt_address
+        $result = $result && add_field($table, $field);
+        
+    /// Define field address to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('address');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'alt_address');
+
+    /// Launch add field address
+        $result = $result && add_field($table, $field);
+        
+    /// Define field tipoid to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('tipoid');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '1', null, null, null, XMLDB_ENUM, array('N', 'P', 'T'), null, 'address');
+
+    /// Launch add field tipoid
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codtipoparticipante to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('codtipoparticipante');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '2', null, null, null, XMLDB_ENUM, array('A', 'C', 'T'), null, 'tipoid');
+
+    /// Launch add field codtipoparticipante
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codniveleducativo to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('codniveleducativo');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '2', null, null, null, null, null, null, 'codtipoparticipante');
+
+    /// Launch add field codniveleducativo
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codcuerpodocente to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('codcuerpodocente');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '8', null, null, null, null, null, null, 'codniveleducativo');
+
+    /// Launch add field codcuerpodocente
+        $result = $result && add_field($table, $field);
+        
+    /// Define field codpostal to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('codpostal');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '5', null, null, null, null, null, null, 'codcuerpodocente');
+
+    /// Launch add field codpostal
+        $result = $result && add_field($table, $field);
+        
+    /// Define field sexo to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $field = new XMLDBField('sexo');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '1', null, null, null, XMLDB_ENUM, array('H', 'M'), null, 'codpostal');
+
+    /// Launch add field sexo
+        $result = $result && add_field($table, $field);
+    }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
 /// it's interesting to look how other modules are using this script. Remember that
 /// the basic idea is to have "blocks" of code (each one being executed only once,

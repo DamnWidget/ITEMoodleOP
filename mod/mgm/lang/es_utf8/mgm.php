@@ -146,3 +146,4 @@ $string['solicitudes'] = 'Solicitudes';
 $string['sysnewaddress'] = 'La dirección alternativa será usada en lugar de la dirección del centro';
 $string['tutor'] = 'Tutor';
 $string['userselect'] = 'Seleccione al usuario';
+$string['exportdata'] = 'Exportar datos para terceros';

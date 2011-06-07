@@ -56,3 +56,8 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('edicionesscala', get_string('edicionesscala', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/edicionesscala.php', 'mod/mgm:createedicion')
 );
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('exportdata', get_string('exportdata', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/export.php', 'mod/mgm:aprobe')
+);
