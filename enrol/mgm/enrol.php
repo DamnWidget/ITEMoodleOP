@@ -88,8 +88,7 @@ class enrolment_plugin_mgm {
 
         $ret = null;
         $euser = mgm_get_user_extend($USER->id);
-        mgm_check_user_cc($euser->cc, $ret);
-        
+
         if ($ret == MGM_DATA_CC_ERROR) {
             error(get_string('cc_no_error', 'mgm'), '/mod/mgm/user.php');
         }
