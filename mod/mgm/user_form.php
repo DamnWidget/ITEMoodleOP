@@ -59,8 +59,8 @@ class mod_mgm_user_form extends moodleform {
         $mform->addRule('codpostal', get_string('required'), 'required', null);
         $mform->addElement('text', 'sexo', get_string('sexo','mgm'), array('size' => '1'));
         $mform->addRule('sexo', get_string('required'), 'required', null);
-        
-        
+
+
         $achoices = $schoices = array();
         $aespecs = & $this->_customdata->aespecs;
         $sespecs = & $this->_customdata->sespecs;

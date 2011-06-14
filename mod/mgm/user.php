@@ -88,6 +88,14 @@ if ($mform->is_cancelled()) {
         error(get_string('cc_no_error', 'mgm'), $CFG->wwwroot.'/mod/mgm/user.php');
     }
 
+    if ($sdata == MGM_DATA_DNI_ERROR) {
+        error(get_string('dnimulti', 'mgm'), $CFG->wwwroot.'/mod/mgm/user.php');
+    }
+
+    if ($sdata == MGM_DATA_DNI_INVALID) {
+        error(get_string('dninotvalid', 'mgm'), $CFG->wwwroot.'/mod/mgm/user.php');
+    }
+
     redirect('user.php', get_string('codemessage', 'mgm'), 10);
 }
 

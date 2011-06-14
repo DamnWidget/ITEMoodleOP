@@ -51,6 +51,8 @@ define('MGM_ITE_SCALA', 3);
 define('MGM_DATA_NO_ERROR', 0);
 define('MGM_DATA_CC_ERROR', 1);
 define('MGM_DATA_CC_ERROR_PRIVATE', 2);
+define('MGM_DATA_DNI_ERROR', 3);
+define('MGM_DATA_DNI_INVALID', 4);
 
 define('MGM_PUBLIC_CENTER', 0);
 define('MGM_MIXIN_CENTER', 1);
@@ -1605,10 +1607,36 @@ function mgm_check_user_cc($code, &$ret) {
     return $code;
 }
 
+/**
+ * Check if the user dni is a valid dni
+ * @param string $dni
+ * @param string $ret
+ * @return string
+ */
+function mgm_check_user_dni($userid, $dni, &$ret) {
+    global $CFG;
+
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_user
+    		WHERE dni='".mysql_escape_string($dni)."' AND userid!='".$userid."'";
+
+    if ($odni = get_record_sql($sql)) {
+        $ret = MGM_DATA_DNI_ERROR;
+        return '';
+    }
+
+    if (!mgm_validate_cif($dni)) {
+        $ret = MGM_DATA_DNI_INVALID;
+        return '';
+    }
+
+    return $dni;
+}
+
 function mgm_set_userdata($userid, $data) {
     $ret = MGM_DATA_NO_ERROR;
     $newdata = $data;
     $newdata->cc = mgm_check_user_cc($data->cc, $ret);
+    $newdata->dni = mgm_check_user_dni($userid, $data->dni, $ret);
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {
         if (isset($data->addsel)) {
@@ -1939,4 +1967,93 @@ function mgm_certificate_course($userid, $courseid) {
     $data->userid = $userid;
     $data->courseid = $courseid;
     insert_record('edicion_cert_history', $data);
+}
+
+function mgm_get_pass_courses($editionid, $userid) {
+    if (!$editionid || !$userid) {
+        return false;
+    }
+
+    if (!$ctask = mgm_get_certification_task($course)) {
+
+    }
+}
+
+/**
+   * Funcion para validar un CIF NIF o NIE
+   *
+   * @param string $nif
+   * @return string
+   */
+function mgm_validate_cif($cif) {
+    $cif = strtoupper($cif);
+    for ($i = 0; $i < 9; $i ++) {
+      $num[$i] = substr($cif, $i, 1);
+    }
+
+    // Si no tiene un formato valido devuelve error
+    if (!ereg('((^[A-Z]{1}[0-9]{7}[A-Z0-9]{1}$|^[T]{1}[A-Z0-9]{8}$)|^[0-9]{8}[A-Z]{1}$)', $cif)) {
+      return false;
+    }
+
+    // Comprobacion de NIFs estandar
+    if (ereg('(^[0-9]{8}[A-Z]{1}$)', $cif)) {
+      if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr($cif, 0, 8) % 23, 1)) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    }
+
+    // Algoritmo para comprobacion de codigos tipo CIF
+    $suma = $num[2] + $num[4] + $num[6];
+    for ($i = 1; $i < 8; $i += 2) {
+      $suma += substr((2 * $num[$i]),0,1) + substr((2 * $num[$i]),1,1);
+    }
+
+    $n = 10 - substr($suma, strlen($suma) - 1, 1);
+    // Comprobacion de NIFs especiales (se calculan como CIFs)
+    if (ereg('^[KLM]{1}', $cif)) {
+      if ($num[8] == chr(64 + $n)) {
+         return true;
+      }
+      else {
+         return false;
+      }
+    }
+
+    // Comprobacion de CIFs
+    if (ereg('^[ABCDEFGHJNPQRSUVW]{1}', $cif)) {
+      if ($num[8] == chr(64 + $n) || $num[8] == substr($n, strlen($n) - 1, 1)) {
+         return true;
+      }
+      else {
+         return false;
+      }
+    }
+
+    //comprobacion de NIEs
+    //T
+    if (ereg('^[T]{1}', $cif)) {
+      if ($num[8] == ereg('^[T]{1}[A-Z0-9]{8}$', $cif)) {
+         return true;
+      }
+      else {
+         return false;
+      }
+    }
+
+    //XYZ
+    if (ereg('^[XYZ]{1}', $cif)) {
+      if ($num[8] == substr('TRWAGMYFPDXBNJZSQVHLCKE', substr(str_replace(array('X','Y','Z'), array('0','1','2'), $cif), 0, 8) % 23, 1)) {
+         return true;
+      }
+      else {
+         return false;
+      }
+    }
+
+    // Si todavia no se ha verificado devuelve error
+    return false;
 }
