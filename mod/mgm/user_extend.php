@@ -37,6 +37,7 @@ require_capability('mod/mgm:aprobe', get_context_instance(CONTEXT_SYSTEM));
 
 define("MAX_USERS_PER_PAGE", 5000);
 
+$search         = optional_param('search', '', PARAM_RAW); // search button
 $searchtext     = optional_param('searchtext', '', PARAM_RAW); // search string
 $previoussearch = optional_param('previoussearch', 0, PARAM_BOOL);
 
@@ -52,7 +53,7 @@ $navlinks[] = array('name' => $strperfil, 'type' => 'misc');
 $navigation = build_navigation($navlinks);
 
 if ($frm = data_submitted() and confirm_sesskey()) {
-    if (!empty($frm->addselect)) {
+    if (!empty($frm->addselect) && empty($search)) {
         if (!$user = get_record('user', 'id', $_REQUEST['addselect'][0])) {
             error('User doesn\'t exists!');
         } else {

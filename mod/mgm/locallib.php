@@ -1908,3 +1908,35 @@ function mgm_get_check_index($criteria) {
 
     return $x;
 }
+
+function mgm_get_cert_history($userid) {
+    if (!$userid) {
+        return false;
+    }
+
+    return get_records('edicion_cert_history', 'userid', $userid);
+}
+
+function mgm_is_course_certified($userid, $courseid) {
+    if (!$userid || !$courseid) {
+        return false;
+    }
+
+    if (!$cert = get_record('edicion_cert_history', 'userid', $userid,
+    	'courseid', $courseid)) {
+        return false;
+    } else {
+        return true;
+    }
+}
+
+function mgm_certificate_course($userid, $courseid) {
+    if (!$userid || !$courseid) {
+        return;
+    }
+
+    $data = new stdClass();
+    $data->userid = $userid;
+    $data->courseid = $courseid;
+    insert_record('edicion_cert_history', $data);
+}

@@ -61,3 +61,8 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('exportdata', get_string('exportdata', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/export.php', 'mod/mgm:aprobe')
 );
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('certhistory', get_string('certhistory', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/certhistory.php', 'mod/mgm:aprobe')
+);
