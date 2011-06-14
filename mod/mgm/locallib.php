@@ -1542,31 +1542,25 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
 }
 
 /**
- * Return the user's CC
+ * Return the user's extended data
  * @param string $userid
  * @return string
  */
-function mgm_get_user_cc($userid) {
-    if ($cc = get_record('edicion_user', 'userid', $userid)) {
-        return $cc->cc;
+function mgm_get_user_extend($userid) {
+    if ($euser = get_record('edicion_user', 'userid', $userid)) {
+        return $euser;
     }
 
-    return '';
+    $euser = new stdClass();
+    $euser->cc = '';
+    $euser->dni = '';
+    $euser->tipoid = '';
+    $euser->codniveleducativo='';
+    $euser->codcuerpodocente='';
+    $euser->codpostal='';
+    $euser->sexo='';
+    return $euser;
 }
-
-/**
- * Return the user's DNI
- * @param string $userid
- * @return string
- */
-function mgm_get_user_dni($userid) {
-    if ($dni = get_record('edicion_user', 'userid', $userid)) {
-        return $dni->dni;
-    }
-
-    return '';
-}
-
 
 function mgm_get_user_especialidades($userid) {
     if ($especialidades = get_record('edicion_user', 'userid', $userid)) {
@@ -1613,8 +1607,7 @@ function mgm_check_user_cc($code, &$ret) {
 
 function mgm_set_userdata($userid, $data) {
     $ret = MGM_DATA_NO_ERROR;
-    $newdata = new stdClass();
-    $newdata->dni = $data->dni;
+    $newdata = $data;
     $newdata->cc = mgm_check_user_cc($data->cc, $ret);
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {

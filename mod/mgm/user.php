@@ -72,9 +72,7 @@ if (!empty($allespecs)) {
     $aespecs = $allespecs;
 }
 
-$userdata = new stdClass();
-$userdata->cc = mgm_get_user_cc($USER->id);
-$userdata->dni = mgm_get_user_dni($USER->id);
+$userdata = mgm_get_user_extend($USER->id);
 $userdata->sespecs = $sespecs;
 $userdata->aespecs = $aespecs;
 
@@ -87,7 +85,7 @@ if ($mform->is_cancelled()) {
     $sdata = mgm_set_userdata($USER->id, $data);
 
     if ($sdata == MGM_DATA_CC_ERROR) {
-        error(get_string('cc_no_error', 'mgm'), $CFG->dirroot.'/mod/mgm/user.php');
+        error(get_string('cc_no_error', 'mgm'), $CFG->wwwroot.'/mod/mgm/user.php');
     }
 
     redirect('user.php', get_string('codemessage', 'mgm'), 10);
