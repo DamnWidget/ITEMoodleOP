@@ -64,7 +64,7 @@ if ($id && $courseid) {
 if ($frm = data_submitted() and confirm_sesskey()) {
     foreach ($frm->groups as $group) {
         if (!$userid = clean_param($group['tutor'], PARAM_INT)) {
-            continue;
+             continue;
         }
 
         if (!groups_add_member($group['data'], $userid)) {
