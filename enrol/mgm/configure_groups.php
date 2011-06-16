@@ -101,9 +101,12 @@ print_header("$course->shortname: $strgroups", $course->fullname, $navigation, '
 ?>
 <script type="text/javascript">
 //<![CDATA[
-function updateGroupName(elId, userId) {
+function updateGroupName(elId, userId, gId) {
     var nameEl = document.getElementById(elId);
     var target = document.getElementById('tutor_'+userId);
+    if (!target) {
+        target = document.getElementById('none_'+gId);
+    }
     nameEl.value = target.text;
 }
 //]]>
@@ -121,6 +124,8 @@ function updateGroupName(elId, userId) {
                 $groupoptions = groups_get_users_not_in_group_by_role($courseid, $group->id);
                 $memberoptions = '';
                 if (!empty($groupoptions)) {
+                    $memberoptions .= '<optgroup label="'.get_string('none').'">';
+                    $memberoptions .= '<option id="none_'.$gname[1].'" value="'.$group->name.'">'.$group->name.'</option>';
                     foreach($groupoptions as $roleid=>$roledata) {
                         $memberoptions .= '<optgroup label="'.htmlspecialchars($roledata->name).'">';
                         foreach($roledata->users as $member) {
@@ -145,8 +150,8 @@ function updateGroupName(elId, userId) {
                         <p>
                             <label for="groups[<?php echo $gname[1] ?>][tutor]"><?php print_string('tutor', 'mgm'); ?></label>
                         </p>
-                        <select name="groups[<?php echo $gname[1] ?>][tutor]" id="groups[<?php echo $gname[1] ?>][tutor]" onchange="updateGroupName('groups[<?php  echo $gname[1] ?>][name]', this.value);"
-                        onfocus="updateGroupName('groups[<?php  echo $gname[1] ?>][name]', this.value);">
+                        <select name="groups[<?php echo $gname[1] ?>][tutor]" id="groups[<?php echo $gname[1] ?>][tutor]" onchange="updateGroupName('groups[<?php  echo $gname[1] ?>][name]', this.value, '<?php echo $gname[1]; ?>');"
+                        onfocus="updateGroupName('groups[<?php  echo $gname[1] ?>][name]', this.value, '<?php echo $gname[1]; ?>');">
                           <?php echo $memberoptions ?>
                         </select>
                         <input type="hidden" name="groups[<?php echo $gname[1] ?>][data]" value="<?php echo $group->id ?>" />
