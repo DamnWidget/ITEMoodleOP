@@ -63,12 +63,12 @@ class mod_mgm_edit_form extends moodleform {
         $mform->setHelpButton('description', array('writing', 'richtext'), false, 'editorhelpbutton');
 
         $iniciogrp = array();
-        $iniciogrp[] = &MoodleQuickForm::createElement('date_selector', 'inicio');
+        $iniciogrp[] = &MoodleQuickForm::createElement('date_time_selector', 'inicio');
         $mform->addGroup($iniciogrp, 'iniciogrp', get_string('fechainicio', 'mgm'), ' ', false);
         $mform->setDefault('inicio', 0);
 
         $fingrp = array();
-        $fingrp[] = &MoodleQuickForm::createElement('date_selector', 'fin');
+        $fingrp[] = &MoodleQuickForm::createElement('date_time_selector', 'fin');
         $mform->addGroup($fingrp, 'fingrp', get_string('fechafin', 'mgm'), ' ', false);
         $mform->setDefault('fin', 0);
 

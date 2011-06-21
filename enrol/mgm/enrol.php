@@ -159,7 +159,9 @@ class enrolment_plugin_mgm {
             }
 
             mgm_preinscribe_user_in_edition($edition->id, $USER->id, $courses, $ret);
-            redirect('?id='.$course->id, get_string('preinscrito', 'mgm'), 2);
+            notice_yesno(get_string('preinscrito', 'mgm'), '?id='.$course->id,
+                         $CFG->wwwroot.'/mod/mgm/user.php');
+            die();
         }
 
         $eform->display();

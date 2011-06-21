@@ -99,6 +99,7 @@ $string['opcionuno'] = 'First option';
 $string['opciondos'] = 'Seccond option';
 $string['out'] = 'Out';
 $string['plazas'] = 'Places';
+$string['preinscrito'] = 'Do you want to pre-inscribe to another course?.';
 $string['prioridadcentro'] = 'Prioridad de centros de territorio ME';
 $string['prioridadespec'] = 'Prioridad de Especialidades';
 $string['removesel'] = 'Remove Course(s)';
