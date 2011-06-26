@@ -1,0 +1,40 @@
+$ Tests Unitarios y de Integración sobre código ya existente $
+# El usuario debe de poder pre inscribirse a cursos de ediciones - ¡HECHO!
+    * Si no se pasan cursos se eliminan las pre inscripciones del alumno - ¡HECHO!
+    * Cuando la pre inscripción es nueva se crea un nuevo registro - ¡HECHO!
+    * Cuando el alumno ya está pre inscrito, se actualiza su inscripción con los nuevos datos - ¡HECHO!
+# El administrador debe de poder inscribir a los alumnos de forma definitiva - ¡HECHO!
+    * El administrador puede decidir si dejar la inscripción en borrador o no - ¡HECHO!
+    * Si el registro no existe, se crea uno nuevo - ¡HECHO!
+    * Si el registro existe, se actualiza con los nuevos datos - ¡HECHO!
+# El sistema debe de crear los grupos de alumnos para los cursos - ¡HECHO!
+    * Si no existe inscripción debe de resultar un error - ¡HECHO!
+    * Si no existe criteria debe de resultar un error - ¡HECHO!    
+
+$ Caso de uso 3 del módulo de Certificaciones $
+# Aceptación - La emisión de certificados se realiza a través del menú de Ediciones de MGM
+# Aceptación - En el menú de acciones de cada edición aparece un botón para controlar las certificaciones - ¡HECHO!
+    * Si no existe certificación de la edición el botón se muestra en estado "Crear Borrador" - ¡HECHO!
+    * Si existe certificación en estado borrador de la edición el botón se muestra en estado "Validar Borrador" - ¡HECHO!
+# Aceptación - Se define una fecha de emisión de certificaciones al hacer click en el botón y se solicita confirmación
+    * Si se pulsa en Si el sistema certifica en modo borrador - ¡HECHO!
+    * Si se pulsa en No el sistema vuelve atrás y no toca nada - ¡HECHO!
+# Aceptación - Si existe certificación en estado validado el botón se muestra en gris e inutilizable
+    * Si se intenta acceder al menú de certificaciones de una edición ya certificada a través de URL el sistema muestra un mensaje de error   
+# Aceptación - El usuario puede acceder a un listado de certificaciones a través de la pantalla de cada curso de la edición
+# Aceptacion - El usuario puede descargar el listado en formato de hoja de cálculo a su equipo
+# Aceptación - El usuario puede eliminar certificaciones si es necesario 
+# Aceptación - El sistema no permitirá modificaciones de ningún tipo e las certificaciones una vez han sido validadas
+# Aceptación - Al certificar de forma definitiva a un alumno, se le añade al histórico de certificados de forma automática
+
+$ Caso de uso PR03 del módulo de Matriculación y Gestión (Extensiones) $
+# Aceptación - Los usuarios administrativos de Moodle pueden ver los cursos certificados de un alumno usando una interfaz en el menu de ediciones
+# Aceptación - El administrador puede seleccionar al usuario de un listado de usuarios y hacer click en el botón "Siguiente"
+    * Si el usuario seleccionado tiene cursos certificados se mostrará una relación de sus códigos
+    * Si el usuario seleccionado no tiene cursos certificados se mostrará un mensaje indicándolo
+    * Si no se ha seleccionado un usuario el sistema devolverá un mensaje de error
+# Aceptación - Solo puede haber una dependencia por curso
+# Aceptación - La dependencia de un curso se configura en la interfaz de criterios de inscripción de los cursos
+# Aceptación - Se selecciona el Numero ID del curso de una lista desplegable
+# Aceptación - La dependencia de un curso de activa y se desactiva mediante un checkbox
+# Aceptación - Si un alumno desea matricularse en un curso con dependencia debe de tener certificado el curso dependiente

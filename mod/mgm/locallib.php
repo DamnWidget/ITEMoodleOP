@@ -34,6 +34,10 @@ defined('MOODLE_INTERNAL') || die();
 define('EDICIONES', $CFG->prefix.'ediciones');
 define('EDICIONES_COURSE', $CFG->prefix.'ediciones_course');
 
+define('MGM_CERTIFICATE_NONE', 0);
+define('MGM_CERTIFICATE_DRAFT', 1);
+define('MGM_CERTIFICATE_VALIDATED', 2);
+
 define('MGM_CRITERIA_PLAZAS', 0);
 define('MGM_CRITERIA_OPCION1', 1);
 define('MGM_CRITERIA_OPCION2', 2);
@@ -247,6 +251,20 @@ function mgm_get_edition_menu($edition) {
     } else {
         $menu .= '<a title="'.get_string('activar', 'mgm').'" href="active.php?id='.$edition->id.'">'.
              	 '<img src="'.$CFG->pixpath.'/t/go.gif" class="iconsmall" alt="'.get_string('activar', 'mgm').'" /></a>';
+    }
+    if (!mgm_edition_is_certified($edition)) {
+        $menu .= ' | <a title="'.get_string('cert', 'mgm').'" href="certificate.php?id='.$edition->id.'" id="edicion_'.$edition->id.'">'.
+         		 '<img src="'.$CFG->pixpath.'/t/grades.gif" class="iconsmall" alt="'.get_string('cert', 'mgm').'" /></a>';
+    } else {
+        if (mgm_edition_is_on_draft($edition)) {
+            $menu .= ' | <a title="'.get_string('certdraft', 'mgm').'" href="certificate.php?id='.$edition->id.'&draft=1" id="edicion_'.$edition->id.'">'.
+         			 '<img src="'.$CFG->pixpath.'/c/site.gif" class="iconsmall" alt="'.get_string('certdraft', 'mgm').'" /></a>';
+        }
+
+        if (mgm_edition_is_on_validate($edition)) {
+            $menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="">'.
+         			 '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
+        }
     }
 
     return $menu;
@@ -735,6 +753,70 @@ function mgm_edition_is_active($edition) {
 }
 
 /**
+ * Returns true if edition is certified otherwise returns false
+ *
+ * @param object $edition
+ * @return bool
+ */
+function mgm_edition_is_certified($edition) {
+    return ($edition->certified) ? true : false;
+}
+
+/**
+ * Returns true if edition certification is on draft state otherwise returns false
+ *
+ * @param object $edition
+ * @return boolean
+ */
+function mgm_edition_is_on_draft($edition) {
+    return ($edition->certified == MGM_CERTIFICATE_DRAFT) ? true : false;
+}
+
+/**
+* Returns true if edition certification is on validates state otherwise returns false
+*
+* @param object $edition
+* @return boolean
+*/
+function mgm_edition_is_on_validate($edition) {
+    return ($edition->certified == MGM_CERTIFICATE_VALIDATED) ? true : false;
+}
+
+/**
+ * Sets the edition certification state as draft
+ *
+ * @param object $edition
+ * @return boolean
+ */
+function mgm_set_edition_certification_on_draft($edition) {
+    if(is_object($edition)) {
+        if (!mgm_edition_is_certified($edition)) {
+            $edition->certified = MGM_CERTIFICATE_DRAFT;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
+ * Sets the edition certification state as validated
+ *
+ * @param object $edition
+ * @return boolean
+ */
+function mgm_set_edition_certification_on_validate($edition) {
+    if(is_object($edition)) {
+        if (mgm_edition_is_on_draft($edition)) {
+            $edition->certified = MGM_CERTIFICATE_VALIDATED;
+            return true;
+        }
+    }
+
+    return false;
+}
+
+/**
  * Return the course's edition (Edition will be active)
  *
  * @param string $id
@@ -854,11 +936,13 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
     global $CFG;
 
     if(!$inscripcion = mgm_check_already_enroled($editionid, $courseid)) {
-        die('Error, there is no inscription for the edition and course ids given');
+        trigger_error('Error, there is no inscription for the edition and course ids given');
+        return false;
     }
 
     if (!$criteria = mgm_get_edition_course_criteria($editionid, $courseid)) {
-        die('Error, there is no criteria for the edition and course ids given');
+        trigger_error('Error, there is no criteria for the edition and course ids given');
+        return false;
     }
 
     $max = round($criteria->plazas / $criteria->numgroups);
@@ -934,6 +1018,8 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
         }
         $x++;
     }
+
+    return true;
 }
 
 function mgm_check_already_enroled($editionid, $courseid) {
@@ -1844,6 +1930,11 @@ function mgm_get_user_inscription_by_edition($user, $edition) {
     return $inscripcion;
 }
 
+/**
+ * Get the certification scala
+ *
+ * @return mixed
+ */
 function mgm_get_certification_scala() {
     global $CFG;
 
@@ -1856,6 +1947,11 @@ function mgm_get_certification_scala() {
     }
 }
 
+/**
+ * Sets the certification scala
+ *
+ * @param string $scala
+ */
 function mgm_set_certification_scala($scala) {
     if (!$nscala = mgm_get_certification_scala()) {
         $nscala = new stdClass();
@@ -1887,7 +1983,15 @@ function mgm_get_courses($course) {
     return $retdata;
 }
 
-function mgm_get_course_dependencies($edition, $course, $user) {
+/**
+ * Returns true if the user has the required course dependencies
+ *
+ * @param object $edition
+ * @param object $course
+ * @param object $user
+ * @return boolean
+ */
+function mgm_check_course_dependencies($edition, $course, $user) {
     global $CFG;
 
     if(!$criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
@@ -1902,17 +2006,19 @@ function mgm_get_course_dependencies($edition, $course, $user) {
         return false;
     }
 
-    $sql = "SELECT * FROM ".$CFG->prefix."grade_grades
-    		WHERE itemid ='".$ctask->id."'
-    		AND userid ='".$user->id."'";
-
-    if (!$grade = get_record_sql($sql)) {
+    if (!$grade = mgm_get_grade($ctask, $user)) {
         return false;
     }
 
     return $grade->finalgrade == $grade->rawgrademax;
 }
 
+/**
+ * Returns the certifiation task for the given course
+ *
+ * @param string $course
+ * @return object
+ */
 function mgm_get_certification_task($course) {
     global $CFG;
 
@@ -1925,6 +2031,22 @@ function mgm_get_certification_task($course) {
     return get_record_sql($sql);
 }
 
+/**
+ * Returns the grade for the given task and user
+ *
+ * @param object $task
+ * @param object $user
+ * @return object
+ */
+function mgm_get_grade($task, $user) {
+    return get_record(
+        'grade_grades', 'itemid', $task->id, 'userid', $user->id
+    );
+}
+
+/**
+ * Helper class for courses interface
+ */
 function mgm_get_check_index($criteria) {
     $x = 0;
     foreach($criteria->dependencias as $k => $v) {

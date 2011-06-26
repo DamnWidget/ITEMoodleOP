@@ -82,7 +82,7 @@ class enrolment_plugin_mgm {
             error(get_string('fueradeperiodo', 'mgm'));
         }
 
-        if (!mgm_get_course_dependencies($edition, $course, $USER)) {
+        if (!mgm_check_course_dependencies($edition, $course, $USER)) {
             error(get_string('nodependencias', 'mgm'));
         }
 

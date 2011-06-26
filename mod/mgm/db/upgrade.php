@@ -165,7 +165,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codprovincia
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codpais to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('codpais');
@@ -173,7 +173,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codpais
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codmateria to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('codmateria');
@@ -181,7 +181,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codmateria
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codniveleducativo to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('codniveleducativo');
@@ -189,7 +189,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codniveleducativo
         $result = $result && add_field($table, $field);
-        
+
     /// Define field numhoras to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('numhoras');
@@ -197,7 +197,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field numhoras
         $result = $result && add_field($table, $field);
-        
+
     /// Define field numcreditos to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('numcreditos');
@@ -205,7 +205,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field numcreditos
         $result = $result && add_field($table, $field);
-        
+
     /// Define field fechainicio to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('fechainicio');
@@ -213,7 +213,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field fechainicio
         $result = $result && add_field($table, $field);
-        
+
     /// Define field fechafin to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('fechafin');
@@ -221,7 +221,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field fechafin
         $result = $result && add_field($table, $field);
-        
+
     /// Define field localidad to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('localidad');
@@ -229,7 +229,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field localidad
         $result = $result && add_field($table, $field);
-        
+
     /// Define field fechainimodalidad to be added to edicion_course
         $table = new XMLDBTable('edicion_course');
         $field = new XMLDBField('fechainimodalidad');
@@ -245,7 +245,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field alt_address
         $result = $result && add_field($table, $field);
-        
+
     /// Define field address to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('address');
@@ -253,7 +253,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field address
         $result = $result && add_field($table, $field);
-        
+
     /// Define field tipoid to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('tipoid');
@@ -261,7 +261,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field tipoid
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codtipoparticipante to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('codtipoparticipante');
@@ -269,7 +269,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codtipoparticipante
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codniveleducativo to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('codniveleducativo');
@@ -277,7 +277,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codniveleducativo
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codcuerpodocente to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('codcuerpodocente');
@@ -285,7 +285,7 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codcuerpodocente
         $result = $result && add_field($table, $field);
-        
+
     /// Define field codpostal to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('codpostal');
@@ -293,13 +293,24 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     /// Launch add field codpostal
         $result = $result && add_field($table, $field);
-        
+
     /// Define field sexo to be added to edicion_user
         $table = new XMLDBTable('edicion_user');
         $field = new XMLDBField('sexo');
         $field->setAttributes(XMLDB_TYPE_CHAR, '1', null, null, null, XMLDB_ENUM, array('H', 'M'), null, 'codpostal');
 
     /// Launch add field sexo
+        $result = $result && add_field($table, $field);
+    }
+
+    if ($result && $oldversion < 2011062700) {
+
+        /// Define field timemodified to be added to edicion
+        $table = new XMLDBTable('edicion');
+        $field = new XMLDBField('certified');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'active');
+
+        /// Launch add field timemodified
         $result = $result && add_field($table, $field);
     }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
