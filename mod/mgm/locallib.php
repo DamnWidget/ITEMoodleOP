@@ -262,7 +262,7 @@ function mgm_get_edition_menu($edition) {
         }
 
         if (mgm_edition_is_on_validate($edition)) {
-            $menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="">'.
+            $menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="#">'.
          			 '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
         }
     }
@@ -2080,15 +2080,41 @@ function mgm_is_course_certified($userid, $courseid) {
     }
 }
 
-function mgm_certificate_course($userid, $courseid) {
-    if (!$userid || !$courseid) {
-        return;
+function mgm_certificate_course($userid, $courseid, $edition) {
+    if (!$userid || !$courseid || !$edition) {
+        return false;
+    }
+    
+    if (!mgm_edition_is_on_validate($edition)) {
+        return false;
     }
 
     $data = new stdClass();
     $data->userid = $userid;
     $data->courseid = $courseid;
-    insert_record('edicion_cert_history', $data);
+    $data->edicionid = $edition->id;    
+    
+    return insert_record('edicion_cert_history', $data);
+}
+
+function mgm_certificate_edition($edition) {
+    if (!$edition) {
+        return false;
+    }
+    
+    foreach (mgm_get_edition_courses($edition) as $course) {
+        if (!$participants = mgm_get_course_participants($course)) {
+            return false;
+        }
+        
+        foreach($participants as $participant) {
+            if (!mgm_certificate_course($participant->id, $course->id, $edition->id)) {
+                return false;
+            }
+        }
+    }
+    
+    return true;
 }
 
 function mgm_get_pass_courses($editionid, $userid) {
@@ -2097,8 +2123,62 @@ function mgm_get_pass_courses($editionid, $userid) {
     }
 
     if (!$ctask = mgm_get_certification_task($course)) {
-
+        
     }
+}
+
+function mgm_get_course_participants($course) {
+    global $CFG;
+    
+    if(!$course) {
+        return false;
+    }
+        
+    if (!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
+        error('No context found');
+    }
+    
+    $sitecontext = get_context_instance(CONTEXT_SYSTEM);
+    $frontpagectx = get_context_instance(CONTEXT_COURSE, SITEID);
+    
+    $adminroles = array();
+    if ($roles = get_roles_used_in_context($context, true)) {
+        $canviewroles    = get_roles_with_capability('moodle/course:view', CAP_ALLOW, $context);
+        $doanythingroles = get_roles_with_capability('moodle/site:doanything', CAP_ALLOW, $sitecontext);
+
+        if ($context->id == $frontpagectx->id) {
+            //we want admins listed on frontpage too
+            foreach ($doanythingroles as $dar) {
+                $canviewroles[$dar->id] = $dar;
+            }
+            $doanythingroles = array();
+        }
+
+        foreach ($roles as $role) {
+            if (!isset($canviewroles[$role->id])) {   // Avoid this role (eg course creator)
+                $adminroles[] = $role->id;
+                unset($roles[$role->id]);
+                continue;
+            }
+            if (isset($doanythingroles[$role->id])) {   // Avoid this role (ie admin)
+                $adminroles[] = $role->id;
+                unset($roles[$role->id]);
+                continue;
+            }            
+        }
+    }
+    
+    $sql = "SELECT DISTINCT u.id, u.username FROM ".$CFG->prefix."user u ".
+            "LEFT OUTER JOIN ".$CFG->prefix."context ctx ".
+            "ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.") ".
+            "JOIN ".$CFG->prefix."role_assignments r ".
+            "ON u.id=r.userid ".
+            "WHERE (r.contextid = ".$context->id.") ".
+            "AND u.deleted = 0 ".            
+            "AND u.username != 'guest' ".
+            "AND r.roleid NOT IN (".implode(',', $adminroles).")";
+    
+    return get_records_sql($sql);    
 }
 
 /**

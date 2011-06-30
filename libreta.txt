@@ -12,20 +12,26 @@ $ Tests Unitarios y de Integración sobre código ya existente $
     * Si no existe criteria debe de resultar un error - ¡HECHO!    
 
 $ Caso de uso 3 del módulo de Certificaciones $
-# Aceptación - La emisión de certificados se realiza a través del menú de Ediciones de MGM
+# Aceptación - La emisión de certificados se realiza a través del menú de Ediciones de MGM - ¡HECHO!
 # Aceptación - En el menú de acciones de cada edición aparece un botón para controlar las certificaciones - ¡HECHO!
     * Si no existe certificación de la edición el botón se muestra en estado "Crear Borrador" - ¡HECHO!
     * Si existe certificación en estado borrador de la edición el botón se muestra en estado "Validar Borrador" - ¡HECHO!
-# Aceptación - Se define una fecha de emisión de certificaciones al hacer click en el botón y se solicita confirmación
+# Aceptación - Se define una fecha de emisión de certificaciones al hacer click en el botón y se solicita confirmación - ¡HECHO!
     * Si se pulsa en Si el sistema certifica en modo borrador - ¡HECHO!
     * Si se pulsa en No el sistema vuelve atrás y no toca nada - ¡HECHO!
-# Aceptación - Si existe certificación en estado validado el botón se muestra en gris e inutilizable
-    * Si se intenta acceder al menú de certificaciones de una edición ya certificada a través de URL el sistema muestra un mensaje de error   
+# Aceptación - Si existe certificación en estado validado el botón se muestra en gris e inutilizable - ¡HECHO!
+    * Si se intenta acceder al menú de certificaciones de una edición ya certificada a través de URL el sistema muestra un mensaje de error - ¡HECHO!
 # Aceptación - El usuario puede acceder a un listado de certificaciones a través de la pantalla de cada curso de la edición
-# Aceptacion - El usuario puede descargar el listado en formato de hoja de cálculo a su equipo
-# Aceptación - El usuario puede eliminar certificaciones si es necesario 
-# Aceptación - El sistema no permitirá modificaciones de ningún tipo e las certificaciones una vez han sido validadas
-# Aceptación - Al certificar de forma definitiva a un alumno, se le añade al histórico de certificados de forma automática
+# Aceptacion - El usuario puede descargar el listado 'al menos' en formato de hoja de cálculo a su equipo
+# Aceptación - El usuario puede eliminar certificaciones si es necesario desde la interfaz normal de los cursos de moodle - ¡HECHO! 
+# Aceptación - El sistema no permitirá modificaciones de ningún tipo en las certificaciones una vez han sido validadas - ¡HECHO!
+# Aceptación - Al certificar de forma definitiva a un alumno, se le añade al histórico de certificados de forma automática - ¡HECHO!
+    * Si no se especifica un usuario, el método devuelve false - ¡HECHO!
+    * Si no se especifica un curso, el método devuelve false - ¡HECHO!
+    * Si no se especifica una edición, el método devuelve false - ¡HECHO!
+    * Si la edición no se encuentra en el estado de validación, el método devuelve false - ¡HECHO!
+# Aceptación - Si un participante está registrado con varios roles en el mismo curso, solo se le certifica el rol más alto -
+# Aceptación - Si un participante está registrado con varios roles en cursos diferentes, solo se le certifica en el curso y rol más alto -
 
 $ Caso de uso PR03 del módulo de Matriculación y Gestión (Extensiones) $
 # Aceptación - Los usuarios administrativos de Moodle pueden ver los cursos certificados de un alumno usando una interfaz en el menu de ediciones

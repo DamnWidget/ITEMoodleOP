@@ -305,13 +305,35 @@ function xmldb_mgm_upgrade($oldversion=0) {
 
     if ($result && $oldversion < 2011062700) {
 
-        /// Define field timemodified to be added to edicion
+        /// Define field certified to be added to edicion
         $table = new XMLDBTable('edicion');
         $field = new XMLDBField('certified');
         $field->setAttributes(XMLDB_TYPE_INTEGER, '1', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'active');
 
         /// Launch add field timemodified
         $result = $result && add_field($table, $field);
+    }
+    
+    if ($result && $oldversion < 2011062700) {
+        
+        /// Define field fechaemision to be added to edicion
+        $table = new XMLDBTable('edicion');
+        $field = new XMLDBField('fechaemision');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, null, 'certified' );
+        
+        $result = $result && add_field($table, $field);
+    }
+    
+    if ($result && $oldversion < 2011063000) {
+         
+        $table = new XMLDBTable('edicion_cert_history');
+        $table->addFieldInfo('id', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, XMLDB_SEQUENCE, null, null, null, null);
+        $table->addFieldInfo('courseid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'id');
+        $table->addFieldInfo('userid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'courseid');
+        $table->addFieldInfo('edicionid', XMLDB_TYPE_INTEGER, '10', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'userid');
+        $table->addKeyInfo('primary', XMLDB_KEY_PRIMARY, array('id'));
+        
+        $result = create_table($table);
     }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
 /// it's interesting to look how other modules are using this script. Remember that

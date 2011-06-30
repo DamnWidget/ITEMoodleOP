@@ -77,10 +77,45 @@ class testCertificatesIssuance extends UnitTestCase {
          global $CFG;
 
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
-         $this->menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="">'.
+         $this->menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="#">'.
          			    '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
 
          $this->assertEqual($this->menu, mgm_get_edition_menu($this->edition));
+     }
+     
+     function testNoActionOnValidated() {
+         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
+         $this->assertFalse(mgm_set_edition_certification_on_validate($this->edition));
+     }
+     
+     function testCourseCertificationInsertRecord() {
+         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;                
+         mgm_certificate_course('1010101010', '1010101010', $this->edition);
+         $history = get_record('edicion_cert_history', 'courseid', '1010101010', 'userid', '1010101010');         
+         $this->assertTrue($history);
+         if ($history) {
+            delete_records('edicion_cert_history', 'id', $history->id);
+         }
+     }
+     
+     function testCourseCertificationNoCourse() {
+         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
+         $this->assertFalse(mgm_certificate_course('1010101010', '', $this->edition));          
+     }
+     
+     function testCourseCertificationNoUser() {
+         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
+         $this->assertFalse(mgm_certificate_course('', '1010101010', $this->edition));          
+     }
+     
+     function testCourseCertificationNoEdition() {
+         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
+         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', null));          
+     }
+     
+     function testCourseCertificationIncorrectEditionState() {
+         $this->edition->certified = MGM_CERTIFICATE_DRAFT;
+         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', $this->edition)); 
      }
 }
 
@@ -111,6 +146,17 @@ class testCertificationIssuanceInterface extends WebTestCase {
         $this->edition = get_record_sql($sql, false, true);
         $this->clickLinkById('edicion_'.$this->edition->id);
     }
+    
+    function helperGetEditionForTest($status) {
+         $edition = new stdClass();
+         $edition->id = 1;
+         $edition->name = '1010101010';         
+         $edition->active = false;         
+         $edition->certified = $status;         
+         insert_record('edicion', $edition);
+         $edition = get_record('edicion', 'name', '1010101010');
+         return $edition;
+    }
 
     function testNoEditionId() {
         global $CFG;
@@ -125,16 +171,26 @@ class testCertificationIssuanceInterface extends WebTestCase {
         $this->get($CFG->wwwroot.'/mod/mgm/certificate.php?id=1010101010');
         $this->assertText('Edition not known');
     }
+    
+    function testSelectDateAndOk() {
+        $this->helperGetCertificationDraft();
+        $this->click(get_string('ok'));
+        $this->assertText(get_string('certdraftsure', 'mgm'));                
+    }
 
     function testButtonNoRollback() {
+        global $CFG;
+        
         $this->helperGetCertificationDraft();
-        $this->click('No');
-        $this->assertText('Desarrollo-ITE: Administración: Ediciones: Agregar/modificar ediciones', 'Click at NO button just returns to index.php');
+        $this->click(get_string('ok'));
+        $this->click(get_string('no'));        
+        $this->assertEqual($CFG->wwwroot.'/mod/mgm/index.php', $this->getUrl());        
     }
 
     function testButtonYesCertificateDraft() {
         $this->helperGetCertificationDraft();
-        $this->click('Sí');
+        $this->click(get_string('ok'));
+        $this->click(get_string('yes'));
         $data = get_record('edicion', 'id', $this->edition->id);
         $this->assertEqual(MGM_CERTIFICATE_DRAFT, $data->certified);
         $this->edition->certified = MGM_CERTIFICATE_NONE;
@@ -153,9 +209,29 @@ class testCertificationIssuanceInterface extends WebTestCase {
 
         $this->get($CFG->wwwroot.'/mod/mgm/index.php?editionedit=on');
         $this->clickLinkById('edicion_'.$edition->id);
-        $this->click('Sí');
+        $this->click(get_string('yes'));
         $data = get_record('edicion', 'id', $edition->id);
         $this->assertEqual(MGM_CERTIFICATE_VALIDATED, $data->certified);
         delete_records('edicion', 'id', $edition->id);
     }
+    
+    function testAlreadyDraft() {
+         global $CFG;
+         
+         $edition = $this->helperGetEditionForTest(MGM_CERTIFICATE_DRAFT);
+         $this->helperGetCertificationDraft();
+         $this->get($CFG->wwwroot.'/mod/mgm/certificate.php?id='.$edition->id);         
+         $this->assertText('Edition already draft!');
+         delete_records('edicion', 'id', $edition->id);         
+     }
+     
+     function testAlreadyValidated() {
+         global $CFG;
+         
+         $edition = $this->helperGetEditionForTest(MGM_CERTIFICATE_VALIDATED);
+         $this->helperGetCertificationDraft();
+         $this->get($CFG->wwwroot.'/mod/mgm/certificate.php?id='.$edition->id.'&draft=1');         
+         $this->assertText('Edition already validated!');
+         delete_records('edicion', 'id', $edition->id);
+     }
 }
