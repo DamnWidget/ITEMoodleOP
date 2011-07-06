@@ -1779,9 +1779,9 @@ function mgm_get_cc_type($cc) {
         return -1;
     }
 
-    foreach(mgm_get_cc_data() as $ccdata) {
+    foreach(mgm_get_cc_data() as $ccdata) {        
         if ($ccdata[5] == $cc) {
-            return $ccdata[7];
+            return $ccdata[6];
         }
     }
 
@@ -2027,19 +2027,14 @@ function mgm_set_certification_roles($roles) {
 function mgm_get_courses($course) {
     global $CFG;
 
-    $sql = "SELECT * FROM ".$CFG->prefix."course
+    $sql = "SELECT id, idnumber, fullname FROM ".$CFG->prefix."course
     		WHERE id !='".$course->id."'";
 
     if (!$data = get_records_sql($sql)) {
         return array();
     }
 
-    $retdata = array();
-    foreach($data as $v) {
-        $retdata[$v->id] = $v->fullname;
-    }
-
-    return $retdata;
+    return $data;
 }
 
 /**
@@ -2050,18 +2045,22 @@ function mgm_get_courses($course) {
  * @param object $user
  * @return boolean
  */
-function mgm_check_course_dependencies($edition, $course, $user) {
+function mgm_check_course_dependencies($edition, $course, $user) {    
     global $CFG;
-
-    if(!$criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {
+    
+    if(!$criteria = mgm_get_edition_course_criteria($edition->id, $course->id)) {                
         return true;
-    }
+    }       
 
     if(!isset($criteria->depends) || !$criteria->depends) {
         return true;
     }
+    
+    if (mgm_is_course_certified($user->id, $criteria->dlist)) {
+        return true;
+    }
 
-    if(!$ctask = mgm_get_certification_task($criteria->dlist)) {
+    /*if(!$ctask = mgm_get_certification_task($criteria->dlist)) {
         return false;
     }
 
@@ -2069,7 +2068,9 @@ function mgm_check_course_dependencies($edition, $course, $user) {
         return false;
     }
 
-    return $grade->finalgrade == $grade->rawgrademax;
+    return $grade->finalgrade == $grade->rawgrademax;*/
+   
+    return false;
 }
 
 /**
@@ -2145,9 +2146,9 @@ function mgm_is_course_certified($userid, $courseid) {
     }
 
     if (!$cert = get_record('edicion_cert_history', 'userid', $userid,
-    	'courseid', $courseid)) {
+    	'courseid', $courseid)) {    	    
         return false;
-    } else {
+    } else {        
         return true;
     }
 }

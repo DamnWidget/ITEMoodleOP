@@ -124,7 +124,7 @@ class testCertificatesIssuance extends UnitTestCase {
      }
 }
 
-class testCertificationIssuanceInterface extends WebTestCase {
+/*class testCertificationIssuanceInterface extends WebTestCase {
 
     function setUp() {
         global $CFG;
@@ -239,4 +239,4 @@ class testCertificationIssuanceInterface extends WebTestCase {
          $this->assertText('Edition already validated!');
          delete_records('edicion', 'id', $edition->id);
      }
-}
+}*/

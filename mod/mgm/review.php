@@ -116,16 +116,18 @@ if ($id) {
             }
 
             $record->fecha = $row->timemodified;
-            $cc_type = mgm_get_cc_type($record->cc);
-            if ($cc_type == MGM_PUBLIC_CENTER) {
+            $cc_type = mgm_get_cc_type($record->cc);                        
+            /*if ($cc_type == MGM_PUBLIC_CENTER) {
                 $record->cc_type = get_string('cc_public', 'mgm');
             } else if ($cc_type == MGM_MIXIN_CENTER) {
                 $record->cc_type == get_string('cc_mixin', 'mgm');
             } else if ($cc_type == MGM_PRIVATE_CENTER) {
                 $record->cc_type = get_string('cc_private', 'mgm');
             } else {
-                $record->cc_type = get_string('cc_noidea', 'mgm');
-            }
+                //$record->cc_type = get_string('cc_noidea', 'mgm');
+                $record->cc_type = $cc_type;
+            }*/
+           $record->cc_type = $cc_type;
             $alumnos[] = $record;
         }
 

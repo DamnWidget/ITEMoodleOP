@@ -32,7 +32,7 @@ $ Caso de uso 3 del módulo de Certificaciones $
     * Si la edición no se encuentra en el estado de validación, el método devuelve false - ¡HECHO!
 # Aceptación - Se usa una interfaz para fijar tres roles: Coordinador/a, Estudiante y Tutor/a - ¡HECHO!
 # Aceptación - Si un participante está registrado con varios roles en el mismo curso, se le certifica el de mayor rango - ¡HECHO!
-# Aceptación - Si un participante está registrado con varios roles en cursos diferentes, se le certifica en cada curso y rol -
+# Aceptación - Si un participante está registrado con varios roles en cursos diferentes, se le certifica en cada curso y rol - ¡HECHO!
 
 $ Caso de uso PR03 del módulo de Matriculación y Gestión (Extensiones) $
 # Aceptación - Los usuarios administrativos de Moodle pueden ver los cursos certificados de un alumno usando una interfaz en el menu de ediciones
@@ -40,8 +40,8 @@ $ Caso de uso PR03 del módulo de Matriculación y Gestión (Extensiones) $
     * Si el usuario seleccionado tiene cursos certificados se mostrará una relación de sus códigos
     * Si el usuario seleccionado no tiene cursos certificados se mostrará un mensaje indicándolo
     * Si no se ha seleccionado un usuario el sistema devolverá un mensaje de error
-# Aceptación - Solo puede haber una dependencia por curso
-# Aceptación - La dependencia de un curso se configura en la interfaz de criterios de inscripción de los cursos
-# Aceptación - Se selecciona el Numero ID del curso de una lista desplegable
-# Aceptación - La dependencia de un curso de activa y se desactiva mediante un checkbox
-# Aceptación - Si un alumno desea matricularse en un curso con dependencia debe de tener certificado el curso dependiente
+# Aceptación - Solo puede haber una dependencia por curso -¡HECHO!
+# Aceptación - La dependencia de un curso se configura en la interfaz de criterios de inscripción de los cursos - ¡HECHO!
+# Aceptación - Se selecciona el Numero ID del curso de una lista desplegable - ¡HECHO!
+# Aceptación - La dependencia de un curso de activa y se desactiva mediante un checkbox - ¡HECHO!
+# Aceptación - Si un alumno desea matricularse en un curso con dependencia debe de tener certificado el curso dependiente - ¡HECHO!
