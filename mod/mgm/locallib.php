@@ -51,6 +51,7 @@ define('MGM_CRITERIA_NUMGROUPS', 8);
 define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
 define('MGM_ITE_SCALA', 3);
+define('MGM_ITE_ROLE', 4);
 
 define('MGM_DATA_NO_ERROR', 0);
 define('MGM_DATA_CC_ERROR', 1);
@@ -1948,6 +1949,32 @@ function mgm_get_certification_scala() {
 }
 
 /**
+ * Get the certification roles
+ *
+ * @return mixed
+ */
+function mgm_get_certification_roles() {
+    global $CFG;
+    
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+            WHERE type = ".MGM_ITE_ROLE."";
+    if($role = get_record_sql($sql)) {
+        $roles = array(
+            'coordinador' => 0, 'tutor'=> 0, 'estudiante'=> 0
+        );
+        
+        foreach (explode(",", $role->value) as $value) {
+            $tmpvalue = explode(":", $value);
+            $roles[$tmpvalue[0]] = $tmpvalue[1];                                       
+        }
+        
+        return $roles;         
+    } else {
+        return false;
+    }
+}
+
+/**
  * Sets the certification scala
  *
  * @param string $scala
@@ -1962,6 +1989,38 @@ function mgm_set_certification_scala($scala) {
     } else {
         $nscala->value = $scala;
         update_record('edicion_ite', $nscala);
+    }
+}
+
+/**
+ * Sets the certification roles
+ *
+ * @param string $roles
+ */
+function mgm_set_certification_roles($roles) {
+    $troles = "";
+    $x = 1;
+    foreach ($roles as $k=>$v) {
+        if ($x < count($roles)) {
+            $troles .= $k.":".$v.",";
+        } else {
+            $troles .= $k.":".$v;
+        }
+        $x++;
+    }
+    
+    if (!$nroles = mgm_get_certification_roles()) {
+        // New Record
+        $nroles = new stdClass();
+        $nroles->type = MGM_ITE_ROLE;
+        $nroles->name = 'Roles';
+        $nroles->value = $troles;
+        insert_record('edicion_ite', $nroles);
+    } else {
+        // Update Record
+        $nroles = get_record('edicion_ite', 'type', MGM_ITE_ROLE);
+        $nroles->value = $troles;
+        update_record('edicion_ite', $nroles);
     }
 }
 
@@ -2059,6 +2118,12 @@ function mgm_get_check_index($criteria) {
     return $x;
 }
 
+/**
+ * Return the user certification history
+ *
+ * @param string $userid
+ * @return object
+ */
 function mgm_get_cert_history($userid) {
     if (!$userid) {
         return false;
@@ -2067,6 +2132,13 @@ function mgm_get_cert_history($userid) {
     return get_records('edicion_cert_history', 'userid', $userid);
 }
 
+/**
+ * Return true if user given by userid has certified the course given by courseid
+ *
+ * @param string $userid
+ * @param string $courseid
+ * @return boolean
+ */ 
 function mgm_is_course_certified($userid, $courseid) {
     if (!$userid || !$courseid) {
         return false;
@@ -2080,8 +2152,17 @@ function mgm_is_course_certified($userid, $courseid) {
     }
 }
 
-function mgm_certificate_course($userid, $courseid, $edition) {
-    if (!$userid || !$courseid || !$edition) {
+/**
+ * Certificates a course
+ *
+ * @param string $userid 
+ * @param string $courseid
+ * @param object $edition
+ * @param string $roleid
+ * @return boolean
+ */
+function mgm_certificate_course($userid, $courseid, $edition, $roleid=0) {
+    if (!$userid || !$courseid || !$edition || !$roleid) {
         return false;
     }
     
@@ -2092,11 +2173,18 @@ function mgm_certificate_course($userid, $courseid, $edition) {
     $data = new stdClass();
     $data->userid = $userid;
     $data->courseid = $courseid;
-    $data->edicionid = $edition->id;    
+    $data->edicionid = $edition->id;
+    $data->roleid = $roleid;    
     
     return insert_record('edicion_cert_history', $data);
 }
 
+/**
+ * Certficates an edition
+ *
+ * @param object $edition
+ * @return boolean
+ */
 function mgm_certificate_edition($edition) {
     if (!$edition) {
         return false;
@@ -2105,16 +2193,82 @@ function mgm_certificate_edition($edition) {
     foreach (mgm_get_edition_courses($edition) as $course) {
         if (!$participants = mgm_get_course_participants($course)) {
             return false;
-        }
+        }       
         
-        foreach($participants as $participant) {
-            if (!mgm_certificate_course($participant->id, $course->id, $edition->id)) {
+        $participants = mgm_check_double_role_in_course($participants);
+        
+        $course_participants = array();
+        foreach($participants as $participant) {            
+            if (!mgm_certificate_course($participant->userid, $course->id, $edition->id, $participant->roleid)) {
                 return false;
-            }
+            }            
         }
     }
     
     return true;
+}
+
+/**
+ * Check if there exists dupe ids in a participants array.
+ * If exists, just certificate the highest roleid
+ *
+ * @param array $participants
+ * @return array
+ */
+function mgm_check_double_role_in_course($participants) {    
+    $ardy = array();
+    foreach ($participants as $k=>$v) {
+        if (array_key_exists($v->userid, $ardy)) {
+            // Double found
+            $ardy[$v->userid] = mgm_get_highest_role($ardy[$v->userid], $v);           
+        } else {
+            $ardy[$v->userid] = $v;
+        }
+    }
+    
+    return $ardy;    
+}
+
+/**
+ * Return the highest role
+ *
+ * @param object $rol1
+ * @param object $rol2
+ * @return object
+ */
+function mgm_get_highest_role($rol1, $rol2) {
+    $roles = mgm_get_certification_roles();
+    $role1_level = $role2_level = 0;
+    
+    switch ($rol1->roleid) {
+        case $roles['coordinador']:
+            $role1_level = 3;
+            break;
+        case $roles['tutor']:
+            $role1_level = 2;
+            break;
+        case $roles['alumno']:
+            $role1_level = 1;
+            break;        
+    }
+    
+    switch ($rol2->roleid) {
+        case $roles['coordinador']:
+            $role2_level = 3;
+            break;
+        case $roles['tutor']:
+            $role2_level = 2;
+            break;
+        case $roles['alumno']:
+            $role2_level = 1;
+            break;        
+    }
+    
+    if ($role1 > $role2) {
+        return $role1;
+    } else {
+        return $role2;
+    }
 }
 
 function mgm_get_pass_courses($editionid, $userid) {
@@ -2168,7 +2322,7 @@ function mgm_get_course_participants($course) {
         }
     }
     
-    $sql = "SELECT DISTINCT u.id, u.username FROM ".$CFG->prefix."user u ".
+    $sql = "SELECT DISTINCT ctx.id, u.id as userid, u.username, r.roleid FROM ".$CFG->prefix."user u ".
             "LEFT OUTER JOIN ".$CFG->prefix."context ctx ".
             "ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.") ".
             "JOIN ".$CFG->prefix."role_assignments r ".
@@ -2177,7 +2331,7 @@ function mgm_get_course_participants($course) {
             "AND u.deleted = 0 ".            
             "AND u.username != 'guest' ".
             "AND r.roleid NOT IN (".implode(',', $adminroles).")";
-    
+        
     return get_records_sql($sql);    
 }
 

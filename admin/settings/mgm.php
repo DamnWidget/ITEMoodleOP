@@ -58,6 +58,11 @@ $ADMIN->add(
 );
 
 $ADMIN->add(
+    'ediciones', new admin_externalpage('edicionesrole', get_string('edicionesrole', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/roles.php', 'mod/mgm:createedicion')
+);
+
+$ADMIN->add(
     'ediciones', new admin_externalpage('exportdata', get_string('exportdata', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/export.php', 'mod/mgm:aprobe')
 );

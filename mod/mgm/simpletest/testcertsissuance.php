@@ -90,7 +90,7 @@ class testCertificatesIssuance extends UnitTestCase {
      
      function testCourseCertificationInsertRecord() {
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;                
-         mgm_certificate_course('1010101010', '1010101010', $this->edition);
+         mgm_certificate_course('1010101010', '1010101010', $this->edition, 5);
          $history = get_record('edicion_cert_history', 'courseid', '1010101010', 'userid', '1010101010');         
          $this->assertTrue($history);
          if ($history) {
@@ -100,22 +100,27 @@ class testCertificatesIssuance extends UnitTestCase {
      
      function testCourseCertificationNoCourse() {
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
-         $this->assertFalse(mgm_certificate_course('1010101010', '', $this->edition));          
+         $this->assertFalse(mgm_certificate_course('1010101010', '', $this->edition, 5));          
      }
      
      function testCourseCertificationNoUser() {
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
-         $this->assertFalse(mgm_certificate_course('', '1010101010', $this->edition));          
+         $this->assertFalse(mgm_certificate_course('', '1010101010', $this->edition, 5));          
      }
      
      function testCourseCertificationNoEdition() {
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
-         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', null));          
+         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', null, 5));          
      }
      
      function testCourseCertificationIncorrectEditionState() {
          $this->edition->certified = MGM_CERTIFICATE_DRAFT;
-         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', $this->edition)); 
+         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', $this->edition, 5)); 
+     }
+     
+     function testCourseCertificationNoRoleid() {
+         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
+         $this->assertFalse(mgm_certificate_course('1010101010', '1010101010', $this->edition));
      }
 }
 
