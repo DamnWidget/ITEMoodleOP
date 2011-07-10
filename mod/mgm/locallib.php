@@ -495,6 +495,21 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
     $criteria->plazas = 0;
     $criteria->espec = array();
 
+    //Datos extendidos
+    $edata = mgm_get_edition_course($editionid,$courseid);
+    $criteria->codmodalidad = $edata->codmodalidad;
+    $criteria->codagrupacion = $edata->codagrupacion;
+    $criteria->codprovincia = $edata->codprovincia;
+    $criteria->codpais = $edata->codpais;
+    $criteria->codmateria = $edata->codmateria;
+    $criteria->codniveleducativo = $edata->codniveleducativo;
+    $criteria->numhoras = $edata->numhoras;
+    $criteria->numcreditos = $edata->numcreditos;
+    $criteria->fechainicio = $edata->fechainicio;
+    $criteria->fechafin = $edata->fechafin;
+    $criteria->localidad = $edata->localidad;
+    $criteria->fechainimodalidad = $edata->fechainimodalidad;
+        
     $sql = 'SELECT * FROM '.$CFG->prefix.'edicion_criterios
     		WHERE edicion = \''.$editionid.'\' AND course = \''.$courseid.'\'';
     if (!$cdata = get_records_sql($sql)) {
@@ -550,7 +565,24 @@ function mgm_set_edition_course_criteria($data) {
     $criteria = new stdClass();
     $criteria->edicion = $data->edicionid;
     $criteria->course = $data->courseid;
-
+    
+    //Datos extendidos
+    $edata = mgm_get_edition_course($data->edicionid,$data->courseid);
+    $edata->codmodalidad = $data->codmodalidad;
+    $edata->codagrupacion = $data->codagrupacion;
+    $edata->codprovincia = $data->codprovincia;
+    $edata->codpais = $data->codpais;
+    $edata->codmateria = $data->codmateria;
+    $edata->codniveleducativo = $data->codniveleducativo;
+    $edata->numhoras = $data->numhoras;
+    $edata->numcreditos = $data->numcreditos;
+    $edata->fechainicio = $data->fechainicio;
+    $edata->fechafin = $data->fechafin;
+    $edata->localidad = $data->localidad;
+    $edata->fechainimodalidad = $data->fechainimodalidad;
+    
+    update_record('edicion_course', $edata);
+    
     // Plazas
     $criteria->type = MGM_CRITERIA_PLAZAS;
     $criteria->value = $data->plazas;
@@ -2413,4 +2445,372 @@ function mgm_validate_cif($cif) {
 
     // Si todavia no se ha verificado devuelve error
     return false;
+}
+
+class Edicion {
+  var $data;
+  var $anoacademico = null;
+  
+  function Edicion( $data = null ) {
+    if (!$data)
+      $this->data = mgm_get_active_edition();
+    else
+      $this->data = $data;
+  }
+  
+  function getFin() {
+    return $this->data->fin;
+  }
+  
+  function getAnoAcademico() {
+    if (!$this->anoacademico) {
+      $yday = date("z",$this->data->inicio);
+      $year = date("Y",$this->data->inicio);
+      //Inicio de año academico el 15 de septiembre
+      //TODO: Parametrizar?
+      if ($yday < date("z",mktime(0,0,0,9,15,2011))) {
+        $year--;
+      }
+      $this->anoacademico = $year.$year+1;
+    }
+    return $this->anoacademico;
+  }
+  
+  function getCursos() {
+    $cursosdata = mgm_get_edition_courses($this->data);
+    $cursos = array();
+    if ($cursosdata)
+    foreach ($cursosdata as $cursodata)
+      $cursos[$cursodata->id] = new Curso( $cursodata, $this );
+    return $cursos;
+  }
+}
+
+class Curso {
+  var $data;
+  var $participantes = null;
+  var $dparticipantes = False;
+  var $edata = array();
+  var $dbedata;
+  var $edicion;
+  var $incidencias = array();
+  var $info;
+
+  function cargarEdata($campo, $ncampo) {
+    if (!$campo) {
+      $this->info->campo = $ncampo;
+      $this->incidencias[] = get_string('incidencia_curso', 'mgm', $this->info);
+    }
+    $this->edata[$ncampo] = $campo;
+  }
+  
+  function Curso( $data, $edicion ) {
+    $this->data = $data;
+    $this->edicion = $edicion;
+    $this->dbedata = mgm_get_edition_course($edicion->data->id, $data->id);
+    
+    $this->info->curso = $this->data->fullname;
+    $this->info->edicion = $this->edicion->data->name;
+    $this->info->cursoid = $this->data->id;
+    $this->info->edicionid = $this->edicion->data->id;
+    
+    $this->edata['anoacademico'] = $this->edicion->getAnoAcademico();#Obligatorio
+    
+    #TODO: Parametrizar?
+    $this->edata['codentidad'] = '28923065';#Obligatorio
+    
+    #TODO: Parametrizar?
+    $this->edata['codentidadvisado'] = '28923016';#Obligatorio
+    
+    $this->edata['codtipoactividad'] = 'AP';#Obligatorio
+    
+    #Nos tiene que venir de vuelta
+    $this->edata['numactividad'] = null;
+    
+    $this->cargarEdata($this->dbedata->codagrupacion, 'codagrupacion');#Obligatorio
+    
+    #Nos tiene que venir de vuelta
+    $this->edata['codactividad'] = null;#Obligatorio
+    
+    $this->cargarEdata($this->dbedata->codmodalidad, 'codmodalidad');#Obligatorio
+    
+    #TODO: Parametrizar?
+    $this->edata['codentidadpadre'] = '28923016';#Obligatorio
+    
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->codprovincia, 'codprovincia');#Obligatorio
+    
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->codpais, 'codpais');#Obligatorio
+        
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->codmateria, 'codmateria');#Obligatorio
+    
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->codniveleducativo, 'codniveleducativo');#Obligatorio
+        
+    #No es necesario rellenarlo, sería necesario rellenar mediante interfaz
+    $this->edata['codambito'] = null;
+    
+    #No es necesario rellenarlo, aunque es calculable
+    $this->edata['numsolicitudes'] = null;
+    
+    #No es necesario rellenarlo, aunque es calculable
+    $this->edata['numasistentes'] = null;
+
+    #No es necesario rellenarlo, aunque es calculable
+    $this->edata['numfinalizados'] = null;
+    
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->numhoras, 'numhoras');#Obligatorio
+    
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->numcreditos, 'numcreditos');#Obligatorio
+    
+    #No es necesario rellenarlo
+    $this->edata['fechainicioprevista'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['fechafinprevista'] = null;
+
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->fechainicio, 'fechainicio');#Obligatorio
+    
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->fechafin, 'fechafin');#Obligatorio
+    
+    #No es necesario rellenarlo
+    $this->edata['generaacta'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['actagenerada'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['fechagenacta'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['generacertif'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['tema'] = null;
+
+    $this->edata['titulo'] = $this->data->fullname;#Obligatorio
+
+    #No es necesario rellenarlo
+    $this->edata['idsexenios'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['numregCCAA'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['textocertif'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['centroeducativo'] = null;
+
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->localidad, 'localidad');#Obligatorio
+    
+    #No es necesario rellenarlo
+    $this->edata['motivorechazo'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['fase'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['estado'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['idmodificacion'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['fechaactualizacion'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['codentidadmodif'] = null;
+
+    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
+    $this->cargarEdata($this->dbedata->fechainimodalidad, 'fechainimodalidad');#Obligatorio
+    
+    #No es necesario rellenarlo
+    $this->edata['convresol'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['fechaconvresol'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['codentidadintr'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['idcambioanoacad'] = null;
+
+    #No es necesario rellenarlo
+    $this->edata['idpi'] = null;
+  }
+  
+  function getNombre() {
+    return $this->data->name;
+  } 
+  
+  function getTutores() {}
+  function getCoordinadores() {}
+  function getParticipantes() {
+    if ( $this->dparticipantes )
+      return $this->participantes;
+    $this->participantes = array();
+    $userlist = mgm_get_course_participants($this->data);
+    foreach ($userlist as $userdata) {
+      $this->participantes[$userdata->userid] = new Usuario( $userdata, $this );
+    }
+    $this->dparticipantes = True;
+    return $this->participantes;
+  }
+  
+  function getTareas( $usuario ) {}
+}
+
+class Usuario {
+  var $data;
+  var $edata = array();
+  var $curso;
+  var $incidencias = array();
+  
+  function Usuario( $data, $curso ) {
+    $this->data = $data;
+    $this->curso = $curso;
+    $this->edata['anoacademico'] = $this->curso->edicion->getAnoAcademico();#Obligatorio
+    $this->edata['anoacademico'] = "20102011";
+    $this->edata['codactividad'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['tipoid'] = null;#Obligatorio, "N" o "P" o "T"
+    $this->edata['DNI'] = null;#Obligatorio
+    $this->edata['creditos'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['fechaemision'] = null;
+    $this->edata['fechaultduplicado'] = null;
+    $this->edata['numduplicados'] = null;
+    $this->edata['remitido'] = null;
+    $this->edata['codmotivo'] = null;
+    $this->edata['numregistro'] = null;
+    $this->edata['numregistroCCAA'] = null;
+    $this->edata['generacertif'] = null;
+    $this->edata['codtipoparticipante'] = null;#Obligatorio
+    $this->edata['codmodalidad'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['fechainicio'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['codtipoactividad'] = 'AP';#Obligatorio
+    $this->edata['idayuda'] = null;
+    $this->edata['organismo'] = null;
+    $this->edata['impayuda'] = null;
+    $this->edata['codagrupacion'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['numhoras'] = null;#Obligatorio, proviene de la actividad/curso
+  }
+  
+  function getNombre() {
+    return $this->data->username;
+  }
+}
+
+class Tarea {
+  function getNombre() {}  
+  function completada() {}
+}
+
+class EmisionDatos {
+  var $edicion;
+  var $uexcluidos;
+  
+  function EmisionDatos( $edicion = null ) {
+    if ($edicion)
+      $this->edicion = $edicion;
+    else
+      $this->edicion = new Edicion();
+  }
+  
+  function Validar( $fechaactual=null ) {
+    if (!$fechaactual)
+      $fechaactual = mktime();
+    
+    $cursos = $this->edicion->getCursos();
+    
+    $tareas_sin_f = array();
+    if ($cursos)
+    foreach ($cursos as $curso) {
+      $usuarios = array_merge($curso->getTutores(), $curso->getCoordinadores());
+      if ($usuarios)
+      foreach ($usuarios as $usuario) {
+        $tareas = $curso->getTareas($usuario);
+        if ($tareas)
+        foreach ($tareas as $tarea) {
+          if (!$tarea->completada()) {
+            $tarea_sin_f = new stdClass();
+            $tarea_sin_f->curso = $curso->getNombre();
+            $tarea_sin_f->usuario = $usuario->getNombre();
+            $tarea_sin_f->tarea = $tarea->getNombre();
+            $tareas_sin_f[] = $tarea_sin_f;
+          }
+        }
+      }
+    }
+    $ret = new stdClass();
+    $ret->ok = False;
+    $ret->incidencias = array();
+    if ($this->edicion->getFin() < $fechaactual) {
+      if ($tareas_sin_f) {
+        foreach ($tareas_sin_f as $tarea) {
+          $ret->incidencias[] = get_string('user_no_task_ended','mgm',$tarea);
+        }
+      }
+      else {
+        $ret->ok = True;
+      }
+    }
+    else {
+      $ret->incidencias[] = get_string('edition_not_ended','mgm');
+    }
+    return $ret;
+  }
+  
+  function Excluir( $usuarios ) {
+    $this->uexcluidos = $usuarios;
+  }
+
+  function aFichero( $directorio ) {
+    $ret = new stdClass();
+    $ret->ok = True;
+    $ret->incidencias = array();
+    $cursos = $this->edicion->getCursos();
+    $fparticipantes = fopen( "/tmp/participantes.csv", "w" );
+    $factividades = fopen( "/tmp/actividades.csv", "w" );
+    $cabecera_participantes = False;
+    $cabecera_actividades = False;
+    if ($cursos)
+    foreach ($cursos as $curso) {
+      if (!$cabecera_participantes) {
+        fwrite($factividades, implode(',', array_keys($curso->edata))."\n");
+        $cabecera_actividades = True;
+      }
+      if ($curso->incidencias)
+        $ret->incidencias = array_merge( $ret->incidencias, $curso->incidencias );
+      fwrite($factividades, implode(',', $curso->edata)."\n");
+      $participantes = $curso->getParticipantes();
+      foreach ($participantes as $participante) {
+        if (!$cabecera_participantes) {
+          fwrite($fparticipantes, implode(',', array_keys($participante->edata))."\n");
+          $cabecera_participantes = True;
+        }
+        if ($participante->incidencias)
+          $ret->incidencias = array_merge( $ret->incidencias, $participante->incidencias );
+        fwrite($fparticipantes, implode(',', $participante->edata)."\n");
+      }
+    }
+    fclose($factividades);
+    fclose($fparticipantes);
+    $ret->filename = tempnam($directorio,"export").".zip";
+    zip_files(array("/tmp/participantes.csv","/tmp/actividades.csv"), $ret->filename);
+    $newname = md5_file($ret->filename);
+    rename($ret->filename, $directorio."/".$newname);
+    $ret->filename = $newname;
+    @unlink("/tmp/participantes.csv");
+    @unlink("/tmp/actividades.csv");
+    return $ret;
+  }
+  
 }

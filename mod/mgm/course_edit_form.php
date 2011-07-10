@@ -49,6 +49,44 @@ class mgm_course_edit_form extends moodleform {
             $strsubmit = get_string('createcriteria', 'mgm');
         }
 
+        $mform->addElement('header', 'course_extend', get_string('course_extend', 'mgm'));
+        $mform->addElement('text', 'codagrupacion', get_string('codagrupacion', 'mgm'));
+        $mform->addRule('codagrupacion', get_string('required'), 'required', null);
+        $mform->addRule('codagrupacion', get_string('numeric', 'mgm'), 'numeric');
+        
+        $mform->addElement('text', 'codmodalidad', get_string('codmodalidad', 'mgm'));
+        $mform->addRule('codmodalidad', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'codprovincia', get_string('codprovincia', 'mgm'));
+        $mform->addRule('codprovincia', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'codpais', get_string('codpais', 'mgm'));
+        $mform->addRule('codpais', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'codmateria', get_string('codmateria', 'mgm'));
+        $mform->addRule('codmateria', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'codniveleducativo', get_string('codniveleducativo', 'mgm'));
+        $mform->addRule('codniveleducativo', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'numhoras', get_string('numhoras', 'mgm'));
+        $mform->addRule('numhoras', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'numcreditos', get_string('numcreditos', 'mgm'));
+        $mform->addRule('numcreditos', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'fechainicio', get_string('fechainicio', 'mgm'));
+        $mform->addRule('fechainicio', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'fechafin', get_string('fechafin', 'mgm'));
+        $mform->addRule('fechafin', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'localidad', get_string('localidad', 'mgm'));
+        $mform->addRule('localidad', get_string('required'), 'required', null);
+        
+        $mform->addElement('text', 'fechainimodalidad', get_string('fechainimodalidad', 'mgm'));
+        $mform->addRule('fechainimodalidad', get_string('required'), 'required', null);
+        
         $mform->addElement('header', 'criteria', get_string('criterios', 'mgm'));
 
         $mform->addElement('text', 'plazas', get_string('plazas', 'mgm'));
