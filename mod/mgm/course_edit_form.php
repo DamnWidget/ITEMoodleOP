@@ -38,6 +38,12 @@ class mgm_course_edit_form extends moodleform {
     // Form definition
     function definition() {
         global $CFG;
+        global $NIVELES_EDUCATIVOS;
+        global $CODIGOS_AGRUPACION;
+        global $MODALIDADES;
+        global $PROVINCIAS;
+        global $PAISES;
+        global $MATERIAS;
         $mform =& $this->_form;
         $criteria = $this->_customdata;
 
@@ -50,42 +56,46 @@ class mgm_course_edit_form extends moodleform {
         }
 
         $mform->addElement('header', 'course_extend', get_string('course_extend', 'mgm'));
-        $mform->addElement('text', 'codagrupacion', get_string('codagrupacion', 'mgm'));
+        
+        $mform->addElement('select', 'codagrupacion', get_string('codagrupacion', 'mgm'), $CODIGOS_AGRUPACION);
         $mform->addRule('codagrupacion', get_string('required'), 'required', null);
         $mform->addRule('codagrupacion', get_string('numeric', 'mgm'), 'numeric');
         
-        $mform->addElement('text', 'codmodalidad', get_string('codmodalidad', 'mgm'));
+        $mform->addElement('select', 'codmodalidad', get_string('codmodalidad', 'mgm'), $MODALIDADES);
         $mform->addRule('codmodalidad', get_string('required'), 'required', null);
         
-        $mform->addElement('text', 'codprovincia', get_string('codprovincia', 'mgm'));
+        $mform->addElement('select', 'codprovincia', get_string('codprovincia', 'mgm'), $PROVINCIAS);
         $mform->addRule('codprovincia', get_string('required'), 'required', null);
         
-        $mform->addElement('text', 'codpais', get_string('codpais', 'mgm'));
+        $mform->addElement('select', 'codpais', get_string('codpais', 'mgm'), $PAISES);
         $mform->addRule('codpais', get_string('required'), 'required', null);
         
-        $mform->addElement('text', 'codmateria', get_string('codmateria', 'mgm'));
+        $mform->addElement('select', 'codmateria', get_string('codmateria', 'mgm'), $MATERIAS);
         $mform->addRule('codmateria', get_string('required'), 'required', null);
         
-        $mform->addElement('text', 'codniveleducativo', get_string('codniveleducativo', 'mgm'));
+        $mform->addElement('select', 'codniveleducativo', get_string('codniveleducativo', 'mgm'), $NIVELES_EDUCATIVOS );
         $mform->addRule('codniveleducativo', get_string('required'), 'required', null);
         
         $mform->addElement('text', 'numhoras', get_string('numhoras', 'mgm'));
         $mform->addRule('numhoras', get_string('required'), 'required', null);
+        $mform->addRule('numhoras', get_string('numeric', 'mgm'), 'numeric');
         
         $mform->addElement('text', 'numcreditos', get_string('numcreditos', 'mgm'));
         $mform->addRule('numcreditos', get_string('required'), 'required', null);
+        $mform->addRule('numcreditos', get_string('numeric', 'mgm'), 'numeric');
         
-        $mform->addElement('text', 'fechainicio', get_string('fechainicio', 'mgm'));
+        $mform->addElement('date_selector', 'fechainicio', get_string('fechainicio', 'mgm'));
         $mform->addRule('fechainicio', get_string('required'), 'required', null);
         
-        $mform->addElement('text', 'fechafin', get_string('fechafin', 'mgm'));
+        $mform->addElement('date_selector', 'fechafin', get_string('fechafin', 'mgm'));
         $mform->addRule('fechafin', get_string('required'), 'required', null);
         
         $mform->addElement('text', 'localidad', get_string('localidad', 'mgm'));
         $mform->addRule('localidad', get_string('required'), 'required', null);
         
-        $mform->addElement('text', 'fechainimodalidad', get_string('fechainimodalidad', 'mgm'));
+        $mform->addElement('date_selector', 'fechainimodalidad', get_string('fechainimodalidad', 'mgm'));
         $mform->addRule('fechainimodalidad', get_string('required'), 'required', null);
+        $mform->setDefault('fechainimodalidad', mktime(0,0,0,9,1,1975));
         
         $mform->addElement('header', 'criteria', get_string('criterios', 'mgm'));
 
