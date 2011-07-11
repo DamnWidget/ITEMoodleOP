@@ -1923,7 +1923,7 @@ function mgm_rollback_borrador($editionid, $courseid) {
 
 function mgm_edition_set_user_address($userid, $address) {
     if (!$euser = get_record('edicion_user', 'userid', $userid)) {
-        error('Use doesn\'t exists!');
+        error('User doesn\'t exists!');
     } else {
         if (!empty($addres)) {
             $euser->alt_address = true;
@@ -2537,16 +2537,12 @@ class Curso {
     #TODO: Parametrizar?
     $this->edata['codentidadpadre'] = '28923016';#Obligatorio
     
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->codprovincia, 'codprovincia');#Obligatorio
     
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->codpais, 'codpais');#Obligatorio
         
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->codmateria, 'codmateria');#Obligatorio
     
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->codniveleducativo, 'codniveleducativo');#Obligatorio
         
     #No es necesario rellenarlo, sería necesario rellenar mediante interfaz
@@ -2561,10 +2557,8 @@ class Curso {
     #No es necesario rellenarlo, aunque es calculable
     $this->edata['numfinalizados'] = null;
     
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->numhoras, 'numhoras');#Obligatorio
     
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->numcreditos, 'numcreditos');#Obligatorio
     
     #No es necesario rellenarlo
@@ -2573,10 +2567,8 @@ class Curso {
     #No es necesario rellenarlo
     $this->edata['fechafinprevista'] = null;
 
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->fechainicio, 'fechainicio');#Obligatorio
     
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->fechafin, 'fechafin');#Obligatorio
     
     #No es necesario rellenarlo
@@ -2608,7 +2600,6 @@ class Curso {
     #No es necesario rellenarlo
     $this->edata['centroeducativo'] = null;
 
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->localidad, 'localidad');#Obligatorio
     
     #No es necesario rellenarlo
@@ -2629,7 +2620,6 @@ class Curso {
     #No es necesario rellenarlo
     $this->edata['codentidadmodif'] = null;
 
-    #TODO: Desarrollar interfaz para introducir dicho campo en Moodle?
     $this->cargarEdata($this->dbedata->fechainimodalidad, 'fechainimodalidad');#Obligatorio
     
     #No es necesario rellenarlo
@@ -2671,19 +2661,30 @@ class Curso {
 
 class Usuario {
   var $data;
+  var $dbdata;
   var $edata = array();
   var $curso;
   var $incidencias = array();
+  var $info;
   
   function Usuario( $data, $curso ) {
     $this->data = $data;
     $this->curso = $curso;
+    $this->info->nombre = $data->username;
+    $this->dbdata = get_record('edicion_user', 'userid', $data->userid);
     $this->edata['anoacademico'] = $this->curso->edicion->getAnoAcademico();#Obligatorio
     $this->edata['anoacademico'] = "20102011";
-    $this->edata['codactividad'] = null;#Obligatorio, proviene de la actividad/curso
-    $this->edata['tipoid'] = null;#Obligatorio, "N" o "P" o "T"
-    $this->edata['DNI'] = null;#Obligatorio
-    $this->edata['creditos'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['codactividad'] = null;#Obligatorio, proviene de la actividad/curso. Nos vendrá de vuelta
+    if (!$this->dbdata) {
+      $this->edata['tipoid'] = null;#Obligatorio, "N" o "P" o "T"
+      $this->edata['DNI'] = null;#Obligatorio
+      $this->incidencias[] = get_string('incidencia_usuario', 'mgm', $this->info);
+    }
+    else {
+      $this->edata['tipoid'] = $this->dbdata->tipoid;
+      $this->edata['DNI'] = $this->dbdata->dni;
+    }
+    $this->edata['creditos'] = $this->curso->edata['numcreditos'];#Obligatorio, proviene de la actividad/curso
     $this->edata['fechaemision'] = null;
     $this->edata['fechaultduplicado'] = null;
     $this->edata['numduplicados'] = null;
@@ -2692,19 +2693,32 @@ class Usuario {
     $this->edata['numregistro'] = null;
     $this->edata['numregistroCCAA'] = null;
     $this->edata['generacertif'] = null;
-    $this->edata['codtipoparticipante'] = null;#Obligatorio
-    $this->edata['codmodalidad'] = null;#Obligatorio, proviene de la actividad/curso
-    $this->edata['fechainicio'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['codtipoparticipante'] = $this->getTipo();#Obligatorio
+    $this->edata['codmodalidad'] = $this->curso->edata['codmodalidad'];#Obligatorio, proviene de la actividad/curso
+    $this->edata['fechainicio'] = $this->curso->edata['fechainicio'];#Obligatorio, proviene de la actividad/curso
     $this->edata['codtipoactividad'] = 'AP';#Obligatorio
     $this->edata['idayuda'] = null;
     $this->edata['organismo'] = null;
     $this->edata['impayuda'] = null;
-    $this->edata['codagrupacion'] = null;#Obligatorio, proviene de la actividad/curso
-    $this->edata['numhoras'] = null;#Obligatorio, proviene de la actividad/curso
+    $this->edata['codagrupacion'] = $this->curso->edata['codagrupacion'];#Obligatorio, proviene de la actividad/curso
+    $this->edata['numhoras'] = $this->curso->edata['numhoras'];#Obligatorio, proviene de la actividad/curso
   }
   
   function getNombre() {
     return $this->data->username;
+  }
+  
+  function getTipo() {
+    $roles = mgm_get_certification_roles();
+    if ($roles) {
+      if ($this->data->roleid == $roles['alumno'])
+        return 'A';
+      elseif ($this->data->roleid == $roles['tutor'])
+        return 'T';
+      elseif ($this->data->roleid == $roles['coordinador'])
+        return 'C';
+    }
+    return null;
   }
 }
 
