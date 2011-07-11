@@ -2060,7 +2060,8 @@ function mgm_get_courses($course) {
     global $CFG;
 
     $sql = "SELECT id, idnumber, fullname FROM ".$CFG->prefix."course
-    		WHERE id !='".$course->id."'";
+    		WHERE id !='".$course->id."' 
+    		AND idnumber != '' GROUP BY idnumber";
 
     if (!$data = get_records_sql($sql)) {
         return array();
