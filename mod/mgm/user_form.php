@@ -50,6 +50,7 @@ class mod_mgm_user_form extends moodleform {
         $mform->addElement('text', 'dni', get_string('dni', 'mgm'), array('size' => '9'));
         $mform->addRule('dni', get_string('required'), 'required', null);
         $mform->addElement('text', 'cc', get_string('cc', 'mgm'), array('size'=>'30'));
+        $mform->setHelpButton('cc', array('cc', get_string('cc', 'mgm'), 'mgm'));
         $mform->addRule('cc', get_string('required'), 'required', null);
         $mform->addElement('text', 'codniveleducativo', get_string('codniveleducativo','mgm'), array('size' => '2'));
         $mform->addRule('codniveleducativo', get_string('required'), 'required', null);
