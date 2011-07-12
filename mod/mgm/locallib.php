@@ -3260,6 +3260,8 @@ class Usuario {
     $this->curso = $curso;
     $this->info->nombre = $data->username;
     $this->dbdata = get_record('edicion_user', 'userid', $data->userid);
+    
+    //Datos para participantes.csv
     $this->edata['anoacademico'] = $this->curso->edicion->getAnoAcademico();#Obligatorio
     $this->edata['anoacademico'] = "20102011";
     $this->edata['codactividad'] = $this->curso->edata['codactividad'];#Obligatorio, proviene de la actividad/curso. Nos vendrá de vuelta
@@ -3291,6 +3293,7 @@ class Usuario {
     $this->edata['codagrupacion'] = $this->curso->edata['codagrupacion'];#Obligatorio, proviene de la actividad/curso
     $this->edata['numhoras'] = $this->curso->edata['numhoras'];#Obligatorio, proviene de la actividad/curso
     
+    //Datos para profesores.csv
     $this->edatap['tipoid'] = $this->edata['tipoid'];#Obligatorio
     $this->edatap['DNI'] = $this->edata['DNI'];#Obligatorio
     if (!$this->dbdata) {
@@ -3312,8 +3315,14 @@ class Usuario {
     }
     $userdata = get_record('user', 'id', $data->userid);
     $apellidos = explode(' ', $userdata->lastname, 2);
-    $this->edatap['apellido1'] = mb_strtoupper($apellidos[0], 'utf-8');#Obligatorio
-    $this->edatap['apellido2'] = mb_strtoupper($apellidos[1], 'utf-8'); #Obligatorio
+    if (count($apellidos) > 0)
+      $this->edatap['apellido1'] = mb_strtoupper($apellidos[0], 'utf-8');#Obligatorio
+    else
+      $this->edatap['apellido1'] = null;
+    if (count($apellidos) > 1)
+      $this->edatap['apellido2'] = mb_strtoupper($apellidos[1], 'utf-8'); #Obligatorio
+    else
+      $this->edatap['apellido2'] = null;
     $this->edatap['nombre'] = mb_strtoupper($userdata->firstname, 'utf-8');#Obligatorio
     $this->edatap['anosexperiencia'] = null;
     $this->edatap['situacionadmin'] = null;

@@ -162,7 +162,8 @@ class mgm_course_edit_form extends moodleform {
             $mform->setDefault('courseid', $criteria->courseid);
         }
 
-        $dpends = array();        
+        $dpends = array();
+        $dchoices = array();     
         foreach ($this->_customdata->dependencias as $k => $v) {
             $dchoices[$k] = ($v->idnumber != "") ? $v->idnumber : "NO CODE"." (".$v->fullname.")"; 
         } 
