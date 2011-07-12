@@ -40,7 +40,7 @@ class mod_mgm_user_form extends moodleform {
 
     // Form definition
     function definition() {
-        global $CFG, $USER, $NIVELES_EDUCATIVOS, $CUERPOS_DOCENTES;
+        global $CFG, $USER, $NIVELES_EDUCATIVOS, $CUERPOS_DOCENTES, $PAISES, $PROVINCIAS;
         $mform =& $this->_form;
         $strsubmit = get_string('savechanges');
 
@@ -69,6 +69,12 @@ class mod_mgm_user_form extends moodleform {
         
         $mform->addElement('text', 'codpostal', get_string('codpostal','mgm'), array('size' => '5'));
         $mform->addRule('codpostal', get_string('required'), 'required', null);
+
+        $mform->addElement('select', 'codprovincia', get_string('codprovincia','mgm'), $PROVINCIAS);
+        $mform->addRule('codprovincia', get_string('required'), 'required', null);
+
+        $mform->addElement('select', 'codpais', get_string('codpais','mgm'),$PAISES);
+        $mform->addRule('codpais', get_string('required'), 'required', null);
         
         $sexos = array(
           'H' => 'H Hombre',

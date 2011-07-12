@@ -3304,12 +3304,13 @@ class Usuario {
       $this->edatap['codniveleducativo'] = $this->dbdata->codniveleducativo;#Obligatorio
       $this->edatap['codcuerpodocente'] = $this->dbdata->codcuerpodocente;#Obligatorio
     }
-    $this->edatap['codprovincia'] = null;#Obligatorio
     if (!$this->dbdata) {
+      $this->edatap['codprovincia'] = null;#Obligatorio
       $this->edatap['codpostal'] = null;#Obligatorio
       $this->edatap['codcentro'] = null;#Obligatorio
     }
     else {
+      $this->edatap['codprovincia'] = $this->dbdata->codprovincia;#Obligatorio
       $this->edatap['codpostal'] = $this->dbdata->codpostal;#Obligatorio
       $this->edatap['codcentro'] = $this->dbdata->cc;#Obligatorio
     }
@@ -3329,11 +3330,14 @@ class Usuario {
     $this->edatap['domicilio'] = mb_strtoupper($userdata->address, 'utf-8');#Obligatorio
     $this->edatap['telefono'] = $userdata->phone1;#Obligatorio
     $this->edatap['localidad'] = mb_strtoupper($userdata->city, 'utf-8');#Obligatorio
-    $this->edatap['codpais'] = null;
-    if (!$this->dbdata)
+    if (!$this->dbdata) {
+      $this->edatap['codpais'] = null;
       $this->edatap['sexo'] = null;#Obligatorio
-    else
+    }
+    else {
+      $this->edatap['codpais'] = $this->dbdata->codpais;
       $this->edatap['sexo'] = $this->dbdata->sexo;#Obligatorio
+    }
   }
   
   function getNombre() {

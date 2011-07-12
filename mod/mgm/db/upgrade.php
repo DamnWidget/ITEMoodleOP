@@ -352,6 +352,20 @@ function xmldb_mgm_upgrade($oldversion=0) {
         $result = $result && change_field_type($table, $field);
     }
     
+    if ($result && $oldversion < 2011071200) {
+      $table = new XMLDBTable('edicion_user');
+      $field = new XMLDBField('codpais');
+      $field->setAttributes(XMLDB_TYPE_CHAR, '3', null, null, null, null, null, null, 'sexo');
+      
+      /// Launch add field codpais
+      $result = $result && add_field($table, $field);
+      
+      $field = new XMLDBField('codprovincia');
+      $field->setAttributes(XMLDB_TYPE_CHAR, '3', null, null, null, null, null, null, 'codpais');
+      
+      /// Launch add field codprovincia
+      $result = $result && add_field($table, $field);
+    }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
 /// it's interesting to look how other modules are using this script. Remember that
 /// the basic idea is to have "blocks" of code (each one being executed only once,
