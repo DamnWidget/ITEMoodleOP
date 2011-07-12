@@ -3062,9 +3062,12 @@ class Edicion {
   function getCursos() {
     $cursosdata = mgm_get_edition_courses($this->data);
     $cursos = array();
+    $numactividad = 1;
     if ($cursosdata)
-    foreach ($cursosdata as $cursodata)
-      $cursos[$cursodata->id] = new Curso( $cursodata, $this );
+    foreach ($cursosdata as $cursodata) {
+      $cursos[$cursodata->id] = new Curso( $cursodata, $this, $numactividad );
+      $numactividad++;
+    }
     return $cursos;
   }
 }
@@ -3087,7 +3090,7 @@ class Curso {
     $this->edata[$ncampo] = $campo;
   }
   
-  function Curso( $data, $edicion ) {
+  function Curso( $data, $edicion, $numactividad ) {
     $this->data = $data;
     $this->edicion = $edicion;
     $this->dbedata = mgm_get_edition_course($edicion->data->id, $data->id);
@@ -3108,12 +3111,12 @@ class Curso {
     $this->edata['codtipoactividad'] = 'AP';#Obligatorio
     
     #Nos tiene que venir de vuelta
-    $this->edata['numactividad'] = null;
+    $this->edata['numactividad'] = $numactividad;
     
     $this->cargarEdata($this->dbedata->codagrupacion, 'codagrupacion');#Obligatorio
     
     #Nos tiene que venir de vuelta
-    $this->edata['codactividad'] = null;#Obligatorio
+    $this->edata['codactividad'] = $this->edata['codentidad'].sprintf('%04d', $numactividad);#Obligatorio
     
     $this->cargarEdata($this->dbedata->codmodalidad, 'codmodalidad');#Obligatorio
     
@@ -3169,7 +3172,7 @@ class Curso {
     #No es necesario rellenarlo
     $this->edata['tema'] = null;
 
-    $this->edata['titulo'] = strtoupper($this->data->fullname);#Obligatorio
+    $this->edata['titulo'] = mb_strtoupper($this->data->fullname, 'utf-8');#Obligatorio
 
     #No es necesario rellenarlo
     $this->edata['idsexenios'] = null;
@@ -3183,7 +3186,7 @@ class Curso {
     #No es necesario rellenarlo
     $this->edata['centroeducativo'] = null;
 
-    $this->cargarEdata(strtoupper($this->dbedata->localidad), 'localidad');#Obligatorio
+    $this->cargarEdata(mb_strtoupper($this->dbedata->localidad, 'utf-8'), 'localidad');#Obligatorio
     
     #No es necesario rellenarlo
     $this->edata['motivorechazo'] = null;
@@ -3247,6 +3250,7 @@ class Usuario {
   var $data;
   var $dbdata;
   var $edata = array();
+  var $edatap = array();
   var $curso;
   var $incidencias = array();
   var $info;
@@ -3258,7 +3262,7 @@ class Usuario {
     $this->dbdata = get_record('edicion_user', 'userid', $data->userid);
     $this->edata['anoacademico'] = $this->curso->edicion->getAnoAcademico();#Obligatorio
     $this->edata['anoacademico'] = "20102011";
-    $this->edata['codactividad'] = null;#Obligatorio, proviene de la actividad/curso. Nos vendrá de vuelta
+    $this->edata['codactividad'] = $this->curso->edata['codactividad'];#Obligatorio, proviene de la actividad/curso. Nos vendrá de vuelta
     if (!$this->dbdata) {
       $this->edata['tipoid'] = null;#Obligatorio, "N" o "P" o "T"
       $this->edata['DNI'] = null;#Obligatorio
@@ -3266,7 +3270,7 @@ class Usuario {
     }
     else {
       $this->edata['tipoid'] = $this->dbdata->tipoid;
-      $this->edata['DNI'] = $this->dbdata->dni;
+      $this->edata['DNI'] = strtoupper($this->dbdata->dni);
     }
     $this->edata['creditos'] = $this->curso->edata['numcreditos'];#Obligatorio, proviene de la actividad/curso
     $this->edata['fechaemision'] = null;
@@ -3286,6 +3290,41 @@ class Usuario {
     $this->edata['impayuda'] = null;
     $this->edata['codagrupacion'] = $this->curso->edata['codagrupacion'];#Obligatorio, proviene de la actividad/curso
     $this->edata['numhoras'] = $this->curso->edata['numhoras'];#Obligatorio, proviene de la actividad/curso
+    
+    $this->edatap['tipoid'] = $this->edata['tipoid'];#Obligatorio
+    $this->edatap['DNI'] = $this->edata['DNI'];#Obligatorio
+    if (!$this->dbdata) {
+      $this->edatap['codniveleducativo'] = null;#Obligatorio
+      $this->edatap['codcuerpodocente'] = null;#Obligatorio
+    }
+    else {
+      $this->edatap['codniveleducativo'] = $this->dbdata->codniveleducativo;#Obligatorio
+      $this->edatap['codcuerpodocente'] = $this->dbdata->codcuerpodocente;#Obligatorio
+    }
+    $this->edatap['codprovincia'] = null;#Obligatorio
+    if (!$this->dbdata) {
+      $this->edatap['codpostal'] = null;#Obligatorio
+      $this->edatap['codcentro'] = null;#Obligatorio
+    }
+    else {
+      $this->edatap['codpostal'] = $this->dbdata->codpostal;#Obligatorio
+      $this->edatap['codcentro'] = $this->dbdata->cc;#Obligatorio
+    }
+    $userdata = get_record('user', 'id', $data->userid);
+    $apellidos = explode(' ', $userdata->lastname, 2);
+    $this->edatap['apellido1'] = mb_strtoupper($apellidos[0], 'utf-8');#Obligatorio
+    $this->edatap['apellido2'] = mb_strtoupper($apellidos[1], 'utf-8'); #Obligatorio
+    $this->edatap['nombre'] = mb_strtoupper($userdata->firstname, 'utf-8');#Obligatorio
+    $this->edatap['anosexperiencia'] = null;
+    $this->edatap['situacionadmin'] = null;
+    $this->edatap['domicilio'] = mb_strtoupper($userdata->address, 'utf-8');#Obligatorio
+    $this->edatap['telefono'] = $userdata->phone1;#Obligatorio
+    $this->edatap['localidad'] = mb_strtoupper($userdata->city, 'utf-8');#Obligatorio
+    $this->edatap['codpais'] = null;
+    if (!$this->dbdata)
+      $this->edatap['sexo'] = null;#Obligatorio
+    else
+      $this->edatap['sexo'] = $this->dbdata->sexo;#Obligatorio
   }
   
   function getNombre() {
@@ -3377,8 +3416,11 @@ class EmisionDatos {
     $cursos = $this->edicion->getCursos();
     $fparticipantes = fopen( "/tmp/participantes.csv", "w" );
     $factividades = fopen( "/tmp/actividades.csv", "w" );
+    $fprofesores = fopen( "/tmp/profesores.csv", "w" );
     $cabecera_participantes = False;
     $cabecera_actividades = False;
+    $cabecera_profesores = False;
+    $profesores = array();
     if ($cursos)
     foreach ($cursos as $curso) {
       if (!$cabecera_participantes) {
@@ -3394,20 +3436,32 @@ class EmisionDatos {
           fwrite($fparticipantes, implode(',', array_keys($participante->edata))."\n");
           $cabecera_participantes = True;
         }
+        if ($participante->dbdata)
+          $profesores[$participante->edata['DNI']] = $participante;
         if ($participante->incidencias)
           $ret->incidencias = array_merge( $ret->incidencias, $participante->incidencias );
         fwrite($fparticipantes, implode(',', $participante->edata)."\n");
       }
     }
+    if ($profesores)
+    foreach ($profesores as $profesor) {
+      if (!$cabecera_profesores) {
+        fwrite($fprofesores, implode(',', array_keys($profesor->edatap))."\n");
+        $cabecera_profesores = True;
+      }
+      fwrite($fprofesores, implode(',', $profesor->edatap)."\n");
+    }
     fclose($factividades);
     fclose($fparticipantes);
+    fclose($fprofesores);
     $ret->filename = tempnam($directorio,"export").".zip";
-    zip_files(array("/tmp/participantes.csv","/tmp/actividades.csv"), $ret->filename);
+    zip_files(array("/tmp/participantes.csv","/tmp/actividades.csv","/tmp/profesores.csv"), $ret->filename);
     $newname = md5_file($ret->filename);
     rename($ret->filename, $directorio."/".$newname);
     $ret->filename = $newname;
     @unlink("/tmp/participantes.csv");
     @unlink("/tmp/actividades.csv");
+    @unlink("/tmp/profesores.csv");
     return $ret;
   }
   
