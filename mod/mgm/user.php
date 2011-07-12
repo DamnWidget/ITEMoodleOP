@@ -95,8 +95,8 @@ if ($mform->is_cancelled()) {
     if ($sdata == MGM_DATA_DNI_INVALID) {
         error(get_string('dninotvalid', 'mgm'), $CFG->wwwroot.'/mod/mgm/user.php');
     }
-
-    redirect('user.php', get_string('codemessage', 'mgm'), 10);
+    
+    notice(get_string('codemessage', 'mgm'), $CFG->wwwroot.'/enrol/mgm/show_requests.php');
 }
 
 print_header($strmatricular, $strmatricular, $navigation);
