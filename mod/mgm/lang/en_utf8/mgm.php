@@ -151,3 +151,4 @@ $string['user_no_task_ended'] = 'El usuario $a->usuario no ha concluido la tarea
 $string['file_export_link'] = '<p>Pulse aquí para descargar el <a href=\"export.php?filename=$a->filename\">fichero</a>.</p>';
 $string['incidencia_curso'] = '<p>Advertencia: No hay dato para el campo $a->campo del curso $a->curso de la edición $a->edicion. Puede editarlo <a href=\"courses.php?courseid=$a->cursoid&edicionid=$a->edicionid\"/>aquí</a>.</p>';
 $string['incidencia_usuario'] = '<p>Advertencia: No hay información extendida para el usuario $a->nombre.</p>';
+$string['incidencia_dni'] = '<p>Advertencia: El campo DNI está vacío o es incorrecto para el usuario $a->nombre.</p>';

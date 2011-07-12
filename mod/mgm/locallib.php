@@ -3271,6 +3271,8 @@ class Usuario {
       $this->incidencias[] = get_string('incidencia_usuario', 'mgm', $this->info);
     }
     else {
+      if (!$this->dbdata->dni || strlen($this->dbdata->dni) != 9)
+        $this->incidencias[] = get_string('incidencia_dni', 'mgm', $this->info);
       $this->edata['tipoid'] = $this->dbdata->tipoid;
       $this->edata['DNI'] = strtoupper($this->dbdata->dni);
     }
