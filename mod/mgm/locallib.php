@@ -3368,6 +3368,7 @@ class Tarea {
 class EmisionDatos {
   var $edicion;
   var $uexcluidos;
+  var $separador_campo = ';';
   
   function EmisionDatos( $edicion = null ) {
     if ($edicion)
@@ -3439,32 +3440,32 @@ class EmisionDatos {
     if ($cursos)
     foreach ($cursos as $curso) {
       if (!$cabecera_participantes) {
-        fwrite($factividades, implode(',', array_keys($curso->edata))."\n");
+        fwrite($factividades, implode($this->separador_campo, array_keys($curso->edata))."\n");
         $cabecera_actividades = True;
       }
       if ($curso->incidencias)
         $ret->incidencias = array_merge( $ret->incidencias, $curso->incidencias );
-      fwrite($factividades, implode(',', $curso->edata)."\n");
+      fwrite($factividades, implode($this->separador_campo, $curso->edata)."\n");
       $participantes = $curso->getParticipantes();
       foreach ($participantes as $participante) {
         if (!$cabecera_participantes) {
-          fwrite($fparticipantes, implode(',', array_keys($participante->edata))."\n");
+          fwrite($fparticipantes, implode($this->separador_campo, array_keys($participante->edata))."\n");
           $cabecera_participantes = True;
         }
         if ($participante->dbdata)
           $profesores[$participante->edata['DNI']] = $participante;
         if ($participante->incidencias)
           $ret->incidencias = array_merge( $ret->incidencias, $participante->incidencias );
-        fwrite($fparticipantes, implode(',', $participante->edata)."\n");
+        fwrite($fparticipantes, implode($this->separador_campo, $participante->edata)."\n");
       }
     }
     if ($profesores)
     foreach ($profesores as $profesor) {
       if (!$cabecera_profesores) {
-        fwrite($fprofesores, implode(',', array_keys($profesor->edatap))."\n");
+        fwrite($fprofesores, implode($this->separador_campo, array_keys($profesor->edatap))."\n");
         $cabecera_profesores = True;
       }
-      fwrite($fprofesores, implode(',', $profesor->edatap)."\n");
+      fwrite($fprofesores, implode($this->separador_campo, $profesor->edatap)."\n");
     }
     fclose($factividades);
     fclose($fparticipantes);
