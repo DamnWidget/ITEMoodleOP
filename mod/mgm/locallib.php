@@ -2897,7 +2897,7 @@ function mgm_get_pass_courses($editionid, $userid) {
     }
 }
 
-function mgm_get_course_participants($course) {
+function mgm_get_course_participants($course, $real = false) {
     global $CFG;
     
     if(!$course) {
@@ -2938,17 +2938,35 @@ function mgm_get_course_participants($course) {
         }
     }
     
-    $sql = "SELECT DISTINCT ctx.id, u.id as userid, u.username, r.roleid FROM ".$CFG->prefix."user u ".
+    if ($real)
+      $select = "SELECT DISTINCT u.id as userid, ctx.id as ctxid, u.username, r.roleid ";
+    else
+      $select = "SELECT DISTINCT ctx.id, u.id as userid, u.username, r.roleid ";
+    $from =	"FROM ".$CFG->prefix."user u ".
             "LEFT OUTER JOIN ".$CFG->prefix."context ctx ".
             "ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.") ".
             "JOIN ".$CFG->prefix."role_assignments r ".
-            "ON u.id=r.userid ".
-            "WHERE (r.contextid = ".$context->id.") ".
-            "AND u.deleted = 0 ".            
+            "ON u.id=r.userid ";
+    
+    // we are looking for all users with this role assigned in this context or higher
+    if ($usercontexts = get_parent_contexts($context)) {
+      $listofcontexts = '('.implode(',', $usercontexts).')';
+    } else {
+      $listofcontexts = '('.$sitecontext->id.')'; // must be site
+    }
+    
+    if ($real)
+      $where = "WHERE (r.contextid = ".$context->id." OR r.contextid in ".$listofcontexts.") ".
+                "AND u.deleted = 0 ".
+                "AND u.username != 'guest' ".
+                "AND r.roleid NOT IN (".implode(',', $adminroles).")";
+    else
+      $where = "WHERE (r.contextid = ".$context->id.") ".
+            "AND u.deleted = 0 ".
             "AND u.username != 'guest' ".
             "AND r.roleid NOT IN (".implode(',', $adminroles).")";
         
-    return get_records_sql($sql);    
+    return get_records_sql($select.$from.$where);    
 }
 
 /**
@@ -3228,13 +3246,29 @@ class Curso {
     return $this->data->name;
   } 
   
-  function getTutores() {}
-  function getCoordinadores() {}
+  function getTutores() {
+    return $this->getParticipantesTipo('T');
+  }
+  
+  function getCoordinadores() {
+    return $this->getParticipantesTipo('C');
+  }
+
+  function getParticipantesTipo( $tipo ) {
+    $this->getParticipantes();
+    $participantes = array();
+    foreach ($this->participantes as $participante) {
+      if ($participante->getTipo() == $tipo )
+      $participantes[] = $participante;
+    }
+    return $participantes;
+  }
+  
   function getParticipantes() {
     if ( $this->dparticipantes )
       return $this->participantes;
     $this->participantes = array();
-    $userlist = mgm_get_course_participants($this->data);
+    $userlist = mgm_get_course_participants($this->data, true);
     if ($userlist)
     foreach ($userlist as $userdata) {
       $this->participantes[$userdata->userid] = new Usuario( $userdata, $this );
@@ -3243,7 +3277,9 @@ class Curso {
     return $this->participantes;
   }
   
-  function getTareas( $usuario ) {}
+  function getTareas( $usuario ) {
+    
+  }
 }
 
 class Usuario {
@@ -3259,6 +3295,8 @@ class Usuario {
     $this->data = $data;
     $this->curso = $curso;
     $this->info->nombre = $data->username;
+    $this->info->id = $data->userid;
+    $this->info->sesskey = $_SESSION['USER']->sesskey;
     $this->dbdata = get_record('edicion_user', 'userid', $data->userid);
     
     //Datos para participantes.csv

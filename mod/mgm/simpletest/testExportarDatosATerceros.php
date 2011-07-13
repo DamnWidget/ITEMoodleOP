@@ -104,6 +104,21 @@ class testExportarDatosATerceros extends UnitTestCase
 
 class testExportarDatosATercerosIntegracion extends UnitTestCase
 {
+  public function setUp() {
+    $this->oldedition_active = mgm_get_active_edition();
+    $this->edition = new stdClass();
+    $this->edition->name = "Edición de prueba";
+    $this->edition->inicio = mktime(0,0,0,9,15,2010);
+    $this->edition->fin = mktime(0,0,0,2,15,2011);
+    $id = insert_record('edicion', $this->edition, true);
+    $this->edition = get_record('edicion', 'id', $id);
+  }
+  
+  public function tearDown() {
+    delete_records('edicion', 'id', $this->edition->id);
+    mgm_active_edition($this->oldedition_active);
+  }
+  
   public function testEdicionCursosIntegracion()
   {
     $edicion = new Edicion();
