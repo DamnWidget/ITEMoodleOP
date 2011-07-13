@@ -2553,13 +2553,9 @@ function mgm_get_user_inscription_by_edition($user, $edition) {
 function mgm_get_certification_scala() {
     global $CFG;
 
-    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_ite
     		WHERE type = ".MGM_ITE_SCALA."";
-    if($scala = get_record_sql($sql)) {
-        return $scala;
-    } else {
-        return false;
-    }
+    return get_record_sql($sql);
 }
 
 /**
@@ -3277,8 +3273,15 @@ class Curso {
     return $this->participantes;
   }
   
+  function aprobado( $usuario ) {
+    if (!$ctask = mgm_get_certification_task($this->data->id))
+      return false;
+    if (!$grade = get_record('grade_grades', 'itemid', $ctask->id, 'userid', $usuario->data->userid ))
+      return false;
+    return $grade->finalgrade == $grade->rawgrademax;
+  }
+  
   function getTareas( $usuario ) {
-    
   }
 }
 
@@ -3296,6 +3299,7 @@ class Usuario {
     $this->curso = $curso;
     $this->info->nombre = $data->username;
     $this->info->id = $data->userid;
+    $this->info->curso = $this->curso->data->fullname;
     $this->info->sesskey = $_SESSION['USER']->sesskey;
     $this->dbdata = get_record('edicion_user', 'userid', $data->userid);
     
@@ -3324,6 +3328,8 @@ class Usuario {
     $this->edata['numregistroCCAA'] = null;
     $this->edata['generacertif'] = null;
     $this->edata['codtipoparticipante'] = $this->getTipo();#Obligatorio
+    if (!$this->edata['codtipoparticipante'])
+      $this->incidencias[] = get_string('incidencia_no_tipo_usuario', 'mgm', $this->info);
     $this->edata['codmodalidad'] = $this->curso->edata['codmodalidad'];#Obligatorio, proviene de la actividad/curso
     $this->edata['fechainicio'] = $this->curso->edata['fechainicio'];#Obligatorio, proviene de la actividad/curso
     $this->edata['codtipoactividad'] = 'AP';#Obligatorio
@@ -3394,7 +3400,7 @@ class Usuario {
       elseif ($this->data->roleid == $roles['coordinador'])
         return 'C';
     }
-    return null;
+    return false;
   }
 }
 
@@ -3490,11 +3496,15 @@ class EmisionDatos {
           fwrite($fparticipantes, implode($this->separador_campo, array_keys($participante->edata))."\n");
           $cabecera_participantes = True;
         }
-        if ($participante->dbdata)
-          $profesores[$participante->edata['DNI']] = $participante;
         if ($participante->incidencias)
           $ret->incidencias = array_merge( $ret->incidencias, $participante->incidencias );
-        fwrite($fparticipantes, implode($this->separador_campo, $participante->edata)."\n");
+        if (in_array($participante->edata['codtipoparticipante'], array('C', 'T')) || $aprobado = $curso->aprobado( $participante )) { 
+          if ($participante->dbdata)
+            $profesores[$participante->edata['DNI']] = $participante;
+          fwrite($fparticipantes, implode($this->separador_campo, $participante->edata)."\n");
+        }
+        elseif (!$aprobado && $participante->edata['codtipoparticipante'])
+          $ret->incidencias[] = get_string('incidencia_no_aprobado', 'mgm', $participante->info);
       }
     }
     if ($profesores)
