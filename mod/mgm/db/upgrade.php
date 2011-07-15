@@ -366,6 +366,28 @@ function xmldb_mgm_upgrade($oldversion=0) {
       /// Launch add field codprovincia
       $result = $result && add_field($table, $field);
     }
+    
+    if ($result && $oldversion < 2011071400) {
+        $table = new XMLDBTable('edicion_course');
+        $field = new XMLDBField('codactividad');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'fechainimodalidad');
+        
+        $result = $result && add_field($table, $field);
+        
+        $table = new XMLDBTable('edicion_cert_history');
+        $field = new XMLDBField('numregistro');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'roleid');
+        
+        $result = $result && add_field($table, $field);
+    }
+    
+    if ($result && $oldversion < 2011071500) {
+        $table = new XMLDBTable('edicion_cert_history');
+        $field = new XMLDBField('confirm');
+        $field->setAttributes(XMLDB_TYPE_INTEGER, '2', XMLDB_UNSIGNED, XMLDB_NOTNULL, null, null, null, '0', 'numregistro');
+        
+        $result = $result && add_field($table, $field);
+    }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
 /// it's interesting to look how other modules are using this script. Remember that
 /// the basic idea is to have "blocks" of code (each one being executed only once,

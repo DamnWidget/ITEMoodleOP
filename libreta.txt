@@ -21,8 +21,8 @@ $ Caso de uso 3 del módulo de Certificaciones $
     * Si se pulsa en No el sistema vuelve atrás y no toca nada - ¡HECHO!
 # Aceptación - Si existe certificación en estado validado el botón se muestra en gris e inutilizable - ¡HECHO!
     * Si se intenta acceder al menú de certificaciones de una edición ya certificada a través de URL el sistema muestra un mensaje de error - ¡HECHO!
-# Aceptación - El usuario puede acceder a un listado de certificaciones a través de la pantalla de cada curso de la edición
-# Aceptacion - El usuario puede descargar el listado 'al menos' en formato de hoja de cálculo a su equipo
+# Aceptación - El usuario puede acceder a un listado de certificaciones a través de la pantalla de cada curso de la edición - ¡HECHO!
+# Aceptacion - El usuario puede descargar el listado 'al menos' en formato de hoja de cálculo a su equipo - ¡HECHO!
 # Aceptación - El usuario puede eliminar certificaciones si es necesario desde la interfaz normal de los cursos de moodle - ¡HECHO! 
 # Aceptación - El sistema no permitirá modificaciones de ningún tipo en las certificaciones una vez han sido validadas - ¡HECHO!
 # Aceptación - Al certificar de forma definitiva a un alumno, se le añade al histórico de certificados de forma automática - ¡HECHO!

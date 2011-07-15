@@ -28,6 +28,8 @@
  */
 require_once($CFG->dirroot.'/course/lib.php');
 require_once($CFG->dirroot.'/group/lib.php');
+require_once($CFG->libdir.'/excellib.class.php');
+require_once($CFG->libdir.'/odslib.class.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -1374,6 +1376,9 @@ function mgm_edition_is_active($edition) {
  * @return bool
  */
 function mgm_edition_is_certified($edition) {
+    if (!$edition) {
+        return false;
+    }
     return ($edition->certified) ? true : false;
 }
 
@@ -1444,11 +1449,7 @@ function mgm_get_course_edition($id) {
 
     if (!$edition = get_record('edicion', 'id', $row->edicionid)) {
         return null;
-    }
-
-    if (!$edition->active) {
-        return null;
-    }
+    }    
 
     return $edition;
 }
@@ -2669,17 +2670,7 @@ function mgm_check_course_dependencies($edition, $course, $user) {
     
     if (mgm_is_course_certified($user->id, $criteria->dlist)) {
         return true;
-    }
-
-    /*if(!$ctask = mgm_get_certification_task($criteria->dlist)) {
-        return false;
-    }
-
-    if (!$grade = mgm_get_grade($ctask, $user)) {
-        return false;
-    }
-
-    return $grade->finalgrade == $grade->rawgrademax;*/
+    }    
    
     return false;
 }
@@ -2714,6 +2705,24 @@ function mgm_get_grade($task, $user) {
         'grade_grades', 'itemid', $task->id, 'userid', $user->id
     );
 }
+
+/**
+ * Return true if the user has passed the course otherwise returns false
+ *
+ * @param object $user
+ * @param object $course
+ * @return boolean
+ */
+function mgm_user_passed_course($user, $course) {
+    if (!$ctask = mgm_get_certification_task($course->id)) {
+        return false;
+    }
+    if (!$grade = mgm_get_grade($ctask, $user)) {
+        return false;
+    } 
+    
+    return ($grade->finalgrade == $grade->rawgrademax);
+  }
 
 /**
  * Helper class for courses interface
@@ -2774,6 +2783,8 @@ function mgm_is_course_certified($userid, $courseid) {
  * @return boolean
  */
 function mgm_certificate_course($userid, $courseid, $edition, $roleid=0) {
+    global $CFG;
+    
     if (!$userid || !$courseid || !$edition || !$roleid) {
         return false;
     }
@@ -2782,13 +2793,24 @@ function mgm_certificate_course($userid, $courseid, $edition, $roleid=0) {
         return false;
     }
 
-    $data = new stdClass();
-    $data->userid = $userid;
-    $data->courseid = $courseid;
-    $data->edicionid = $edition->id;
-    $data->roleid = $roleid;    
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_cert_history 
+            WHERE userid=".$userid." 
+            AND courseid=".$courseid." 
+            AND edicionid=".$edition->id;
     
-    return insert_record('edicion_cert_history', $data);
+    if (!$data = get_record_sql($sql)) {
+        $data = new stdClass();
+        $data->userid = $userid;
+        $data->courseid = $courseid;
+        $data->edicionid = $edition->id;
+        $data->roleid = $roleid;
+        $data->confirm = true;
+        
+        return insert_record('edicion_cert_history', $data);
+    }
+    
+    $data->confirm = true;
+    return update_record('edicion_cert_history', $data);
 }
 
 /**
@@ -2811,7 +2833,11 @@ function mgm_certificate_edition($edition) {
         
         $course_participants = array();
         foreach($participants as $participant) {            
-            if (!mgm_certificate_course($participant->userid, $course->id, $edition->id, $participant->roleid)) {
+            if (!mgm_user_passed_course(get_record('user', 'id', $participant->userid), $course)) {
+                continue;
+            }           
+             
+            if (!mgm_certificate_course($participant->userid, $course->idnumber, $edition, $participant->roleid)) {
                 return false;
             }            
         }
@@ -2829,6 +2855,9 @@ function mgm_certificate_edition($edition) {
  */
 function mgm_check_double_role_in_course($participants) {    
     $ardy = array();
+    if (!$participants) {
+        return $ardy;
+    }
     foreach ($participants as $k=>$v) {
         if (array_key_exists($v->userid, $ardy)) {
             // Double found
@@ -3042,6 +3071,50 @@ function mgm_validate_cif($cif) {
 
     // Si todavia no se ha verificado devuelve error
     return false;
+}
+
+/**
+ * Download a sheet document with the given data
+ *
+ * @param $fields 
+ */
+function mgm_download_doc($fields) { 
+    switch($fields['filetype']) {
+        case 'xls':
+            $workbook = new MoodleExcelWorkbook('-');
+            $filename = clean_filename($fields['filename'].'.xls');
+            break;
+        case 'ods':
+            $workbook = new MoodleODSWorkbook('-');
+            $filename = clean_filename($fields['filename'].'.ods');
+            break;
+        default:
+            error('Unknown file type in mgm_download_doc '.$fields['filetype']);
+            break;         
+    }    
+    $workbook->send($filename);
+    
+    $worksheet = array();
+    $worksheet[0] =& $workbook->add_worksheet('');
+    
+    $col = 0;
+    foreach($fields['header'] as $fieldname) {
+        $worksheet[0]->write(0, $col, $fieldname);
+        $col++;
+    }
+    
+    $row = 1;
+    foreach($fields['data'] as $data) {
+        $col = 0;
+        foreach($data as $fdata) {
+            $worksheet[0]->write($row, $col, $fdata);
+            $col++;
+        }
+        $row++;
+    }
+    
+    $workbook->close();
+    die();     
 }
 
 class Edicion {

@@ -75,6 +75,10 @@ class enrolment_plugin_mgm {
         if (!$edition = mgm_get_course_edition($course->id)) {
             error(get_string('noeditioncourse', 'mgm'));
         }
+        
+        if (!$edition->active) {
+            error(get_string('noactiveedition', 'mgm'));
+        }
 
         $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
             	WHERE edicionid='".$edition->id."' AND value='".$course->id."'";
