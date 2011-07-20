@@ -43,6 +43,11 @@ $ADMIN->add(
 );
 
 $ADMIN->add(
+    'ediciones', new admin_externalpage('edicionescert', get_string('edicionescert', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/user_certifications.php', 'mod/mgm:aprobe')
+);
+
+$ADMIN->add(
     'ediciones', new admin_externalpage('edicionesaddress', get_string('edicionesaddress', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/user_extend.php', 'mod/mgm:aprobe')
 );

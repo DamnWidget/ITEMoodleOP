@@ -35,11 +35,11 @@ $ Caso de uso 3 del módulo de Certificaciones $
 # Aceptación - Si un participante está registrado con varios roles en cursos diferentes, se le certifica en cada curso y rol - ¡HECHO!
 
 $ Caso de uso PR03 del módulo de Matriculación y Gestión (Extensiones) $
-# Aceptación - Los usuarios administrativos de Moodle pueden ver los cursos certificados de un alumno usando una interfaz en el menu de ediciones
-# Aceptación - El administrador puede seleccionar al usuario de un listado de usuarios y hacer click en el botón "Siguiente"
-    * Si el usuario seleccionado tiene cursos certificados se mostrará una relación de sus códigos
-    * Si el usuario seleccionado no tiene cursos certificados se mostrará un mensaje indicándolo
-    * Si no se ha seleccionado un usuario el sistema devolverá un mensaje de error
+# Aceptación - Los usuarios administrativos de Moodle pueden ver los cursos certificados de un alumno usando una interfaz en el menu de ediciones - ¡HECHO!
+# Aceptación - El administrador puede seleccionar al usuario de un listado de usuarios y hacer click en el botón "Siguiente" - ¡HECHO!
+    * Si el usuario seleccionado tiene cursos certificados se mostrará una relación de sus códigos - ¡HECHO!
+    * Si el usuario seleccionado no tiene cursos certificados se mostrará un mensaje indicándolo - ¡HECHO!
+    * Si no se ha seleccionado un usuario el sistema devolverá un mensaje de error - ¡HECHO!
 # Aceptación - Solo puede haber una dependencia por curso -¡HECHO!
 # Aceptación - La dependencia de un curso se configura en la interfaz de criterios de inscripción de los cursos - ¡HECHO!
 # Aceptación - Se selecciona el Numero ID del curso de una lista desplegable - ¡HECHO!
