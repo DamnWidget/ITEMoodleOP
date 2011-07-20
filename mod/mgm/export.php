@@ -45,7 +45,6 @@ $filename = optional_param('filename');
 if ($filename && file_exists($tempdir.$filename)) {
   $lifetime = 0;
   send_file($tempdir.$filename, "export.zip", $lifetime, 0, false, true);
-  @unlink($tempdir.$filename);
 }
 else {
   admin_externalpage_setup('edicionesmgmt', mgm_update_edition_button());
@@ -55,12 +54,13 @@ else {
   print_simple_box_start('center');
   
   $emision = new EmisionDatos();
-  $resultado = $emision->aFichero( $tempdir );
+  $validacion = $emision->Validar();
+  $afichero = $emision->aFichero( $tempdir );
   
-  foreach ($resultado->incidencias as $incidencia)
+  foreach (array_merge($validacion->incidencias, $afichero->incidencias) as $incidencia)
     echo $incidencia;
   
-  echo get_string('file_export_link', 'mgm', $resultado);
+  echo get_string('file_export_link', 'mgm', $afichero);
   print_simple_box_end();
   
   admin_externalpage_print_footer();

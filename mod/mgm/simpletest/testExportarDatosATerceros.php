@@ -36,7 +36,7 @@ class testExportarDatosATerceros extends UnitTestCase
       $this->coordinador2->setReturnValue('getNombre', 'Q');
       $this->coordinador3 = new MockUsuario();
       $this->coordinador3->setReturnValue('getNombre', 'R');
-      $this->curso1->setReturnValue('getTutores', array($this->tutor1));
+      $this->curso1->setReturnValue('getTutores', array($this->tutor1, $this->tutor2));
       $this->curso1->setReturnValue('getCoordinadores', array());
       $this->curso1->setReturnValue('getNombre', 'A');
       $this->curso2->setReturnValue('getTutores', array($this->tutor1,$this->tutor2));
@@ -48,20 +48,32 @@ class testExportarDatosATerceros extends UnitTestCase
       $this->tarea1 = new MockTarea();
       $this->tarea2 = new MockTarea();
       $this->tarea3 = new MockTarea();
-      $this->curso1->setReturnValue('getTareas', array($this->tarea1, $this->tarea2), array($this->tutor1));
-      $this->curso2->setReturnValue('getTareas', array($this->tarea1, $this->tarea3), array($this->tutor2));
-      $this->curso2->setReturnValue('getTareas', array($this->tarea1, $this->tarea3), array($this->coordinador1));
-      $this->curso3->setReturnValue('getTareas', array($this->tarea1, $this->tarea3), array($this->coordinador2));
-      $this->tarea1->setReturnValue('completada', True);
-      $this->tarea3->setReturnValue('completada', True);
+      $this->curso1->setReturnValue('getTareas', array($this->tarea1, $this->tarea2));
+      $this->curso2->setReturnValue('getTareas', array($this->tarea1, $this->tarea3));
+      $this->curso3->setReturnValue('getTareas', array($this->tarea1, $this->tarea3));
+      $this->tarea1->setReturnValue('completada', True, array($this->tutor1));
+      $this->tarea1->setReturnValue('completada', True, array($this->tutor2));
+      $this->tarea1->setReturnValue('completada', True, array($this->tutor3));
+      $this->tarea1->setReturnValue('completada', True, array($this->coordinador1));
+      $this->tarea1->setReturnValue('completada', True, array($this->coordinador2));
+      $this->tarea1->setReturnValue('completada', True, array($this->coordinador3));
+      $this->tarea2->setReturnValue('completada', True, array($this->tutor2));
+      $this->tarea2->setReturnValue('completada', True, array($this->tutor3));
+      $this->tarea2->setReturnValue('completada', True, array($this->coordinador1));
+      $this->tarea2->setReturnValue('completada', True, array($this->coordinador2));
+      $this->tarea2->setReturnValue('completada', True, array($this->coordinador3));
+      $this->tarea3->setReturnValue('completada', True, array($this->tutor1));
+      $this->tarea3->setReturnValue('completada', True, array($this->tutor2));
+      $this->tarea3->setReturnValue('completada', True, array($this->tutor3));
+      $this->tarea3->setReturnValue('completada', True, array($this->coordinador1));
+      $this->tarea3->setReturnValue('completada', True, array($this->coordinador2));
+      $this->tarea3->setReturnValue('completada', True, array($this->coordinador3));
       $this->tarea2->setReturnValue('getNombre', 'Certificar superación del curso');
       
       $this->edicion->expectOnce('getFin', array());
       $this->edicion->expectOnce('getCursos', array());
       $this->curso1->expectAtLeastOnce('getTutores', array());
-      $this->curso1->expectAtLeastOnce('getTareas', array($this->tutor1));
-      $this->tarea1->expectAtLeastOnce('completada', array());
-      $this->tarea2->expectAtLeastOnce('completada', array());
+      $this->curso1->expectAtLeastOnce('getTareas', array());
     }
     
     public function testEmisionDatosValidarEdicionNoFinalizada()
@@ -77,7 +89,7 @@ class testExportarDatosATerceros extends UnitTestCase
     
     public function testEmisionDatosValidarTutoresYCoordinadoresConTareasCursoFinalizadas()
     {
-        $this->tarea2->setReturnValue('completada', True);
+        $this->tarea2->setReturnValue('completada', True, array($this->tutor1));
         $emision = new EmisionDatos( $this->edicion );
         
         $resultado = $emision->Validar();
@@ -88,7 +100,7 @@ class testExportarDatosATerceros extends UnitTestCase
     
     public function testEmisionDatosValidarTutoresYCoordinadoresConTareasCursoNoFinalizadas()
     {
-      $this->tarea2->setReturnValue('completada', False);
+      $this->tarea2->setReturnValue('completada', False, array($this->tutor1));
       $emision = new EmisionDatos( $this->edicion );
     
       $resultado = $emision->Validar();

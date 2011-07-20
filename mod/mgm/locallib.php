@@ -3168,6 +3168,7 @@ class Curso {
   var $edicion;
   var $incidencias = array();
   var $info;
+  var $tareas = array();
 
   function cargarEdata($campo, $ncampo) {
     if (!$campo) {
@@ -3312,7 +3313,7 @@ class Curso {
   }
   
   function getNombre() {
-    return $this->data->name;
+    return $this->data->fullname;
   } 
   
   function getTutores() {
@@ -3354,7 +3355,16 @@ class Curso {
     return $grade->finalgrade == $grade->rawgrademax;
   }
   
-  function getTareas( $usuario ) {
+  function getTareas() {
+    if ($this->tareas)
+      return $this->tareas;
+    if ($tareas_data = get_records("feedback", 'course', $this->data->id)) {
+      foreach ($tareas_data as $tarea_data)
+        $this->tareas[] = new Tarea($tarea_data, $this);
+      return $this->tareas;
+    }
+    else
+      return null;
   }
 }
 
@@ -3466,26 +3476,51 @@ class Usuario {
   function getTipo() {
     $roles = mgm_get_certification_roles();
     if ($roles) {
-      if ($this->data->roleid == $roles['alumno'])
+      if ($this->data->roleid == $roles['alumno']) {
+        $this->info->tipo = 'Alumno';
         return 'A';
-      elseif ($this->data->roleid == $roles['tutor'])
+      }
+      elseif ($this->data->roleid == $roles['tutor']){
+        $this->info->tipo = 'Tutor';
         return 'T';
-      elseif ($this->data->roleid == $roles['coordinador'])
+      }
+      elseif ($this->data->roleid == $roles['coordinador']) {
+        $this->info->tipo = 'Coordinador';
         return 'C';
+      }
     }
     return false;
   }
 }
 
 class Tarea {
-  function getNombre() {}  
-  function completada() {}
+  var $data;
+  var $course;
+  
+  function Tarea( $data, $course ) {
+    $this->data = $data;
+    $module = get_record('modules', 'name', 'feedback');
+    $this->instancia = get_record('course_modules', 'course', $course->data->id, 'instance', $data->id, 'module', $module->id);
+    $this->course = $course;
+  }
+  
+  function getNombre() {
+    return $this->data->name;
+  }  
+  
+  function completada( $usuario ) {
+    if (get_record('feedback_completed', 'feedback', $this->data->id, 'userid', $usuario->data->userid))
+      return true;
+    else
+      return false;
+  }
 }
 
 class EmisionDatos {
   var $edicion;
   var $uexcluidos;
   var $separador_campo = ';';
+  var $prefix = 'mgm_export';
   
   function EmisionDatos( $edicion = null ) {
     if ($edicion)
@@ -3504,16 +3539,18 @@ class EmisionDatos {
     if ($cursos)
     foreach ($cursos as $curso) {
       $usuarios = array_merge($curso->getTutores(), $curso->getCoordinadores());
-      if ($usuarios)
-      foreach ($usuarios as $usuario) {
-        $tareas = $curso->getTareas($usuario);
-        if ($tareas)
-        foreach ($tareas as $tarea) {
-          if (!$tarea->completada()) {
+      $tareas = $curso->getTareas();
+      if ($tareas)
+      foreach ($tareas as $tarea) {
+        if ($usuarios)
+        foreach ($usuarios as $usuario) {
+          if (!$tarea->completada($usuario)) {
             $tarea_sin_f = new stdClass();
             $tarea_sin_f->curso = $curso->getNombre();
             $tarea_sin_f->usuario = $usuario->getNombre();
             $tarea_sin_f->tarea = $tarea->getNombre();
+            $tarea_sin_f->tareaid = $tarea->instancia->id;
+            $tarea_sin_f->tipo = $usuario->info->tipo;
             $tareas_sin_f[] = $tarea_sin_f;
           }
         }
@@ -3591,9 +3628,12 @@ class EmisionDatos {
     fclose($factividades);
     fclose($fparticipantes);
     fclose($fprofesores);
-    $ret->filename = tempnam($directorio,"export").".zip";
+    foreach (glob($directorio."/".$this->prefix."*") as $filename) {
+      @unlink($filename);
+    }
+    $ret->filename = tempnam($directorio, $this->prefix).".zip";
     zip_files(array("/tmp/participantes.csv","/tmp/actividades.csv","/tmp/profesores.csv"), $ret->filename);
-    $newname = md5_file($ret->filename);
+    $newname = $this->prefix.md5_file($ret->filename);
     rename($ret->filename, $directorio."/".$newname);
     $ret->filename = $newname;
     @unlink("/tmp/participantes.csv");
