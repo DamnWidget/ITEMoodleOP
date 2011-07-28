@@ -3400,6 +3400,7 @@ class Usuario {
         $this->incidencias[] = get_string('incidencia_dni', 'mgm', $this->info);
       $this->edata['tipoid'] = $this->dbdata->tipoid;
       $this->edata['DNI'] = strtoupper($this->dbdata->dni);
+      $this->edata['DNI'] = substr( $this->edata['DNI'], strspn($this->edata['DNI'], '0'));
     }
     $this->edata['creditos'] = $this->curso->edata['numcreditos'];#Obligatorio, proviene de la actividad/curso
     $this->edata['fechaemision'] = null;
