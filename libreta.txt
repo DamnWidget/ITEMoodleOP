@@ -50,7 +50,7 @@ $ Caso de uso 1 módulo de pagos $
 # Aceptación - Solo podrán descargarse informes de cursos ya finalizados y certificados
 # Aceptación - Los usuarios administrativos podrán comprobar los parámetros de pago y descargar informes desde la interfaz de cada curso
     * Si el curso no está finalizado el sistema muestra un mensaje de error
-    * Si el curso está finalizado pero no esta certificado, el sistema muestra un mnesaje de erro
+    * Si el curso está finalizado pero no esta certificado, el sistema muestra un mesaje de error
 # Aceptación - El pago a los coordinadores se calcula en base a un pago fijo y un pago adicional dependiente del tramo por número de tutores coordinados
 # Aceptación - Los tramos son los siguientes: 1 - 5, 6 - 10, 11 - 15, 16 - 20, 21+
 # Aceptación - El pago a los tutores se calcula dependiendo de dos tramos de cuanto se pagara por alumno, hasta cierta actividad del curso
@@ -58,8 +58,8 @@ $ Caso de uso 1 módulo de pagos $
 # Aceptación - Los tramos de coordinadores NO serán parametrizables
 
 $ Caso de uso 2 módulo de pagos $
-# Aceptación - Solo podrán descargarse informes de ediciones ya finalizadas y certificadas
-# Aceptación - Los usurios administrativos podrán descargar informe de pagos de ediciones desde la interfaz de administración de ediciones
+# Aceptación - Solo podrán descargarse informes de ediciones ya finalizadas y certificadas - ¡HECHO!
+# Aceptación - Los usurios administrativos podrán descargar informe de pagos de ediciones desde la interfaz de administración de ediciones - ¡HECHO!
 # Aceptación - El informe podrá ser descargado en formato XLS y ODS
 # Aceptación - En el informe aparecerán los siguientes campos: Nombre del curso, actividad, nombre del tutor o coordinador, datos de contacto, cantidad a abonar
 # Aceptación - Si se trata de un coordinador, aparecerá además desglosado el fijo base más el número de tutores coordinados y precio por tutor
