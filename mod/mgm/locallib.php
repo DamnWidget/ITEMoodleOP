@@ -840,15 +840,21 @@ function mgm_get_edition_menu($edition) {
     if (!mgm_edition_is_certified($edition)) {
         $menu .= ' | <a title="'.get_string('cert', 'mgm').'" href="certificate.php?id='.$edition->id.'" id="edicion_'.$edition->id.'">'.
          		 '<img src="'.$CFG->pixpath.'/t/grades.gif" class="iconsmall" alt="'.get_string('cert', 'mgm').'" /></a>';
+        $menu .= ' | <a title="'.get_string('pago-nc', 'mgm').'" href="#">'.
+                 '<img src="'.$CFG->pixpath.'/i/unlock.gif" class="iconsmall" alt="'.get_string('pago-nc', 'mgm').'" /></a>';
     } else {
         if (mgm_edition_is_on_draft($edition)) {
             $menu .= ' | <a title="'.get_string('certdraft', 'mgm').'" href="certificate.php?id='.$edition->id.'&draft=1" id="edicion_'.$edition->id.'">'.
          			 '<img src="'.$CFG->pixpath.'/c/site.gif" class="iconsmall" alt="'.get_string('certdraft', 'mgm').'" /></a>';
+         	$menu .= ' | <a title="'.get_string('pago-nc', 'mgm').'" href="#">'.
+                     '<img src="'.$CFG->pixpath.'/i/unlock.gif" class="iconsmall" alt="'.get_string('pago-nc', 'mgm').'" /></a>';
         }
 
         if (mgm_edition_is_on_validate($edition)) {
             $menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="#">'.
          			 '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
+            $menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="#">'.
+                     '<img src="'.$CFG->pixpath.'/i/lock.gif" class="iconsmall" alt="'.get_string('pago', 'mgm').'" /></a>';
         }
     }
 

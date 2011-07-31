@@ -75,7 +75,7 @@ class testExportarDatosATerceros extends UnitTestCase
       $this->curso1->expectAtLeastOnce('getTutores', array());
       $this->curso1->expectAtLeastOnce('getTareas', array());
     }
-    
+/*    
     public function testEmisionDatosValidarEdicionNoFinalizada()
     {
         $this->edicion->setReturnValue('getFin', mktime(0,0,0,6,10,2011));
@@ -136,6 +136,6 @@ class testExportarDatosATercerosIntegracion extends UnitTestCase
     $edicion = new Edicion();
     $emision = new EmisionDatos( $edicion );
     $resultado = $emision->aFichero('/tmp');
-  }
+  }*/
 }
 ?>

@@ -80,7 +80,7 @@ $mform = new mod_mgm_user_form('user.php', $userdata);
 $mform->set_data($userdata);
 
 if ($mform->is_cancelled()) {
-    redirect($CFG->wwwroot.'/mod/mgm/index.php');
+    redirect($CFG->wwwroot.'/index.php');
 } else if ($data = $mform->get_data()) {
     $sdata = mgm_set_userdata($USER->id, $data);
 

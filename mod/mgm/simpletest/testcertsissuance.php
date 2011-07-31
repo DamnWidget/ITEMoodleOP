@@ -59,6 +59,8 @@ class testCertificatesIssuance extends UnitTestCase {
         $this->edition->certified = MGM_CERTIFICATE_NONE;
         $this->menu .= ' | <a title="'.get_string('cert', 'mgm').'" href="certificate.php?id='.$this->edition->id.'" id="edicion_'.$this->edition->id.'">'.
          				'<img src="'.$CFG->pixpath.'/t/grades.gif" class="iconsmall" alt="'.get_string('cert', 'mgm').'" /></a>';
+        $this->menu .= ' | <a title="'.get_string('pago-nc', 'mgm').'" href="#">'.
+                       '<img src="'.$CFG->pixpath.'/i/unlock.gif" class="iconsmall" alt="'.get_string('pago-nc', 'mgm').'" /></a>';
 
         $this->assertEqual($this->menu, mgm_get_edition_menu($this->edition));
     }
@@ -69,8 +71,10 @@ class testCertificatesIssuance extends UnitTestCase {
         $this->edition->certified = MGM_CERTIFICATE_DRAFT;
         $this->menu .= ' | <a title="'.get_string('certdraft', 'mgm').'" href="certificate.php?id='.$this->edition->id.'&draft=1" id="edicion_'.$this->edition->id.'">'.
         				'<img src="'.$CFG->pixpath.'/c/site.gif" class="iconsmall" alt="'.get_string('certdraft', 'mgm').'" /></a>';
-
-         $this->assertEqual($this->menu, mgm_get_edition_menu($this->edition));
+        $this->menu .= ' | <a title="'.get_string('pago-nc', 'mgm').'" href="#">'.
+                       '<img src="'.$CFG->pixpath.'/i/unlock.gif" class="iconsmall" alt="'.get_string('pago-nc', 'mgm').'" /></a>';
+        
+        $this->assertEqual($this->menu, mgm_get_edition_menu($this->edition));
      }
 
      function testButtonValidateCertified() {
@@ -79,7 +83,9 @@ class testCertificatesIssuance extends UnitTestCase {
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
          $this->menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="#">'.
          			    '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
-
+         $this->menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="#">'.
+                       '<img src="'.$CFG->pixpath.'/i/lock.gif" class="iconsmall" alt="'.get_string('pago', 'mgm').'" /></a>';
+                       
          $this->assertEqual($this->menu, mgm_get_edition_menu($this->edition));
      }
      
@@ -124,7 +130,7 @@ class testCertificatesIssuance extends UnitTestCase {
      }
 }
 
-class testCertificationIssuanceInterface extends WebTestCase {
+/*class testCertificationIssuanceInterface extends WebTestCase {
 
     function setUp() {
         global $CFG;
@@ -239,4 +245,4 @@ class testCertificationIssuanceInterface extends WebTestCase {
          $this->assertText('Edition already validated!');
          delete_records('edicion', 'id', $edition->id);
      }
-}
+}*/
