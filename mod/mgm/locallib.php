@@ -3123,6 +3123,32 @@ function mgm_download_doc($fields) {
     die();     
 }
 
+/**
+ * Create some needed data on database if not exists 
+ */
+function mgm_create_especs() {
+    global $CFG;    
+    
+    if( !mgm_especs_exists() ) {
+        // No data exists. Just create it        
+    }
+}
+
+/**
+ * Check if especialidades data exists on the database. If exists returns it
+ * if doesn't exists just returns false
+ * 
+ * @return mixed
+ */
+function mgm_especs_exists() {
+    global $CFG;
+    
+    $sql = "SELECT value FROM ".$CFG->prefix."edicion_ite
+            WHERE type = ".MGM_ITE_ESPECIALIDADES."";
+    
+    return get_record_sql( $sql );
+}
+
 class Edicion {
   var $data;
   var $anoacademico = null;
