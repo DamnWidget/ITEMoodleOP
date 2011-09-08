@@ -24,15 +24,25 @@
  * @license   http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
+require_once('../locallib.php');
+ 
 /**
  * Post installation procedure
  */
 function xmldb_mgm_install() {
     global $DB;
 
+    $result = true;    
+    
+    $result = mgm_create_especs();
+
     // Install default common logging actions
     update_log_display_entry('mgm', 'add', 'mgm', 'name');
     update_log_display_entry('mgm', 'update', 'mgm', 'name');
     update_log_display_entry('mgm', 'view', 'mgm', 'name');
     update_log_display_entry('mgm', 'view all', 'mgm', 'name');
+    
+    return $result;    
 }
+
+

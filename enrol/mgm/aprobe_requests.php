@@ -177,14 +177,14 @@ if ($id) {
         // Table data
         unset($editiontable->data);
         foreach (mgm_get_edition_courses($edition) as $course) {
-            $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+            $sql = "SELECT id FROM ".$CFG->prefix."edicion_inscripcion
             	    WHERE edicionid='".$id."' AND value='".$course->id."' AND released='1'";
             if ($inscripcion = get_records_sql($sql)) {
                 $asignado = $stryes;
                 $link = '<b>'.$course->fullname.'</b>';
             } else {
                 $asignado = $strno;
-                $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+                $sql = "SELECT id FROM ".$CFG->prefix."edicion_inscripcion
             	    WHERE edicionid='".$id."' AND value='".$course->id."' AND released='0'";
                 if ($borrador = get_records_sql($sql)) {
                     $link = '(Borrador) <a href="aprobe_requests.php?id='.$edition->id.'&courseid='.$course->id.'" style="color: red;" alt="Borrador">'.$course->fullname.'</a>';

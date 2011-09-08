@@ -101,6 +101,7 @@ $string['edicionwarning'] = '<center><b>Cuidado: Si modifica sus preferencias pa
 $string['editeditionsettings'] = 'Editar ajustes de edición';
 $string['editionname'] = 'Nombre de la edición';
 $string['emailnotification'] = 'Habilitar notificación por correo electrónico.';
+$string['especdata'] = 'Crear/Comprobar Especialidades';
 $string['especialidades'] = 'Especialidades';
 $string['fechaemision'] = 'Fecha de emisión del certificado';
 $string['fechafin'] = 'Fecha de finalización';

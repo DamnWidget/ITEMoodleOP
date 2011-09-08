@@ -71,3 +71,8 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('exportdata', get_string('exportdata', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/export.php', 'mod/mgm:aprobe')
 );
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('especdata', get_string('especdata', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/espec.php', 'mod/mgm:createedicion')
+);
