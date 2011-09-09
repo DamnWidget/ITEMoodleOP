@@ -1796,8 +1796,7 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
     
     $site = get_site();
     $user = $data->user;
-    $userdata = $data->userdata;
-    $especs = ($data->especs) ? $data->especs : array();
+    $especs = ($data->especialidades) ? $data->especialidades : array();
     $userespecs = '<select name="especialidades" readonly="">';
     foreach ($especs as $espec) {
         $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
@@ -1824,7 +1823,7 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
         '<a href="../../user/view.php?id='.$line->userid.'&amp;course='.$site->id.'">'.$user->firstname.'</a>',
         $user->lastname,
         date("d/m/Y H:i\"s", $line->timemodified),
-        ($userdata) ? $userdata->cc : '',
+        ($data->cc) ? $data->cc : '',
         $userespecs,
         $courses
     );
@@ -1881,31 +1880,25 @@ function mgm_get_user_preinscription_realcourses($editionid, $value) {
 function mgm_user_preinscription_tmpdata($userid) {
     global $CFG;    
     
-    $sql = "SELECT id, firstname, lastname FROM ".$CFG->prefix."user
-            WHERE id='".$userid."'";
+    $sql = "SELECT u.firstname, u.lastname, eu.especialidades, eu.cc FROM ".$CFG->prefix."user AS u
+            LEFT JOIN ".$CFG->prefix."edicion_user AS eu ON eu.userid=u.id WHERE u.id='".$userid."'";
     if (!$user = get_record_sql($sql)) {
         return null;
     }
-    
-    $sql = "SELECT distinct userid, especialidades FROM ".$CFG->prefix."edicion_user
-            WHERE userid='".$user->id."'";
-
+        
     $tmpuser = new stdClass();
     $tmpuser->user = $user;
-    $tmpuser->userdata = get_record_sql($sql);
-    $tmpuser->especs = ($tmpuser->userdata) ? explode("\n", $tmpuser->userdata->especialidades) : array();
 
     return $tmpuser;
 }
 
-function mgm_parse_preinscription_data($edition, $course, $data) {
-    print_object(getdate());
+function mgm_parse_preinscription_data($edition, $course, $data) {    
     // Local variables
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
     $retdata = array();
 
-    foreach ($data as $sqline) {        
-        $lineuser = mgm_user_preinscription_tmpdata($sqline->userid);        
+    foreach ($data as $sqline) {                
+        $lineuser = mgm_user_preinscription_tmpdata($sqline->userid);                
         $lineuser->realcourses = mgm_get_user_preinscription_realcourses($edition->id, $sqline->value);        
         if (empty($lineuser->realcourses)) {
             $lineuser->realcourses[0] = '';
@@ -1948,8 +1941,7 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
         } else {
             $retdata['last'][] = $lineuser;
         }
-    }
-    print_object(getdate());
+    }    
 
     /*
      * Now we have all the data splited into those ones who choosed the course as first option at
@@ -2319,8 +2311,8 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
     		WHERE edicionid = '".$edition->id."') ORDER BY timemodified ASC";
     if (!$preinscripcion = get_records_sql($sql)) {
         return;
-    }
-
+    }    
+    
     $final = array();
     foreach ($preinscripcion as $data) {
         $courses = explode(",", $data->value);
@@ -2333,7 +2325,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
         return;
     }    
 
-    $data = mgm_parse_preinscription_data($edition, $course, $final);
+    $data = mgm_parse_preinscription_data($edition, $course, $final);    
 
     if ($docheck) {
         $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
@@ -3265,6 +3257,15 @@ function mgm_especs_exists() {
             WHERE type = ".MGM_ITE_ESPECIALIDADES."";
     
     return get_record_sql( $sql );
+}
+
+function mgm_get_microtime() {
+    $temp = explode(" ", microtime());
+    return bcadd($temp[0], $temp[1], 6);
+}
+
+function mgm_get_elapsed($start, $end) {
+    return bcsub($start, $end, 6);
 }
 
 class Edicion {

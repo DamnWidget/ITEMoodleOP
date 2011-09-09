@@ -80,14 +80,10 @@ print_header($site->shortname.': '.$strmgm, $stredicionesmgm, build_navigation($
              '', '', true);
 
 if ($id) {
-    $edition = get_record('edicion', 'id', $id);
-
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
-    		WHERE edicionid='".$edition->id."' AND userid
-    		IN ( SELECT userid FROM ".$CFG->prefix."edicion_preinscripcion
-    			 WHERE edicionid='".$edition->id."' ) AND userid
+    		WHERE edicionid='".$id."' AND userid
     		NOT IN ( SELECT userid FROM ".$CFG->prefix."edicion_inscripcion
-    				 WHERE edicionid='".$edition->id."' )";
+    				 WHERE edicionid='".$id."' )";
     $rows = get_records_sql($sql);
     $alumnos = array();
     if (!empty($rows)) {
@@ -97,12 +93,12 @@ if ($id) {
             $record->id = $alumno->id;
             $record->nombre = $alumno->firstname.' '.$alumno->lastname;
             $record->correo = $alumno->email;
-            $sql2 = "SELECT * FROM ".$CFG->prefix."course
-            		 WHERE id IN (".$row->value.")";
-            $courses = get_records_sql($sql2);
+            $sql2 = "SELECT id, fullname FROM ".$CFG->prefix."course
+            		 WHERE id IN (".$row->value.")";            
+            $courses = get_records_sql($sql2);            
             $record->cursos = $courses;
             foreach ($record->cursos as $curso) {
-                $criteria = mgm_get_edition_course_criteria($edition->id, $curso->id);
+                $criteria = mgm_get_edition_course_criteria($id, $curso->id);
                 $curso->plazas = $criteria->plazas;
             }
             if($alumnodata = get_record('edicion_user', 'userid', $alumno->id)) {
@@ -193,7 +189,7 @@ if ($id) {
 if (isset($editiontable)) {
     print_heading($strediciones);
     print_table($editiontable);
-} else {
+} else {    
     print_heading($stralumnos);
     print_table($alumnostable);
 }

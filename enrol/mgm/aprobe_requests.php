@@ -226,8 +226,8 @@ if ($courseid) {
             // Table header
             $editiontable->head = array($strposalumno,$strselect, $strname, $strlastname, $strinscripcion, $strcc, $strespecialidades, $strcourses);
             $editiontable->align = array('left','left', 'left', 'left', 'left', 'left', 'left', 'left');
-
-            $editiontable->data = mgm_get_edition_course_preinscripcion_data($edition, $course);
+            
+            $editiontable->data = mgm_get_edition_course_preinscripcion_data($edition, $course);            
             $strheading = $strheading.' - '.$course->fullname;
         }
     }
