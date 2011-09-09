@@ -1740,7 +1740,7 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
 function mgm_check_already_enroled($editionid, $courseid) {
     global $CFG;
 
-    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    $sql = "SELECT id FROM ".$CFG->prefix."edicion_inscripcion
     		WHERE edicionid='".$editionid."' AND value='".$courseid."'";
     return get_records_sql($sql);
 }
@@ -1792,6 +1792,8 @@ function mgm_exists_criteria_for_course($edition, $course) {
  * @return array
  */
 function mgm_get_user_preinscription_data($line, $edition, $data) {
+    global $CFG;
+    
     $site = get_site();
     $user = $data->user;
     $userdata = $data->userdata;
@@ -1811,8 +1813,8 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
         $realcourses[] = $values[$i];
     }
 
-    foreach($values as $courseid) {
-        $ncourse = get_record('course', 'id', $courseid);
+    foreach($values as $courseid) {        
+        $ncourse = get_record('course', 'id', $courseid);        
         $courses .= '<option name="'.$courseid.'">'.$ncourse->fullname.'</option>';
     }
     $courses .= '</select>';
@@ -1877,30 +1879,39 @@ function mgm_get_user_preinscription_realcourses($editionid, $value) {
 }
 
 function mgm_user_preinscription_tmpdata($userid) {
-    if (!$user = get_record('user', 'id', $userid)) {
+    global $CFG;    
+    
+    $sql = "SELECT id, firstname, lastname FROM ".$CFG->prefix."user
+            WHERE id='".$userid."'";
+    if (!$user = get_record_sql($sql)) {
         return null;
     }
+    
+    $sql = "SELECT distinct userid, especialidades FROM ".$CFG->prefix."edicion_user
+            WHERE userid='".$user->id."'";
 
     $tmpuser = new stdClass();
     $tmpuser->user = $user;
-    $tmpuser->userdata = get_record('edicion_user', 'userid', $user->id);
+    $tmpuser->userdata = get_record_sql($sql);
     $tmpuser->especs = ($tmpuser->userdata) ? explode("\n", $tmpuser->userdata->especialidades) : array();
 
     return $tmpuser;
 }
 
 function mgm_parse_preinscription_data($edition, $course, $data) {
+    print_object(getdate());
     // Local variables
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
     $retdata = array();
 
-    foreach ($data as $sqline) {
-        $lineuser = mgm_user_preinscription_tmpdata($sqline->userid);
-        $lineuser->realcourses = mgm_get_user_preinscription_realcourses($edition->id, $sqline->value);
+    foreach ($data as $sqline) {        
+        $lineuser = mgm_user_preinscription_tmpdata($sqline->userid);        
+        $lineuser->realcourses = mgm_get_user_preinscription_realcourses($edition->id, $sqline->value);        
         if (empty($lineuser->realcourses)) {
             $lineuser->realcourses[0] = '';
-        }
-        $lineuser->tmpdata = mgm_get_user_preinscription_data($sqline, $edition, $lineuser);
+        }        
+        
+        $lineuser->tmpdata = mgm_get_user_preinscription_data($sqline, $edition, $lineuser);        
         $lineuser->sqline = $sqline;
         $lineuser->data = array(
         	'opcion1' => array(
@@ -1938,6 +1949,7 @@ function mgm_parse_preinscription_data($edition, $course, $data) {
             $retdata['last'][] = $lineuser;
         }
     }
+    print_object(getdate());
 
     /*
      * Now we have all the data splited into those ones who choosed the course as first option at
@@ -2297,7 +2309,7 @@ function mgm_get_edition_course_inscription_data($edition, $course, $docheck=tru
  * @param object $course
  * @param boolean $docheck
  */
-function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=true) {
+function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=true) {    
     global $CFG;
 
     // Preinscripcion date first
@@ -2319,7 +2331,7 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck=
 
     if (!count($final)) {
         return;
-    }
+    }    
 
     $data = mgm_parse_preinscription_data($edition, $course, $final);
 
@@ -3226,13 +3238,14 @@ function mgm_download_doc($fields) {
  */
 function mgm_create_especs() {
     global $CFG;    
+    global $MGM_ITE_ESPECS;
     
     if( !mgm_especs_exists() ) {
         // No data exists. Just create it
         $nespecs = new stdClass();
         $nespecs->type = MGM_ITE_ESPECIALIDADES;
         $nespecs->name = 'Especialidades';
-        $nespecs->value = implode("\n", $MGM_ITE_ESPECS);
+        $nespecs->value = implode("\n", $MGM_ITE_ESPECS);        
         insert_record('edicion_ite', $nespecs);        
     }
     
