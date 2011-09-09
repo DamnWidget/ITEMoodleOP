@@ -130,6 +130,9 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+      <INDEXES>
+          <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
+      </INDEXES>
     </TABLE>
     <TABLE NAME="edicion_cert_history" COMMENT="Edicion certification history" PREVIOUS="edicion_user">
       <FIELDS>

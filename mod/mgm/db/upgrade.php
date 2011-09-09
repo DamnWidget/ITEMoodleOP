@@ -388,6 +388,16 @@ function xmldb_mgm_upgrade($oldversion=0) {
         
         $result = $result && add_field($table, $field);
     }
+    
+    if ($result && $oldversion < 2011090900) {
+        /// Define index (not unique) to be added to edicion_user
+        $table = new XMLDBTable('edicion_user');
+        $index = new XMLDBIndex('userid');
+        $index->setAttributes(XMLDB_INDEX_NOTUNIQUE, array('userid'));
+        
+        /// Launch add index userid 
+        $result = $result && add_index($table, $index);
+    }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
 /// it's interesting to look how other modules are using this script. Remember that
 /// the basic idea is to have "blocks" of code (each one being executed only once,

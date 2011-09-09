@@ -2446,7 +2446,11 @@ function mgm_set_userdata($userid, $data) {
     $ret = MGM_DATA_NO_ERROR;
     $newdata = $data;
     $newdata->cc = mgm_check_user_cc($data->cc, $ret);
-    $newdata->dni = mgm_check_user_dni($userid, $data->dni, $ret);
+    if ($data->tipoid == 'N') {
+        $newdata->dni = mgm_check_user_dni($userid, $data->dni, $ret);    
+    } else {
+        $newdata->dni = $data->dni;        
+    }    
     $newdata->userid = $userid;
     if (!record_exists('edicion_user', 'userid', $userid)) {
         if (isset($data->addsel)) {
@@ -2488,12 +2492,12 @@ function mgm_set_userdata($userid, $data) {
  * @return boolean
  */
 function mgm_is_cc_on_csv($cc) {
-    foreach (mgm_get_cc_data() as $ccdata) {
-        if ($ccdata[5] == $cc) {
+    foreach (mgm_get_cc_data() as $ccdata) {        
+        if ($ccdata[5] == $cc) {    
             return true;
         }
     }
-
+    
     return false;
 }
 

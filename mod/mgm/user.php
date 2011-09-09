@@ -96,7 +96,7 @@ if ($mform->is_cancelled()) {
         error(get_string('dninotvalid', 'mgm'), $CFG->wwwroot.'/mod/mgm/user.php');
     }
     
-    notice(get_string('codemessage', 'mgm'), $CFG->wwwroot.'/enrol/mgm/show_requests.php');
+    notice(get_string('codemessage', 'mgm'), $CFG->wwwroot.'/index.php');
 }
 
 print_header($strmatricular, $strmatricular, $navigation);
