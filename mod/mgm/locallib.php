@@ -1725,7 +1725,6 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
         if (!$gid=groups_create_group($group)) {
             error('Error creating the '.$group->name.' group');
         }
-        print_object($group);
         foreach ($fg as $user) {
             if (!groups_add_member($gid, $user->id)) {
                 error('Error adding user '.$user->username.' to group '.$group->name);
@@ -1793,8 +1792,7 @@ function mgm_exists_criteria_for_course($edition, $course) {
  */
 function mgm_get_user_preinscription_data($line, $edition, $data) {
     global $CFG;
-    
-    print_object($data);
+
     $site = get_site();
     $user = $data->user;    
     $especs = ($data->user->especialidades) ? $data->user->especialidades : array();
