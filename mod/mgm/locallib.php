@@ -1794,9 +1794,10 @@ function mgm_exists_criteria_for_course($edition, $course) {
 function mgm_get_user_preinscription_data($line, $edition, $data) {
     global $CFG;
     
+    print_object($data);
     $site = get_site();
-    $user = $data->user;
-    $especs = ($data->especialidades) ? $data->especialidades : array();
+    $user = $data->user;    
+    $especs = ($data->user->especialidades) ? $data->user->especialidades : array();
     $userespecs = '<select name="especialidades" readonly="">';
     foreach ($especs as $espec) {
         $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
@@ -1823,7 +1824,7 @@ function mgm_get_user_preinscription_data($line, $edition, $data) {
         '<a href="../../user/view.php?id='.$line->userid.'&amp;course='.$site->id.'">'.$user->firstname.'</a>',
         $user->lastname,
         date("d/m/Y H:i\"s", $line->timemodified),
-        ($data->cc) ? $data->cc : '',
+        ($data->user->cc) ? $data->user->cc : '',
         $userespecs,
         $courses
     );
