@@ -44,6 +44,7 @@ class mgm_course_edit_form extends moodleform {
         global $PROVINCIAS;
         global $PAISES;
         global $MATERIAS;
+        global $COMUNIDADES;
         $mform =& $this->_form;
         $criteria = $this->_customdata;
 
@@ -111,10 +112,14 @@ class mgm_course_edit_form extends moodleform {
             'ninguna'		 => get_string('sinprioridad', 'mgm'),
             'centros'        => get_string('prioridadcentro', 'mgm'),
             'especialidades' => get_string('prioridadespec', 'mgm')
-        );
+        );        
 
         $mform->addElement('select', 'opcion1', get_string('opcionuno', 'mgm'), $choices, 'onChange="mgm_opciones(true);"');
         $mform->addElement('select', 'opcion2', get_string('opciondos', 'mgm'), $choices, 'onChange="mgm_opciones(false);"');
+        
+        $comunidades = $COMUNIDADES;                
+        
+        $mform->addElement('select', 'comunidad', get_string('comunidad', 'mgm'), $comunidades);
 
         $achoices = $schoices = array();
         $aespecs = & $this->_customdata->aespecs;

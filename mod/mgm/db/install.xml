@@ -134,7 +134,7 @@
           <INDEX NAME="userid" UNIQUE="false" FIELDS="userid"/>
       </INDEXES>
     </TABLE>
-    <TABLE NAME="edicion_cert_history" COMMENT="Edicion certification history" PREVIOUS="edicion_user">
+    <TABLE NAME="edicion_cert_history" COMMENT="Edicion certification history" PREVIOUS="edicion_user" NEXT="edicion_centro">
       <FIELDS>
         <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="courseid"/>
         <FIELD NAME="courseid" TYPE="text" LENGTH="big" NOTNULL="true" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="userid"/>
@@ -147,6 +147,25 @@
       <KEYS>
         <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
       </KEYS>
+    </TABLE>
+    <TABLE NAME="edicion_centro" COMMENT="Edicion Centros" PREVIOUS="edicion_cert_history">
+        <FIELDS>
+            <FIELD NAME="id" TYPE="int" LENGTH="10" NOTNULL="true" UNSIGNED="true" SEQUENCE="true" ENUM="false" NEXT="pais"/>
+            <FIELD NAME="pais" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="id" NEXT="localidad"/>
+            <FIELD NAME="localidad" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="pais" NEXT="dgenerica"/>
+            <FIELD NAME="dgenerica" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="localidad" NEXT="despecifica"/>
+            <FIELD NAME="despecifica" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="dgenerica" NEXT="codigo"/>
+            <FIELD NAME="codigo" TYPE="int" LENGTH="16" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="despecifica" NEXT="naturaleza"/>
+            <FIELD NAME="naturaleza" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="codigo" NEXT="tipo"/>
+            <FIELD NAME="tipo" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="naturaleza" NEXT="direccion"/>
+            <FIELD NAME="direccion" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="tipo"/>
+        </FIELDS>
+        <KEYS>
+            <KEY NAME="primary" TYPE="primary" FIELDS="id"/>
+        </KEYS>
+        <INDEXES>
+            <INDEX NAME="codigo" UNIQUE="true" FIELDS="codigo"/>
+        </INDEXES>
     </TABLE>
   </TABLES>
 </XMLDB>

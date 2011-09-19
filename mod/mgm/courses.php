@@ -96,7 +96,7 @@ $mform->set_data($criteria);
 
 if ($mform->is_cancelled()) {
     redirect($CFG->wwwroot.'/mod/mgm/courses.php');
-} else if ($data = $mform->get_data()) {
+} else if ($data = $mform->get_data()) {    
     if ($data->opcion1 == $data->opcion2 && $data->opcion1 != 'ninguna') {
         error(get_string('opcionesduplicadas', 'mgm'), 'courses.php?courseid='.$courseid.'&edicionid='.$edicionid);
     }

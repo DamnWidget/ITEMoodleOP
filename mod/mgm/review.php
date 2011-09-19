@@ -30,12 +30,16 @@
 
 require_once('../../config.php');
 require_once($CFG->dirroot."/mod/mgm/locallib.php");
+require_once($CFG->dirroot.'/user/filters/lib.php');
 
 require_login();
 
 require_capability('mod/mgm:aprobe', get_context_instance(CONTEXT_SYSTEM));
 
 $id = optional_param('id', 0, PARAM_INT);    // Edition id
+$page = optional_param('page', 0, PARAM_INT);  
+$recordsperpage = optional_param('recordsperpage', 30, PARAM_INT);
+$search = optional_param('search', '', PARAM_RAW);
 
 if (!$site = get_site()) {
     error('Site isn\'t defined!');
@@ -59,6 +63,9 @@ $stryes            = get_string('yes');
 $strno             = get_string('no');
 
 
+// Numalumnos
+$totalalumnos = 0;
+
 // Editions
 $editions = get_records('edicion');
 
@@ -80,81 +87,75 @@ print_header($site->shortname.': '.$strmgm, $stredicionesmgm, build_navigation($
              '', '', true);
 
 if ($id) {
-    $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
-    		WHERE edicionid='".$id."' AND userid
-    		NOT IN ( SELECT userid FROM ".$CFG->prefix."edicion_inscripcion
-    				 WHERE edicionid='".$id."' )";
-    $rows = get_records_sql($sql);
-    $alumnos = array();
-    if (!empty($rows)) {
-        foreach ($rows as $row) {
-            $alumno = get_record('user', 'id', $row->userid);
-            $record = new object();
-            $record->id = $alumno->id;
-            $record->nombre = $alumno->firstname.' '.$alumno->lastname;
-            $record->correo = $alumno->email;
-            $sql2 = "SELECT id, fullname FROM ".$CFG->prefix."course
-            		 WHERE id IN (".$row->value.")";            
-            $courses = get_records_sql($sql2);            
-            $record->cursos = $courses;
-            foreach ($record->cursos as $curso) {
-                $criteria = mgm_get_edition_course_criteria($id, $curso->id);
-                $curso->plazas = $criteria->plazas;
-            }
-            if($alumnodata = get_record('edicion_user', 'userid', $alumno->id)) {
-                $record->dni = $alumnodata->dni;
-                $record->cc = $alumnodata->cc;
-                $record->especialidades = explode("\n", $alumnodata->especialidades);
-            } else {
-                $record->dni = '00000000H';
-                $record->cc = 0;
-                $record->especialidades = array();
-            }
-
-            $record->fecha = $row->timemodified;
-            $cc_type = mgm_get_cc_type($record->cc);                        
-            /*if ($cc_type == MGM_PUBLIC_CENTER) {
-                $record->cc_type = get_string('cc_public', 'mgm');
-            } else if ($cc_type == MGM_MIXIN_CENTER) {
-                $record->cc_type == get_string('cc_mixin', 'mgm');
-            } else if ($cc_type == MGM_PRIVATE_CENTER) {
-                $record->cc_type = get_string('cc_private', 'mgm');
-            } else {
-                //$record->cc_type = get_string('cc_noidea', 'mgm');
-                $record->cc_type = $cc_type;
-            }*/
-           $record->cc_type = $cc_type;
-            $alumnos[] = $record;
+    $alumnos = array();    
+          
+    $data = mgm_get_usuarios_no_inscritos($id, $search, $page, $recordsperpage);
+    $totalalumnos = $data['userscount'];
+    foreach($data['users'] as $alumno) {
+        $record = new object();
+        $record->id = $alumno->userid;
+        $record->nombre = $alumno->firstname.' '.$alumno->lastname;
+        $record->correo = $alumno->email;     
+        $record->cursos = mgm_courses_from_user_choices($alumno->value);
+                
+        foreach($record->cursos as $curso) {
+            $criteria = mgm_get_edition_course_criteria($id, $curso->id);
+            $curso->plazas = $criteria->plazas;
         }
+        
+        $record->dni = ($alumno->dni) ? $alumno->dni : '00000000H';
+        $record->cc = ($alumno->cc) ? $alumno->cc : 0;
+        $record->especialidades = ($alumno->especialidades) ? explode("\n", $alumno->especialidades) : array();
+        
+        $record->fecha = $alumno->timemodified;
+        
+        $cc_type = mgm_get_cc_type($record->cc, true);        
+        $record->real_cc_type = $cc_type;                                        
+        if ($cc_type == MGM_PUBLIC_CENTER) {
+            $record->cc_type = get_string('cc_public', 'mgm');
+        } else if ($cc_type == MGM_MIXIN_CENTER) {
+            $record->cc_type = get_string('cc_mixin', 'mgm');
+        } else if ($cc_type == MGM_PRIVATE_CENTER) {
+            $record->cc_type = get_string('cc_private', 'mgm');
+        } else {         
+            $record->cc_type = $cc_type;
+        }        
+        $alumnos[] = $record;
+    }   
 
-        // Table data
-        foreach($alumnos as $alumno) {
-            // Especialidades
-            $especs = $alumno->especialidades;
-            $userespecs = '<select name="especialidades" readonly="">';
-            foreach ($especs as $espec) {
-                $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
-            }
-            $userespecs .= '</select>';
-
-            // Courses
-            $courses = '<select name="courses" readonly="">';
-            foreach($alumno->cursos as $course) {
-                $courses .= '<option name="'.$course->id.'">'.$course->fullname.'</option>';
-            }
-            $courses .= '</select>';
-
-            $alumnostable->data[] = array(
-                '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>',
-                '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
-                $alumno->dni,
-                $alumno->cc,
-                $alumno->cc_type,
-                (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
-                $courses,
-                date("d/m/Y H:i\"s", $alumno->fecha),
-            );
+    // Table data
+    foreach($alumnos as $alumno) {            
+        // Especialidades
+        $especs = $alumno->especialidades;
+        $userespecs = '<select name="especialidades" readonly="">';
+        foreach ($especs as $espec) {
+            $userespecs .= '<option name="'.$espec.'">'.mgm_translate_especialidad($espec).'</option>';
         }
+        $userespecs .= '</select>';
+
+        // Courses
+        $courses = '<select name="courses" readonly="">';
+        foreach($alumno->cursos as $course) {
+            $courses .= '<option name="'.$course->id.'">'.$course->fullname.'</option>';
+        }
+        $courses .= '</select>';
+        
+        if ($alumno->real_cc_type == MGM_PRIVATE_CENTER || $alumno->real_cc_type == -1) {
+            $name = '<span style="color: red;">(*)</span> '.'<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>';    
+        } else {
+            $name = '<a href="../../user/view.php?id='.$alumno->id.'&amp;course='.$site->id.'">'.$alumno->nombre.'</a>';
+        }
+        
+        $alumnostable->data[] = array(
+            $name,
+            '<a href="mailto:'.$alumno->correo.'">'.$alumno->correo.'</a>',
+            $alumno->dni,
+            $alumno->cc,
+            $alumno->cc_type,
+            (empty($alumno->especialidades)) ? get_string('sinespecialidades', 'mgm') : $userespecs,
+            $courses,
+            date("d/m/Y H:i\"s", $alumno->fecha),
+        );
     }
 
     // Table header
@@ -187,11 +188,19 @@ if ($id) {
 // Output the page
 
 if (isset($editiontable)) {
-    print_heading($strediciones);
-    print_table($editiontable);
-} else {    
-    print_heading($stralumnos);
-    print_table($alumnostable);
+    print_heading($strediciones);    
+    print_table($editiontable);    
+} else {        
+    print_heading($stralumnos." (".$totalalumnos.")");
+    echo '<form action="">
+            <label for="busca">Buscar por nombre o email: <br /></label>
+            <input type="text" name="search" id="busca" />
+            <input type="submit" value="Buscar" />
+            <input type="hidden" name="id" value="'.$id.'" />
+          </form><br />';
+    print_paging_bar($totalalumnos, $page, $recordsperpage, "?id=".$id."&amp;recordsperpage=".$recordsperpage."&amp;search=".$search."&amp;");
+    print_table($alumnostable);        
+    print_paging_bar($totalalumnos, $page, $recordsperpage, "?id=".$id."&amp;recordsperpage=".$recordsperpage."&amp;search=".$search."&amp;");
 }
 
 print_footer();

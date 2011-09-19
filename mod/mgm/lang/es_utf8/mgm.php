@@ -62,6 +62,7 @@ $string['certificaciones'] = 'Certificaciones';
 $string['certified'] = 'Certificado';
 $string['certondraft'] = 'Borrador de certificación de la edición generado';
 $string['certonvalidate'] = 'Borrador de certificación de la edición validado';
+$string['comunidad'] = 'Comunidad Autónoma';
 $string['certvalidatesure'] = '¿Seguro que desea validar el borrador de certificación de la edición?';
 $string['createcriteria'] = 'Crear nuevos criterios';
 $string['createedition'] = 'Crear nueva edición';
