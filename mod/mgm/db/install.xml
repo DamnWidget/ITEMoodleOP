@@ -158,7 +158,10 @@
             <FIELD NAME="codigo" TYPE="int" LENGTH="16" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="despecifica" NEXT="naturaleza"/>
             <FIELD NAME="naturaleza" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="codigo" NEXT="tipo"/>
             <FIELD NAME="tipo" TYPE="int" LENGTH="1" NOTNULL="false" UNSIGNED="true" SEQUENCE="false" ENUM="false" PREVIOUS="naturaleza" NEXT="direccion"/>
-            <FIELD NAME="direccion" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="tipo"/>
+            <FIELD NAME="direccion" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="tipo" NEXT="cp"/>
+            <FIELD NAME="cp" TYPE="char" LENGTH="5" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="direccion" NEXT="provincia"/>
+            <FIELD NAME="provincia" TYPE="text" LENGTH="big" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="cp" NEXT="telefono"/>
+            <FIELD NAME="telefono" TYPE="char" LENGTH="9" NOTNULL="false" SEQUENCE="false" ENUM="false" PREVIOUS="provincia"/>
         </FIELDS>
         <KEYS>
             <KEY NAME="primary" TYPE="primary" FIELDS="id"/>

@@ -104,6 +104,7 @@ $string['editionname'] = 'Nombre de la edición';
 $string['emailnotification'] = 'Habilitar notificación por correo electrónico.';
 $string['especdata'] = 'Crear/Comprobar Especialidades';
 $string['especialidades'] = 'Especialidades';
+$string['estadoborrador'] = 'Esta información no estña disponible aún';
 $string['fechaemision'] = 'Fecha de emisión del certificado';
 $string['fechafin'] = 'Fecha de finalización';
 $string['fechainscripcion'] = 'Fecha de Inscripción';

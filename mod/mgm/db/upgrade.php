@@ -398,6 +398,25 @@ function xmldb_mgm_upgrade($oldversion=0) {
         /// Launch add index userid 
         $result = $result && add_index($table, $index);
     }
+    
+    if ($result && $oldversion < 2011092000) {
+        $table = new XMLDBTable('edicion_centro');        
+        
+        $field = new XMLDBField('cp');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '5', null, null, null, null, null, null, 'direccion');
+        
+        $result = $result && add_field($table, $field);
+        
+        $field = new XMLDBField('provincia');
+        $field->setAttributes(XMLDB_TYPE_TEXT, 'big', null, null, null, null, null, null, 'cp');
+        
+        $result = $result && add_field($table, $field);
+        
+        $field = new XMLDBField('telefono');
+        $field->setAttributes(XMLDB_TYPE_CHAR, '9', null, null, null, null, null, null, 'provincia');
+        
+        $result = $result && add_field($table, $field);
+    }
 /// And that's all. Please, examine and understand the 3 example blocks above. Also
 /// it's interesting to look how other modules are using this script. Remember that
 /// the basic idea is to have "blocks" of code (each one being executed only once,

@@ -84,6 +84,7 @@ $string['edicionesscala'] = 'Set certification scale for courses';
 $string['editeditionsettings'] = 'Edit edition settings';
 $string['editionname'] = 'Edition name';
 $string['especdata'] = 'Create/Check Skills';
+$string['estadoborrador'] = 'This information is not available yet';
 $string['emailnotification'] = 'Enable email notification.';
 $string['fechaemision'] = 'Certification date';
 $string['fechafin'] = 'End date';
