@@ -149,8 +149,8 @@ if ($inscribe) {
         print_footer();
         die();
     }
-
-    foreach($users as $user) {
+    
+    foreach($users as $user) {             
         mgm_inscribe_user_in_edition($id, $user, $courseid, $borrador);
     }
 

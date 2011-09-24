@@ -957,19 +957,22 @@ function mgm_inscribe_user_in_edition($edition, $user, $course, $released = fals
 
     $sql = "SELECT * FROM " . $CFG -> prefix . "edicion_inscripcion
     		WHERE edicionid='" . $edition . "' AND userid='" . $user . "'";
+    
     if(!$record = get_record_sql($sql)) {
         // New record
         $record = new stdClass();
-        $record -> edicionid = $edition;
-        $record -> userid = $user;
-        $record -> value = $course;
-        $record -> released = $released;
+        $record->edicionid = $edition;
+        $record->userid = $user;
+        $record->value = $course;
+        $record->released = $released;
         insert_record('edicion_inscripcion', $record);
     } else {
         // Update record
-        $record -> value = $course;
-        $record -> released = $released;
-        $record -> timemodified = time();
+        $record->edicionid = $edition;
+        $record->userid = $user;
+        $record->value = $course;        
+        $record->released = $released;
+        $record->timemodified = time();
         update_record('edicion_inscripcion', $record);
     }
 }
@@ -982,7 +985,7 @@ function mgm_enrol_edition_course($editionid, $courseid) {
     if($data = get_records_sql($sql)) {
         $course = get_record('course', 'id', $courseid);
         foreach($data as $row) {
-            $user = get_record('user', 'id', $row -> userid);
+            $user = get_record('user', 'id', $row->userid);
             if(!enrol_into_course($course, $user, 'mgm')) {
                 print_error('couldnotassignrole');
             }
@@ -1009,12 +1012,12 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
     $groups = array();
     $ncount = 0;
     $mcount = array();
-    foreach($inscripcion as $row) {
+    foreach($inscripcion as $row) {        
         if(!array_key_exists($ncount, $groups)) {
             $groups[$ncount] = array();
         }
-        $user = get_record('user', 'id', $row -> userid);
-        if(!$user -> ite_data = get_record('edicion_user', 'userid', $row -> userid)) {
+        $user = get_record('user', 'id', $row->id);        
+        if(!$user->ite_data = get_record('edicion_user', 'userid', $row -> userid)) {
             if(count($groups[$ncount]) < $max) {
                 $groups[$ncount][] = $user;
             } else {
@@ -1022,7 +1025,7 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
                 $groups[$ncount][] = $user;
             }
         } else {
-            if(!$user -> ite_data -> cc) {
+            if(!$user->ite_data->cc) {
                 if(count($groups[$ncount] < $max)) {
                     $groups[$ncount][] = $user;
                 } else {
@@ -1030,28 +1033,28 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
                     $groups[$ncount][] = $user;
                 }
             } else {
-                if(array_key_exists($user -> ite_data -> cc, $mcount)) {
-                    if(count($groups[$mcount[$user -> ite_data -> cc]]) < $max) {
-                        $groups[$mcount[$user -> ite_data -> cc]][] = $user;
+                if(array_key_exists($user->ite_data->cc, $mcount)) {
+                    if(count($groups[$mcount[$user->ite_data->cc]]) < $max) {
+                        $groups[$mcount[$user->ite_data->cc]][] = $user;
                     } else {
-                        $mcount[$user -> ite_data -> cc]++;
-                        $groups[$mcount[$user -> ite_data -> cc]][] = $user;
+                        $mcount[$user->ite_data->cc]++;
+                        $groups[$mcount[$user->ite_data->cc]][] = $user;
                     }
                 } else {
-                    $mcount[$user -> ite_data -> cc] = $user -> ite_data -> cc + rand(rand(1, 10000), rand(10000, 100000));
-                    $groups[$mcount[$user -> ite_data -> cc]][] = $user;
+                    $mcount[$user->ite_data->cc] = $user->ite_data -> cc + rand(rand(1, 10000), rand(10000, 100000));
+                    $groups[$mcount[$user->ite_data->cc]][] = $user;
                 }
             }
         }
-    }
+    }    
 
     $finalgroups = array();
-    for($i = 0; $i < $criteria -> numgroups; $i++) {
+    for($i = 0; $i < $criteria->numgroups; $i++) {
         $finalgroups[$i] = array();
         $x = 1;
-        foreach($groups as $group) {
-            foreach($group as $gr) {
-                echo "<br />if (($x <= " . ($i + 1) * $max . ") && ($x > " . ($i * $max) . "))";
+        foreach($groups as $group) {            
+            foreach($group as $gr) {                
+                //echo "<br />if (($x <= " . ($i + 1) * $max . ") && ($x > " . ($i * $max) . "))";
                 if(($x <= ($i + 1) * $max) && ($x > ($i * $max))) {
                     $finalgroups[$i][] = $gr;
                 }
@@ -1063,14 +1066,14 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
     $x = 65;
     foreach($finalgroups as $fg) {
         $group = new object();
-        $group -> courseid = $courseid;
-        $group -> name = 'Grupo ' . chr($x);
+        $group->courseid = $courseid;
+        $group->name = 'Grupo ' . chr($x);
         if(!$gid = groups_create_group($group)) {
-            error('Error creating the ' . $group -> name . ' group');
-        }
+            error('Error creating the ' . $group->name . ' group');
+        }        
         foreach($fg as $user) {
-            if(!groups_add_member($gid, $user -> id)) {
-                error('Error adding user ' . $user -> username . ' to group ' . $group -> name);
+            if(!groups_add_member($gid, $user->id)) {
+                error('Error adding user ' . $user->username . ' to group ' . $group -> name);
             }
         }
         $x++;
@@ -1091,20 +1094,11 @@ function mgm_edition_get_solicitudes($edition, $course) {
     global $CFG;
 
     $ret = 0;
-    $sql = "SELECT value FROM " . $CFG -> prefix . "edicion_preinscripcion
+    $sql = "SELECT count(id) as count FROM " . $CFG -> prefix . "edicion_preinscripcion
     		WHERE edicionid='" . $edition -> id . "'
-    		AND value LIKE '%" . $course -> id . "%'";
-    if($records = get_records_sql($sql)) {
-        foreach($records as $record) {
-            $tmpcount = 0;
-            foreach(explode(",", $record->value) as $c) {
-                if($c == $course -> id) {
-                    $tmpcount++;
-                }
-            }
-
-            $ret += $tmpcount;
-        }
+    		AND value IN (".$course->id.")";
+    if($record = get_record_sql($sql)) {        
+       return $record->count;
     }
 
     return $ret;
@@ -1617,8 +1611,8 @@ function mgm_get_edition_course_inscription_data($edition, $course, $docheck = t
     global $CFG;
 
     // Inscription data
-    $sql = "SELECT * FROM " . $CFG -> prefix . "edicion_inscripcion
-    		WHERE edicionid = '" . $edition -> id . "' AND value='" . $course -> id . "'
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid = '".$edition->id."' AND value='".$course->id."'
     		ORDER BY timemodified ASC";
     if(!$inscripcion = get_records_sql($sql)) {
         return ;
@@ -1626,8 +1620,8 @@ function mgm_get_edition_course_inscription_data($edition, $course, $docheck = t
 
     $data = array();
     foreach($inscripcion as $line) {
-        $tmpdata = mgm_user_preinscription_tmpdata($line -> userid);
-        $data[] = array('<a href="../../user/view.php?id=' . $tmpdata -> user -> id . '&amp;course=1">' . $tmpdata -> user -> firstname . '</a>', $tmpdata -> user -> lastname . '<input type="hidden" name="users[' . $tmpdata -> user -> id . ']" value="1"></input>');
+        $tmpdata = mgm_user_preinscription_tmpdata($line->userid);
+        $data[] = array('<a href="../../user/view.php?id='.$line->userid.'&amp;course=1">'.$tmpdata->user->firstname.'</a>', $tmpdata->user->lastname.'<input type="hidden" name="users['.$line->userid.']" value="1"></input>');
     }
 
     return $data;
@@ -1644,27 +1638,17 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck 
     global $CFG;
 
     // Preinscripcion date first
-    $sql = "SELECT * FROM " . $CFG -> prefix . "edicion_preinscripcion
-    		WHERE edicionid = '" . $edition -> id . "' AND
-    		userid NOT IN (select userid FROM " . $CFG -> prefix . "edicion_inscripcion
-    		WHERE edicionid = '" . $edition -> id . "') ORDER BY timemodified ASC";
+    $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
+    		WHERE edicionid = '".$edition->id."' AND
+    		userid NOT IN (SELECT userid FROM ".$CFG->prefix."edicion_inscripcion
+    		WHERE edicionid='".$edition->id."' AND value='".$course->id."') 
+    		AND value IN (".$course->id.") ORDER BY timemodified ASC";
+    
     if(!$preinscripcion = get_records_sql($sql)) {
         return ;
     }
 
-    $final = array();
-    foreach($preinscripcion as $data) {
-        $courses = explode(",", $data -> value);
-        if(in_array($course -> id, $courses)) {
-            $final[] = $data;
-        }
-    }
-
-    if(!count($final)) {
-        return ;
-    }
-
-    $data = mgm_parse_preinscription_data($edition, $course, $final);
+    $data = mgm_parse_preinscription_data($edition, $course, $preinscripcion);
 
     if($docheck) {
         $criteria = mgm_get_edition_course_criteria($edition -> id, $course -> id);
