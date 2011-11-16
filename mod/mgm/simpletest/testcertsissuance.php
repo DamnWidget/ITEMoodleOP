@@ -83,7 +83,7 @@ class testCertificatesIssuance extends UnitTestCase {
          $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
          $this->menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="#">'.
          			    '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
-         $this->menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="#">'.
+         $this->menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="payment.php?id='.$this->edition->id.'">'.
                        '<img src="'.$CFG->pixpath.'/i/lock.gif" class="iconsmall" alt="'.get_string('pago', 'mgm').'" /></a>';
                        
          $this->assertEqual($this->menu, mgm_get_edition_menu($this->edition));

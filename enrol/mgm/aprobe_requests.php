@@ -155,7 +155,7 @@ if ($inscribe) {
     }
 
     if ($borrador) {
-        mgm_enrol_edition_course($id, $courseid);
+        mgm_enrol_edition_course($id, $courseid);        
         if (mgm_create_enrolment_groups($id, $courseid)) {
             redirect('configure_groups.php?id='.$id.'&courseid='.$courseid);   
         }        

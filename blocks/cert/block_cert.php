@@ -37,10 +37,10 @@ class block_cert extends block_base {
         return array('all' => true, 'my' => false, 'tag' => false);
     }
 
-    function get_content () {
+    function get_content () {        
         global $CFG, $COURSE;
         
-        if ($this->content !== NULL) {
+        if ($this->content !== NULL) {            
             return $this->content;
         }
         
@@ -54,7 +54,7 @@ class block_cert extends block_base {
             return $this->content;
         }
         
-        if (!mgm_edition_is_certified(mgm_get_course_edition($COURSE->id))) {
+        if (!mgm_edition_is_certified(mgm_get_course_edition($COURSE->id))) {            
             $this->content = '';
             return $this->content;
         }
@@ -66,7 +66,7 @@ class block_cert extends block_base {
         $this->content->text .= '<li><a href="'.$CFG->wwwroot.'/mod/mgm/show_certifications.php?contextid='.$COURSE->id.'">'.get_string('showcertifications', 'mgm').'</a></li>';        
         $this->content->text .= '</ul>'."\n";
         $this->content->text .= '</div>';
-
-        return $this->content;
+        
+        return $this->content;        
     }
 }

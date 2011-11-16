@@ -98,6 +98,16 @@ class mgm_course_edit_form extends moodleform {
         $mform->addRule('fechainimodalidad', get_string('required'), 'required', null);
         $mform->setDefault('fechainimodalidad', mktime(0,0,0,9,1,1975));
         
+        $mform->addElement('text', 'tutorpayment', get_string('tutor_payment', 'mgm'));
+        $mform->addRule('tutorpayment', get_string('required'), 'required', null);
+        $mform->setDefault('tutorpayment', 60);
+        
+        $tasks = array(0 => 'Automático');
+        $atasks = & $this->_customdata->tasks;
+        $tasks += $atasks;
+        
+        $mform->addElement('select', 'ecuadortask', get_string('ecuadortask', 'mgm'), $tasks);        
+        
         $mform->addElement('header', 'criteria', get_string('criterios', 'mgm'));
 
         $mform->addElement('text', 'plazas', get_string('plazas', 'mgm'));
