@@ -96,9 +96,9 @@ class testPagos extends UnitTestCase {
         $this->assertFalse(mgm_get_edition_payment_data($this->edition, $basura));     
     }
     
-    function testCertifiedEdition() {        
+    function testCertifiedEdition() {                
         $this->edition->certified = MGM_CERTIFICATE_VALIDATED;
-        $this->assertTrue(mgm_get_edition_payment_data($this->edition));
+        $this->assertTrue(mgm_get_edition_payment_data($this->edition, $data));        
     }
     
     function testNotCertifiedEditionMsg() {
@@ -107,5 +107,16 @@ class testPagos extends UnitTestCase {
         mgm_get_edition_payment_data($this->edition, $basura);
         $this->assertEqual($basura, get_string('pago-nc', 'mgm'));
     }    
+    
+    function testValidData() {        
+        $data = '';
+        $edition = get_record('edicion', 'id', 5);                
+        mgm_get_edition_payment_data($edition, $data);        
+        $this->assertNotNull($data[0]['ecuador']);
+        $this->assertNotNull($data[0]['alumnos']);
+        $this->assertNotNull($data[0]['coordinacion']);        
+        print_object($data);
+        
+    }
 
 }

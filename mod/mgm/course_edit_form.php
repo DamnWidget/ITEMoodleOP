@@ -102,6 +102,34 @@ class mgm_course_edit_form extends moodleform {
         $mform->addRule('tutorpayment', get_string('required'), 'required', null);
         $mform->setDefault('tutorpayment', 60);
         
+        $mform->addElement('text', 'duration', get_string('duration', 'mgm'));
+        $mform->addRule('duration', get_string('required'), 'required', null);
+        $mform->setDefault('duration', 2);
+        
+        $mform->addElement('text', 'prevlab', get_string('prevlab', 'mgm'));
+        $mform->addRule('prevlab', get_string('required'), 'required', null);
+        $mform->setDefault('prevlab', 180);
+        
+        $mform->addElement('text', 'tramo[0]', get_string('tramo', 'mgm').' 1-5');
+        $mform->addRule('tramo[0]', get_string('required'), 'required', null);
+        $mform->setDefault('tramo[0]', ($this->_customdata->tramo[0]) ? $this->_customdata->tramo[0] : 350);
+        
+        $mform->addElement('text', 'tramo[1]', get_string('tramo', 'mgm').' 6-10');
+        $mform->addRule('tramo[1]', get_string('required'), 'required', null);
+        $mform->setDefault('tramo[1]', ($this->_customdata->tramo[1]) ? $this->_customdata->tramo[1] : 350);
+        
+        $mform->addElement('text', 'tramo[2]', get_string('tramo', 'mgm').' 11-15');
+        $mform->addRule('tramo[2]', get_string('required'), 'required', null);
+        $mform->setDefault('tramo[2]', ($this->_customdata->tramo[2]) ? $this->_customdata->tramo[2] : 350);
+        
+        $mform->addElement('text', 'tramo[3]', get_string('tramo', 'mgm').' 16-20');
+        $mform->addRule('tramo[3]', get_string('required'), 'required', null);
+        $mform->setDefault('tramo[3]', ($this->_customdata->tramo[3]) ? $this->_customdata->tramo[3] : 350);
+        
+        $mform->addElement('text', 'tramo[4]', get_string('tramo', 'mgm').' 20+');
+        $mform->addRule('tramo[4]', get_string('required'), 'required', null);
+        $mform->setDefault('tramo[4]', ($this->_customdata->tramo[4]) ? $this->_customdata->tramo[4] : 350);
+        
         $tasks = array(0 => 'Automático');
         $atasks = & $this->_customdata->tasks;
         $tasks += $atasks;
