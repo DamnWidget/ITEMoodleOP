@@ -205,3 +205,9 @@ $string['incidencia_usuario'] = '<p>Advertencia: No hay información extendida p
 $string['incidencia_dni'] = '<p>Advertencia: El campo DNI está vacío o es incorrecto para el usuario $a->nombre. Pulse <a href=\"../../course/loginas.php?user=$a->id&sesskey=$a->sesskey\"/>aquí</a> para iniciar sesión con dicho usuario y editar la información docente en el Panel de control ITE.</p>';
 $string['incidencia_no_aprobado'] = '<p>Advertencia: No se incluye al usuario $a->nombre al no haber aprobado el curso \"$a->curso\".</p>';
 $string['incidencia_no_tipo_usuario'] = '<p>Advertencia: El usuario $a->nombre no tiene asignado un rol de Tutor, Coordinador o Alumno para el curso \"$a->curso\".</p>';
+$string['edition'] = 'Edición';
+$string['filtereditions'] = 'Ediciones';
+$string['filtereditions_summary'] = 'Este filtro muestra una lista de ediciones. Solo se puede seleccionar una ediciona al mismo tiempo';
+$string['reports'] = 'Informes';
+$string['dinamicinfo'] = 'Dinamico';
+$string['unknowreport'] = 'Tipo de informe desconocido';

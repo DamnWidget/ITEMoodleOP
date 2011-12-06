@@ -76,3 +76,10 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('especdata', get_string('especdata', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/espec.php', 'mod/mgm:createedicion')
 );
+
+$ADMIN->add('ediciones', new admin_category('mgmreports', get_string('reports', 'mgm')));
+
+$ADMIN->add(
+    'mgmreports', new admin_externalpage('dinamicinfo', get_string('dinamicinfo', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/report.php?report_type=Report001', 'mod/mgm:createedicion')
+);

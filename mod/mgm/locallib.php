@@ -59,6 +59,7 @@ define('MGM_ITE_ESPECIALIDADES', 1);
 define('MGM_ITE_CENTROS', 2);
 define('MGM_ITE_SCALA', 3);
 define('MGM_ITE_ROLE', 4);
+define('MGM_ITE_REPORT', 5);
 
 define('MGM_DATA_NO_ERROR', 0);
 define('MGM_DATA_CC_ERROR', 1);
@@ -271,7 +272,7 @@ function mgm_get_edition_menu($edition) {
     $menu .= '<a title="' . get_string('delete') . '" href="delete.php?id=' . $edition -> id . '">' .
              '<img src="' . $CFG -> pixpath . '/t/delete.gif" class="iconsmall" alt="' . get_string('delete') . '" /></a>';
     $menu .= ' | ';
-    
+
     if(mgm_edition_is_active($edition)) {
         $menu .= '<a title="' . get_string('desactivar', 'mgm') . '" href="active.php?id=' . $edition -> id . '">' .
                  '<img src="' . $CFG -> pixpath . '/t/stop.gif" class="iconsmall" alt="' . get_string('desactivar', 'mgm') . '" /></a>';
@@ -294,7 +295,7 @@ function mgm_get_edition_menu($edition) {
                      '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
             $menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="payment.php?id='.$edition->id.'">'.
                      '<img src="'.$CFG->pixpath.'/i/lock.gif" class="iconsmall" alt="'.get_string('pago', 'mgm').'" /></a>';
-        }        
+        }
     }
 
     return $menu;
@@ -584,23 +585,23 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
         if($c->type == MGM_CRITERIA_COMUNIDAD) {
             $criteria->comunidad = $c->value;
         }
-        
+
         if($c->type == MGM_CRITERIA_PAGO) {
             $criteria->tutorpayment = $c->value;
         }
-        
+
         if($c->type == MGM_CRITERIA_ECUADOR) {
             $criteria->ecuadortask = $c->value;
         }
-        
+
         if($c->type == MGM_CRITERIA_DURATION) {
             $criteria->ecuadortask = $c->value;
         }
-        
+
         if($c->type == MGM_CRITERIA_PREVLAB) {
             $criteria->ecuadortask = $c->value;
         }
-        
+
         if($c->type == MGM_CRITERIA_TRAMOS) {
             $criteria->tramo = explode(',', $c->value);
         }
@@ -763,7 +764,7 @@ function mgm_set_edition_course_criteria($data) {
             }
         }
     }
-    
+
     // Tutor payment
     if(isset($data->tutorpayment)) {
         $criteria->type = MGM_CRITERIA_PAGO;
@@ -778,9 +779,9 @@ function mgm_set_edition_course_criteria($data) {
     }
 
     // Tarea Ecuador
-    if(isset($data->ecuadortask)) {        
+    if(isset($data->ecuadortask)) {
         $criteria->type = MGM_CRITERIA_ECUADOR;
-        $criteria->value = $data->ecuadortask;        
+        $criteria->value = $data->ecuadortask;
         if(!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
             insert_record('edicion_criterios', $criteria);
         } else {
@@ -788,12 +789,12 @@ function mgm_set_edition_course_criteria($data) {
             update_record('edicion_criterios', $criteria);
             unset($criteria->id);
         }
-    } 
-    
+    }
+
     // Duración del curso para pago al coordinador
-    if(isset($data->duration)) {        
+    if(isset($data->duration)) {
         $criteria->type = MGM_CRITERIA_DURATION;
-        $criteria->value = $data->duration;        
+        $criteria->value = $data->duration;
         if(!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
             insert_record('edicion_criterios', $criteria);
         } else {
@@ -802,11 +803,11 @@ function mgm_set_edition_course_criteria($data) {
             unset($criteria->id);
         }
     }
-    
+
     // Importe por labor previa al curso
-    if(isset($data->prevlab)) {        
+    if(isset($data->prevlab)) {
         $criteria->type = MGM_CRITERIA_PREVLAB;
-        $criteria->value = $data->prevlab;        
+        $criteria->value = $data->prevlab;
         if(!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
             insert_record('edicion_criterios', $criteria);
         } else {
@@ -815,11 +816,11 @@ function mgm_set_edition_course_criteria($data) {
             unset($criteria->id);
         }
     }
-    
+
     // Tramos
-    if(isset($data->tramo)) {                
+    if(isset($data->tramo)) {
         $criteria->type = MGM_CRITERIA_TRAMOS;
-        $criteria->value = implode(',', $data->tramo);        
+        $criteria->value = implode(',', $data->tramo);
         if(!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
             insert_record('edicion_criterios', $criteria);
         } else {
@@ -1057,7 +1058,7 @@ function mgm_inscribe_user_in_edition($edition, $user, $course, $released = fals
 
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_inscripcion
     		WHERE edicionid='".$edition."' AND userid='".$user."'";
-    
+
     if(!$record = get_record_sql($sql)) {
         // New record
         $record = new stdClass();
@@ -1070,7 +1071,7 @@ function mgm_inscribe_user_in_edition($edition, $user, $course, $released = fals
         // Update record
         $record->edicionid = $edition;
         $record->userid = $user;
-        $record->value = $course;        
+        $record->value = $course;
         $record->released = $released;
         $record->timemodified = time();
         update_record('edicion_inscripcion', $record);
@@ -1079,13 +1080,13 @@ function mgm_inscribe_user_in_edition($edition, $user, $course, $released = fals
 
 /**
  * We need to overwrite some Moodle core funcs that are not designed to be masive
- * 
+ *
  * This function makes a role-assignment (a role for a user or group in a particular context)
  * @param $course - the course
  * @param $users - users
  * @param $timestart - time this assignment becomes effective
  * @param $timeend - time this assignemnt ceases to be effective
- * @uses $USER 
+ * @uses $USER
  */
 function mgm_massive_role_assign($course, $users, $timestart=0, $timeend=0, $enrol='mgm') {
     global $USER, $CFG;
@@ -1098,13 +1099,13 @@ function mgm_massive_role_assign($course, $users, $timestart=0, $timeend=0, $enr
     if (!$timemodified) {
         $timemodified = time();
     }
-        
-    foreach($users as $user) {        
+
+    foreach($users as $user) {
         /// Check for existing entry
         if($user->id) {
-            $ra = get_record('role_assignments', 'roleid', $course->role->id, 'contextid', $course->context->id, 'userid', $user->id); 
+            $ra = get_record('role_assignments', 'roleid', $course->role->id, 'contextid', $course->context->id, 'userid', $user->id);
         }
-        
+
         if (empty($ra)) {
             $ra = new object();
             $ra->roleid = $course->role->id;
@@ -1118,7 +1119,7 @@ function mgm_massive_role_assign($course, $users, $timestart=0, $timeend=0, $enr
             $ra->timeend = $timeend;
             $ra->timemodified = $timemodified;
             $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
-            
+
             if (!$ra->id = insert_record('role_assignments', $ra)) {
                return false;
             }
@@ -1132,20 +1133,20 @@ function mgm_massive_role_assign($course, $users, $timestart=0, $timeend=0, $enr
             $ra->timeend = $timeend;
             $ra->timemodified = $timemodified;
             $ra->modifierid = empty($USER->id) ? 0 : $USER->id;
-            
+
             if (!update_record('role_assignments', $ra)) {
                 return false;
             }
         }
-        
+
         if (!empty($USER->id) && $USER->id == $user->id) {
             /// If the user is the current user, then do full reload of capabilities too.
             load_all_capabilities();
         }
-        
+
         events_trigger('role_assigned', $ra);
-    }    
-    
+    }
+
     /// Ask all the modules if anything needs to be done for this user
     if ($mods = get_list_of_plugins('mod')) {
         foreach ($mods as $mod) {
@@ -1172,7 +1173,7 @@ function mgm_massive_role_assign($course, $users, $timestart=0, $timeend=0, $enr
 /**
  * Moodle core functions are not designed for massive enrolments
  * we need to create our own enrolment functions on MGM
- * 
+ *
  * A convenience function to take care of the common case where you
  * just want to enrol someone using the default role into a course
  *
@@ -1181,7 +1182,7 @@ function mgm_massive_role_assign($course, $users, $timestart=0, $timeend=0, $enr
  * @param string $enrol - the plugin used to do this enrolment
  */
 function mgm_enrol_into_course($course, $users, $enrol) {
-        
+
     $timestart = time();
     // remove time part from the timestamp and keep only the date part
     $timestart = make_timestamp(date('Y', $timestart), date('m', $timestart), date('d', $timestart), 0, 0, 0);
@@ -1190,14 +1191,14 @@ function mgm_enrol_into_course($course, $users, $enrol) {
     } else {
         $timeend = 0;
     }
-    
+
     if (!mgm_massive_role_assign($course, $users, $timestart, $timeend, $enrol)) {
         return false;
-    }    
-    
+    }
+
     mark_context_dirty($course->context->path);
     add_to_log($course->id, 'course', 'enrol', 'view.php?id='.$course->id, $course->id);
-    
+
     return true;
 }
 
@@ -1215,23 +1216,23 @@ function mgm_enrol_edition_course($editionid, $courseid) {
         $context = get_context_instance(CONTEXT_COURSE, $course->id);
         $course->role = $role;
         $course->context = $context;
-        
-        $users = array(); 
+
+        $users = array();
         foreach($data as $row) {
             $usql = "SELECT auth, email, id, emailstop, deleted, mnethostid, mailformat, firstname, lastname
                      FROM ".$CFG->prefix."user
                      WHERE id='".$row->userid."'";
-            
-            if(!$user = get_record_sql($usql)) {         
+
+            if(!$user = get_record_sql($usql)) {
                 continue;
             }
-            
+
             $users[] = $user;
         }
-        
+
         if(!mgm_enrol_into_course($course, $users, 'mgm')) {
             print_error('couldnotassignrole');
-        }            
+        }
     }
 }
 
@@ -1254,11 +1255,11 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
     $groups = array();
     $ncount = 0;
     $mcount = array();
-    foreach($inscripcion as $row) {        
+    foreach($inscripcion as $row) {
         if(!array_key_exists($ncount, $groups)) {
             $groups[$ncount] = array();
         }
-        $user = get_record('user', 'id', $row->id);        
+        $user = get_record('user', 'id', $row->id);
         if(!$user->ite_data = get_record('edicion_user', 'userid', $row->userid)) {
             if(count($groups[$ncount]) < $max) {
                 $groups[$ncount][] = $user;
@@ -1288,13 +1289,13 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
                 }
             }
         }
-    }    
+    }
 
     $finalgroups = array();
     for($i = 0; $i < $criteria->numgroups; $i++) {
         $finalgroups[$i] = array();
         $x = 1;
-        foreach($groups as $group) {            
+        foreach($groups as $group) {
             foreach($group as $gr) {
                 if(($x <= ($i + 1) * $max) && ($x > ($i * $max))) {
                     $finalgroups[$i][] = $gr;
@@ -1309,12 +1310,12 @@ function mgm_create_enrolment_groups($editionid, $courseid) {
         $group = new object();
         $group->courseid = $courseid;
         $group->name = groups_parse_name('Grupo @', $x);
-        
+
         if(!$gid = groups_create_group(addslashes_recursive($group))) {
             error('Error creating the ' . $group->name . ' group');
-        }        
-        foreach($fg as $user) {            
-            if(!groups_add_member($gid, $user->id)) {                
+        }
+        foreach($fg as $user) {
+            if(!groups_add_member($gid, $user->id)) {
                 error('Error adding user ' . $user->username . ' to group ' . $group -> name);
             }
         }
@@ -1339,7 +1340,7 @@ function mgm_edition_get_solicitudes($edition, $course) {
     $sql = "SELECT count(id) as count FROM " . $CFG -> prefix . "edicion_preinscripcion
     		WHERE edicionid='" . $edition -> id . "'
     		AND value IN (".$course->id.")";
-    if($record = get_record_sql($sql)) {        
+    if($record = get_record_sql($sql)) {
        return $record->count;
     }
 
@@ -1395,8 +1396,8 @@ function mgm_get_user_preinscription_data($line, $edition, $data, $criteria) {
         $courses .= '<option name="' . $courseid . '">' . $ncourse -> fullname . '</option>';
     }
     $courses .= '</select>';
-    $check = '<input type="checkbox" name="users[' . $line -> userid . ']" />';    
-    $cc_type = mgm_get_cc_type($data->user->cc, true);        
+    $check = '<input type="checkbox" name="users[' . $line -> userid . ']" />';
+    $cc_type = mgm_get_cc_type($data->user->cc, true);
     if($cc_type == MGM_PRIVATE_CENTER || $cc_type == -1) {
         $name = '<span style="color: red;">(*) </span>' . '<a href="../../user/view.php?id=' . $line -> userid . '&amp;course=' . $site -> id . '">' . $user -> firstname . '</a>';
     } else {
@@ -1883,9 +1884,9 @@ function mgm_get_edition_course_preinscripcion_data($edition, $course, $docheck 
     $sql = "SELECT * FROM ".$CFG->prefix."edicion_preinscripcion
     		WHERE edicionid = '".$edition->id."' AND
     		userid NOT IN (SELECT userid FROM ".$CFG->prefix."edicion_inscripcion
-    		WHERE edicionid='".$edition->id."' AND value='".$course->id."') 
+    		WHERE edicionid='".$edition->id."' AND value='".$course->id."')
     		AND value IN (".$course->id.") ORDER BY timemodified ASC";
-    
+
     if(!$preinscripcion = get_records_sql($sql)) {
         return ;
     }
@@ -2055,7 +2056,7 @@ function mgm_set_userdata($userid, $data) {
  * @param string $cc
  * @return boolean
  */
-function mgm_is_cc_on_csv($cc) {    
+function mgm_is_cc_on_csv($cc) {
     $ccdata = mgm_get_cc_data();
     if(array_key_exists($cc, $ccdata)) {
         return $ccdata[$cc];
@@ -2068,7 +2069,7 @@ function mgm_get_cc_type($cc, $sql=false) {
     if(!$cc) {
         return -1;
     }
-    
+
     if (!$sql) {
         $ccdata = mgm_get_cc_data();
         if(array_key_exists($cc, $ccdata)) {
@@ -2076,15 +2077,15 @@ function mgm_get_cc_type($cc, $sql=false) {
         }
     } else {
         global $CFG;
-        
+
         $sql = "SELECT tipo FROM ".$CFG->prefix."edicion_centro
-                WHERE codigo='".$cc."'";        
+                WHERE codigo='".$cc."'";
         if (!$ccdata = get_record_sql($sql)) {
             return -1;
         }
-        
+
         return $ccdata->tipo;
-    }       
+    }
 
     return -1;
 }
@@ -2094,7 +2095,7 @@ function mgm_get_cc_type($cc, $sql=false) {
  * @param string $cc
  * @return boolean
  */
-function mgm_is_cc_valid($cc) {    
+function mgm_is_cc_valid($cc) {
     $ccdata = mgm_get_cc_data();
     if(array_key_exists($cc, $ccdata)) {
         if($ccdata[$cc][7] == MGM_PRIVATE_CENTER) {
@@ -2123,7 +2124,7 @@ function mgm_get_cc_data() {
         $CSV_CACHED_FILE = $csvdata;
 
         return $csvdata;
-    } else {        
+    } else {
         return $CSV_CACHED_FILE;
     }
 }
@@ -2324,11 +2325,37 @@ function mgm_set_certification_roles($roles) {
     }
 }
 
+ /* Sets custom report ITE
+ *
+ * @param string $reportid
+ * @param string $reporttype
+ */
+function mgm_set_report($reportid, $reporttype) {
+    if(!$nscala = mgm_get_certification_scala()) {
+        $report = new stdClass();
+        $report -> type = MGM_ITE_REPORT;
+        $report -> name = $reporttype;
+        $report -> value = $reportid;
+        insert_record('edicion_ite', $report);
+    } else {
+        $report -> value = $reportid;
+        $report -> name = $reporttype;
+        update_record('edicion_ite', $report);
+    }
+}
+function mgm_get_reports() {
+    global $CFG;
+
+    $sql = "SELECT * FROM " . $CFG -> prefix . "edicion_ite
+    		WHERE type = " . MGM_ITE_REPORT . "";
+    return get_records_sql($sql);
+}
+
 function mgm_get_courses($course) {
     global $CFG;
 
     $sql = "SELECT id, idnumber, fullname FROM " . $CFG -> prefix . "course
-    		WHERE id !='" . $course -> id . "' 
+    		WHERE id !='" . $course -> id . "'
     		AND idnumber != '' GROUP BY idnumber";
 
     if(!$data = get_records_sql($sql)) {
@@ -2400,7 +2427,7 @@ function mgm_get_grade($task, $user) {
  * @param object $course
  * @return boolean
  */
-function mgm_user_passed_course($user, $course) {    
+function mgm_user_passed_course($user, $course) {
     if(!$ctask = mgm_get_certification_task($course->id)) {
         return false;
     }
@@ -2479,9 +2506,9 @@ function mgm_certificate_course($userid, $courseid, $edition, $roleid = 0) {
         return false;
     }
 
-    $sql = "SELECT * FROM " . $CFG -> prefix . "edicion_cert_history 
-            WHERE userid=" . $userid . " 
-            AND courseid=" . $courseid . " 
+    $sql = "SELECT * FROM " . $CFG -> prefix . "edicion_cert_history
+            WHERE userid=" . $userid . "
+            AND courseid=" . $courseid . "
             AND edicionid=" . $edition -> id;
 
     if(!$data = get_record_sql($sql)) {
@@ -2655,7 +2682,7 @@ function mgm_get_course_participants($course, $real = false) {
         $select = "SELECT DISTINCT ctx.id, u.id as userid, u.username, r.roleid ";
     $from = "FROM ".$CFG->prefix."user u " .
             "LEFT OUTER JOIN " .$CFG->prefix."context ctx " .
-            "ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")". 
+            "ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")".
             "JOIN ".$CFG->prefix."role_assignments r ".
             "ON u.id=r.userid ";
 
@@ -2843,11 +2870,11 @@ function mgm_get_usuarios_no_inscritos($edicion, $search='', $page=0, $recordspe
     $fullname = sql_concat("a.firstname", "' '", "a.lastname");
 
     $sql = "SELECT p.userid, p.timemodified, p.value, a.firstname, a.lastname,
-                a.email, u.dni, u.cc, u.especialidades 
-            FROM " . $CFG -> prefix . "edicion_preinscripcion AS p LEFT JOIN " . $CFG -> prefix . "user AS a 
-            ON ( a.id = p.userid ) LEFT JOIN " . $CFG -> prefix . "edicion_user AS u 
-            ON ( u.userid = a.id ) WHERE edicionid='" . $edicion . "' 
-            AND p.userid NOT IN 
+                a.email, u.dni, u.cc, u.especialidades
+            FROM " . $CFG -> prefix . "edicion_preinscripcion AS p LEFT JOIN " . $CFG -> prefix . "user AS a
+            ON ( a.id = p.userid ) LEFT JOIN " . $CFG -> prefix . "edicion_user AS u
+            ON ( u.userid = a.id ) WHERE edicionid='" . $edicion . "'
+            AND p.userid NOT IN
             ( SELECT userid FROM " . $CFG -> prefix . "edicion_inscripcion
               WHERE edicionid='" . $edicion . "' )";
 
@@ -2855,12 +2882,12 @@ function mgm_get_usuarios_no_inscritos($edicion, $search='', $page=0, $recordspe
         $search = trim($search);
         $sql .= " AND ( " . $fullname . " " . $LIKE . " '%" . $search . "%' OR a.email " . $LIKE . " '%" . $search . "%')";
     }
-    
+
     $users = get_records_sql($sql, $page * $recordsperpage, $recordsperpage);
 
     $sql = "SELECT COUNT(p.id) as userscount FROM " . $CFG -> prefix . "edicion_preinscripcion
-            AS p LEFT JOIN " . $CFG -> prefix . "user AS a ON ( a.id = p.userid ) 
-            WHERE edicionid='" . $edicion . "' AND p.userid NOT IN 
+            AS p LEFT JOIN " . $CFG -> prefix . "user AS a ON ( a.id = p.userid )
+            WHERE edicionid='" . $edicion . "' AND p.userid NOT IN
             ( SELECT userid FROM " . $CFG -> prefix . "edicion_inscripcion
               WHERE edicionid='" . $edicion . "' )";
 
@@ -2885,16 +2912,16 @@ function mgm_courses_from_user_choices($choices) {
 
 function mgm_get_edition_payment_data($edition, &$data) {
     if ($edition->certified != MGM_CERTIFICATE_VALIDATED) {
-        $data = get_string('pago-nc', 'mgm');        
+        $data = get_string('pago-nc', 'mgm');
         return false;
     }
 
     $data = array();
-    foreach(mgm_get_edition_courses($edition) as $course) {                         
+    foreach(mgm_get_edition_courses($edition) as $course) {
         $data[] = array(
             'course' => array(
-                'id' => $course->id, 
-                'name' => $course->shortname, 
+                'id' => $course->id,
+                'name' => $course->shortname,
                 'fullname' => $course->fullname
             ),
             'criteria' => mgm_get_edition_course_criteria($edition->id, $course->id),
@@ -2902,8 +2929,8 @@ function mgm_get_edition_payment_data($edition, &$data) {
             'alumnos' => mgm_get_course_tutor_payment_count($course),
             'coordinacion' => mgm_get_course_coordinador_payment($course)
         );
-    } 
-    
+    }
+
     return true;
 }
 
@@ -2911,19 +2938,19 @@ function mgm_get_course_coordinador_payment($course) {
     if (!$tutors = mgm_get_course_tutors($course)) {
         return array();
     }
-    
+
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
-    
-    $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors)) * count($tutors);    
-    
+
+    $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors)) * count($tutors);
+
     return array(
         'total_amount' => (($criteria->duration+1) * $amount_per_tutor) + $criteria->prevlab,
         'tutors' => $tutors,
         'amount_per_tutor' => $amount_per_tutor,
         'duration' => $criteria->duration,
         'prevlab' => $criteria->prevlab
-    );    
+    );
 }
 
 function mgm_get_tramo_amount($criteria, $num_tutors) {
@@ -2942,33 +2969,32 @@ function mgm_get_tramo_amount($criteria, $num_tutors) {
 
 function mgm_get_course_tasks($courseid) {
     global $CFG;
-    
-    $sql = "SELECT * FROM ".$CFG->prefix."grade_items    
+
+    $sql = "SELECT * FROM ".$CFG->prefix."grade_items
             WHERE courseid=".$courseid."
             AND scaleid IS NOT NULL";
-    
+
     return get_records_sql($sql);
 }
 
 function mgm_get_course_ecuador($courseid) {
     $edition = mgm_get_course_edition($courseid);
     $criteria = mgm_get_edition_course_criteria($edition->id, $courseid);
-        
     if ($criteria->ecuadortask != MGM_ECUADOR_DEFAULT) {
         return $criteria->ecuadortask;
-    }    
-    
-    $tasks = mgm_get_course_tasks($courseid);    
-    
-    $x = 1;    
+    }
+
+    $tasks = mgm_get_course_tasks($courseid);
+
+    $x = 1;
     foreach ($tasks as $task) {
         if ($x == round(count($tasks) / 2)) {
             return $task;
         }
-        
+
         $x++;
     }
-    
+
     return null;
 }
 
@@ -2976,39 +3002,39 @@ function mgm_get_course_tutor_payment_count($course) {
     if (!$students = mgm_get_course_students($course)) {
         return false;
     }
-    
+
     if (!$ecuador = mgm_get_course_ecuador($course->id)) {
         return false;
     }
-    
+
     $result = array(
-        'dont_start' => array('count' => 0, 'amount' => 0),        
+        'dont_start' => array('count' => 0, 'amount' => 0),
         'half' => array('count' => 0, 'amount' => 0),
         'full' => array('count' => 0, 'amount' => 0)
     );
-    
+
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
-    
-    foreach ($students as $student) {        
+
+    foreach ($students as $student) {
         if (!$grade = mgm_get_grade($ecuador, $student)) {
             $result['dont_start']['count']++;
             continue;
         }
-        
+
         $cgrade = mgm_get_grade(mgm_get_certification_task($course->id), $student);
         if ($cgrade->finalgrade == $cgrade->rawgrademax) {
             $result['full']['count']++;
             $result['full']['amount'] += $criteria->tutorpayment;
             continue;
         }
-        
+
         if ($grade->finalgrade == $grade->rawgrademax) {
             $result['half']['count']++;
             $result['half']['amount'] += ($criteria->tutorpayment * 0.50);
         }
-    }    
-    
+    }
+
     return $result;
 }
 
@@ -3022,26 +3048,25 @@ function mgm_get_course_tutors($course) {
 
 function mgm_get_course_roles_on_demand($course, $role) {
     global $CFG;
-    
+
     if(!$course) {
         return false;
     }
-    
+
     if(!$context = get_context_instance(CONTEXT_COURSE, $course->id)) {
         error('No context found');
     }
-    
+
     $roles = mgm_get_certification_roles();
-    
-    $sql = "SELECT DISTINCT u.id, u.username, u.firstname, u.lastname, ctx.id AS ctxid, ctx.contextlevel AS ctxlevel 
-            FROM ".$CFG->prefix."user u 
-            LEFT OUTER JOIN ".$CFG->prefix."context ctx ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.") 
-            JOIN ".$CFG->prefix."role_assignments r ON u.id=r.userid 
-            LEFT OUTER JOIN ".$CFG->prefix."user_lastaccess ul ON (r.userid=ul.userid and ul.courseid=".$course->id.") 
-            WHERE (r.contextid=".$context->id.") 
-            AND u.deleted = 0  AND r.roleid=".$roles[$role]." AND (ul.courseid=".$course->id." OR ul.courseid IS NULL) 
+    $sql = "SELECT DISTINCT u.id, u.username, u.firstname, u.lastname, ctx.id AS ctxid, ctx.contextlevel AS ctxlevel
+            FROM ".$CFG->prefix."user u
+            LEFT OUTER JOIN ".$CFG->prefix."context ctx ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")
+            JOIN ".$CFG->prefix."role_assignments r ON u.id=r.userid
+            LEFT OUTER JOIN ".$CFG->prefix."user_lastaccess ul ON (r.userid=ul.userid and ul.courseid=".$course->id.")
+            WHERE (r.contextid=".$context->id.")
+            AND u.deleted = 0  AND r.roleid=".$roles[$role]." AND (ul.courseid=".$course->id." OR ul.courseid IS NULL)
             AND u.username != 'guest'";
-    
+
     return get_records_sql($sql);
 }
 
