@@ -62,7 +62,7 @@ $ Caso de uso 1 módulo de pagos $
 $ Caso de uso 2 módulo de pagos $
 # Aceptación - Solo podrán descargarse informes de ediciones ya finalizadas y certificadas - ¡HECHO!
 # Aceptación - Los usurios administrativos podrán descargar informe de pagos de ediciones desde la interfaz de administración de ediciones - ¡HECHO!
-# Aceptación - El informe podrá ser descargado en formato XLS y ODS
-# Aceptación - En el informe aparecerán los siguientes campos: Nombre del curso, actividad, nombre del tutor o coordinador, datos de contacto, cantidad a abonar y detalle
-# Aceptación - Si se trata de un coordinador, aparecerá además desglosado el fijo base más el número de tutores coordinados y precio por tutor
-# Aceptación - Si se trata de un tutor, se mostrará nº de alumnos que superan 1ª actividad y precio, nº de alumnos que superan 2ª actividad y precio
+# Aceptación - El informe podrá ser descargado en formato XLS y ODS - ¡HECHO!
+# Aceptación - En el informe aparecerán los siguientes campos: Nombre del curso, actividad, nombre del tutor o coordinador, datos de contacto, cantidad a abonar y detalle - ¡HECHO!
+# Aceptación - Si se trata de un coordinador, aparecerá además desglosado el fijo base más el número de tutores coordinados y precio por tutor - ¡HECHO!
+# Aceptación - Si se trata de un tutor, se mostrará nº de alumnos que superan 1ª actividad y precio, nº de alumnos que superan 2ª actividad y precio - ¡HECHO!

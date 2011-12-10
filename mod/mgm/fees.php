@@ -54,19 +54,15 @@ $stralumnos         = get_string('alumnos', 'mgm');
 $strnostart         = get_string('nostart', 'mgm');
 $strhalf            = get_string('half', 'mgm');
 $strfull            = get_string('full', 'mgm');
+$strprev            = get_string('prevlab', 'mgm');
+$strtramo           = get_string('tramo', 'mgm');
 
 $id = optional_param('id', 0, PARAM_INT);    // Course id
-$edicionid = optional_param('editionid', 0, PARAM_INT);
 $format = optional_param('format', '', PARAM_ALPHA);
+$type = optional_param('type', '', PARAM_ALPHA);
 
-$feestable->head  = array($strname, $strlastname, $strdni, $strcourse, $strtutors, $stramount);
-$feestable->align = array('center', 'center', 'center', 'center', 'center', 'center');
-
-if ($edicionid) {
-    /*if (!$edition = get_record('edicion', 'id', $edicionid)) {
-        error('Edicion not known');
-    }*/
-}
+$feestablec->head  = array($strname, $strlastname, $strdni, $strcourse, $strtutors, $strprev, $strtramo, $stramount);
+$feestablec->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
 
 if ($id) {
     if (!$course = get_record('course', 'id', $id)) {
@@ -81,76 +77,6 @@ if(!$format) {
 }
 if (!isset($course) && !isset($edition) && !$format) {    
     mgm_print_fees_ediciones_list();    
-} else if (!isset($course) && isset($edition) && !$format) {
- /*   $data = '';    
-    mgm_get_edition_payment_data($edition, $data);
-    
-    foreach($data as $tmp_data) {
-        
-        $tdata[] = array(
-            $tmp_data['coordinacion']['user']->username,
-            $tmp_data['coordinacion']['user']->lastname,        
-            ($tmp_data['coordinacion']['edicion_user']->dni != '') ? $tmp_data['coordinacion']['edicion_user']->dni : 'NO DATA' ,
-            $tmp_data['course']['fullname'],
-            count($tmp_data['coordinacion']['tutors']),
-            $tmp_data['coordinacion']['total_amount'].'€'                
-        );
-        
-        $feestable->data = $tdata;
-        
-        if (!$format) {
-            print_heading(get_string('coordinador', 'mgm'));
-            print_table($feestable);
-            echo "<br />";
-        }
-        
-        
-        $feestable2->head  = array($strname, $strlastname, $strdni, $strcourse, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
-        $feestable2->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
-        unset($feestable->data);
-        
-        if(!$format) print_heading(get_string('tutores', 'mgm'));
-        if (empty($tmp_data['grupos'])) {
-            foreach($tmp_data['coordinacion']['tutors'] as $tutor) {
-                $feestable->data[] = array(
-                    $tutor->firstname,
-                    $tutor->lastname,
-                    mgm_get_user_dni($tutor->id),
-                    $tmp_data['course']['fullname'],
-                    $tmp_data['coordinacion']['alumnos']['dont_start']['count'] + $tmp_data['coordinacion']['alumnos']['half']['count'] + $tmp_data['coordinacion']['alumnos']['full']['count'],
-                    $tmp_data['coordinacion']['alumnos']['dont_start']['count'],
-                    $tmp_data['coordinacion']['alumnos']['half']['count'],
-                    $tmp_data['coordinacion']['alumnos']['full']['count'],
-                    $tmp_data['coordinacion']['alumnos']['half']['amount'] + $tmp_data['coordinacion']['alumnos']['full']['amount'].'€' 
-                );
-            }
-        } else {
-            foreach($tmp_data['grupos'] as $grupo) {                
-                $feestable->data[] = array(
-                    $grupo['tutor'][0]['firstname'],
-                    $grupo['tutor'][0]['lastname'],
-                    mgm_get_user_dni($grupo['tutor'][0]['id']),
-                    $tmp_data['course']['fullname'],
-                    count($grupo['alumnos']),
-                    $grupo['result']['dont_start']['count'],
-                    $grupo['result']['half']['count'],
-                    $grupo['result']['full']['count'], 
-                    $grupo['result']['half']['amount'] + $grupo['result']['full']['amount'].'€'
-                );
-            }
-        }  
-    }
-    
-    if(!$format) {
-        print_object($feestable);
-        print_table($feestable);
-        print_heading('');
-        print_box_start('');
-        echo '<ul>';        
-        echo '<li><a href="fees.php?id='.$id.'&editionid='.$edicionid.'&format=xls">'.get_string('downloadexcel').'</a></li>';
-        echo '</ul>';
-        print_box_end();
-    }*/
 } else {    
     $tmp_data = array(
         'course' => array(
@@ -171,14 +97,26 @@ if (!isset($course) && !isset($edition) && !$format) {
         ($tmp_data['coordinacion']['edicion_user']->dni != '') ? $tmp_data['coordinacion']['edicion_user']->dni : 'NO DATA' ,
         $tmp_data['course']['fullname'],
         count($tmp_data['coordinacion']['tutors']),
+        $tmp_data['coordinacion']['prevlab'].'€',
+        $tmp_data['coordinacion']['amount_per_tutor'].'€',
         $tmp_data['coordinacion']['total_amount'].'€'                
     );
         
-    $feestable->data = $data;
+    $feestablec->data = $data;
     if(!$format) {
         print_heading(get_string('coordinador', 'mgm'));    
-        print_table($feestable); 
+        print_table($feestablec); 
         echo "<br />";
+    }
+    
+    if(!$format) {     
+        print_heading('');
+        print_box_start('');
+        echo '<ul>';        
+        echo '<li><a href="fees.php?id='.$id.'&type=coord&format=xls">'.get_string('downloadexcel').'</a></li>';
+        echo '<li><a href="fees.php?id='.$id.'&type=coord&format=ods">'.get_string('downloadods').'</a></li>';
+        echo '</ul>';
+        print_box_end();
     }
     
     $feestable->head  = array($strname, $strlastname, $strdni, $strcourse, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
@@ -221,7 +159,8 @@ if (!isset($course) && !isset($edition) && !$format) {
         print_heading('');
         print_box_start('');
         echo '<ul>';        
-        echo '<li><a href="fees.php?id='.$id.'&editionid='.$edicionid.'&format=xls">'.get_string('downloadexcel').'</a></li>';
+        echo '<li><a href="fees.php?id='.$id.'&type=tutor&format=xls">'.get_string('downloadexcel').'</a></li>';
+        echo '<li><a href="fees.php?id='.$id.'&type=tutor&format=ods">'.get_string('downloadods').'</a></li>';
         echo '</ul>';
         print_box_end();
     }
@@ -232,13 +171,18 @@ if(!$format) {
     admin_externalpage_print_footer();
 }
 
-if ($format) {        
+if ($format) {
+    if ($type == 'tutor') {
+        $filename = $course->fullname.'-Tutores-fees';
+    } else {
+        $filename = $course->fullname.'-Coordinador-fees';
+    }        
     if ($format == 'ods' || $format == 'xls') {
         $fields = array();
-        $fields['filename'] = $course->idnumber.'-fees';        
+        $fields['filename'] = $filename;
         $fields['filetype'] = $format;
-        $fields['header'] = $feestable->head;
-        $fields['data'] = $feestable->data;        
+        $fields['header'] = ($type == 'tutor') ? $feestable->head : $feestablec->head;
+        $fields['data'] = ($type == 'tutor') ? $feestable->data : $feestablec->data;        
         
         mgm_download_doc($fields);        
         die;

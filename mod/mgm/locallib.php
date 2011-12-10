@@ -2803,28 +2803,28 @@ function mgm_download_doc($fields) {
             error('Unknown file type in mgm_download_doc ' . $fields['filetype']);
             break;
     }
-    $workbook -> send($filename);
+    $workbook->send($filename);
 
     $worksheet = array();
-    $worksheet[0] = &$workbook -> add_worksheet('');
+    $worksheet[0] = &$workbook->add_worksheet('');
 
     $col = 0;
     foreach($fields['header'] as $fieldname) {
-        $worksheet[0] -> write(0, $col, $fieldname);
+        $worksheet[0]->write(0, $col, $fieldname);
         $col++;
     }
-
+    
     $row = 1;
     foreach($fields['data'] as $data) {
         $col = 0;
         foreach($data as $fdata) {
-            $worksheet[0] -> write($row, $col, $fdata);
+            $worksheet[0]->write($row, $col, $fdata);
             $col++;
         }
         $row++;
     }
 
-    $workbook -> close();
+    $workbook->close();
     die();
 }
 
