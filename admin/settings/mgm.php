@@ -83,3 +83,8 @@ $ADMIN->add(
     'mgmreports', new admin_externalpage('dinamicinfo', get_string('dinamicinfo', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/report.php?report_type=Report001', 'mod/mgm:createedicion')
 );
+
+$ADMIN->add(
+    'ediciones', new admin_externalpage('fees', get_string('fees', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/fees.php', 'mod/mgm:aprobe')
+);

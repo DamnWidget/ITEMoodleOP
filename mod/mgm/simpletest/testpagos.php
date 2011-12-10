@@ -115,8 +115,6 @@ class testPagos extends UnitTestCase {
         $this->assertNotNull($data[0]['ecuador']);
         $this->assertNotNull($data[0]['alumnos']);
         $this->assertNotNull($data[0]['coordinacion']);        
-        print_object($data);
-        
     }
 
 }
