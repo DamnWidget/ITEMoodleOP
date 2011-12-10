@@ -371,6 +371,41 @@ function mgm_print_whole_ediciones_list() {
     echo $table;
 }
 
+function mgm_print_fees_ediciones_list() {
+    global $CFG;
+    
+    $editions = get_records('edicion', 'certified', MGM_CERTIFICATE_VALIDATED);
+
+    $editionimage = '<img src="' . $CFG -> pixpath . '/i/db.gif" alt="" />';
+    $courseimage = '<img src="' . $CFG -> pixpath . '/i/course.gif" alt="" />';
+    $table = '<table class="mod-mgm editionlist">';
+    foreach($editions as $edition) {
+        $table .= '<tr>';
+        $table .= '<td valign="top" class="mod-mgm edition image">' . $editionimage . '</td>';
+        $table .= '<td valign="top" class="mod-mgm edition name">';
+        //$table .= '<a class="mod-mgm edition link" href="'.$CFG->wwwroot.'/mod/mgm/fees.php?editionid='.$edition->id.'">';
+        $table .= format_string($edition -> name);
+        //$table .= '</a>';
+        $table .= '</td>';
+        $table .= '<td class="mod-mgm edition info">&nbsp;</td>';
+        if(mgm_count_courses($edition) > 0) {
+            foreach(mgm_get_edition_courses($edition) as $course) {
+                $table .= '<tr>';
+                $table .= '<td valign="top" class="mod-mgm edition image course">' . $courseimage . '</td>';
+                $table .= '<td valign="top" class="mod-mgm edition name course">';
+                $table .= '<a class="mod-mgm edition link course" href="'.$CFG->wwwroot.'/mod/mgm/fees.php?id='.$course->id.'&edicionid='.$edition->id.'">'.format_string($course -> fullname).'</a>';                
+                $table .= '</td>';
+                $table .= '<td class="mod-mgm course info">&nbsp;</td>';
+                $table .= '</tr>';
+            }
+        }
+        $table .= '</tr>';
+    }
+    $table .= '</table>';
+
+    echo $table;
+}
+
 function mgm_get_edition_courses($edition) {
     global $CFG;
 
@@ -594,11 +629,11 @@ function mgm_get_edition_course_criteria($editionid, $courseid) {
         }
         
         if($c->type == MGM_CRITERIA_DURATION) {
-            $criteria->ecuadortask = $c->value;
+            $criteria->duration = $c->value;
         }
         
         if($c->type == MGM_CRITERIA_PREVLAB) {
-            $criteria->ecuadortask = $c->value;
+            $criteria->prevlab = $c->value;
         }
         
         if($c->type == MGM_CRITERIA_TRAMOS) {
@@ -756,7 +791,7 @@ function mgm_set_edition_course_criteria($data) {
         foreach($data->sespecs as $k => $v) {
             $criteria -> type = MGM_CRITERIA_ESPECIALIDAD;
             $criteria -> value = $v;
-            if(!$criteriaid = mgm_edition_course_criteria_data_exists($criteria)) {
+            if(!$criteriaid = rmgm_edition_course_criteria_data_exists($criteria)) {
                 continue ;
             } else {
                 delete_records('edicion_criterios', 'id', $criteriaid -> id);
@@ -2890,7 +2925,13 @@ function mgm_get_edition_payment_data($edition, &$data) {
     }
 
     $data = array();
-    foreach(mgm_get_edition_courses($edition) as $course) {                         
+    foreach(mgm_get_edition_courses($edition) as $course) {
+        $groups = groups_get_all_groups($course->id);
+        foreach($groups as $k=>$v) {
+            if ($groupmemberroles = groups_get_members_by_role($k,$course->id)) {
+                
+            }
+        }                                 
         $data[] = array(
             'course' => array(
                 'id' => $course->id, 
@@ -2900,11 +2941,99 @@ function mgm_get_edition_payment_data($edition, &$data) {
             'criteria' => mgm_get_edition_course_criteria($edition->id, $course->id),
             'ecuador' => mgm_get_course_ecuador($course->id),
             'alumnos' => mgm_get_course_tutor_payment_count($course),
-            'coordinacion' => mgm_get_course_coordinador_payment($course)
+            'coordinacion' => mgm_get_course_coordinador_payment($course),
+            'grupos' => mgm_get_course_tutor_payment($course)
         );
     } 
     
     return true;
+}
+
+function mgm_get_course_tutor_payment($course) {    
+    $data = array();
+    $rolesid = mgm_get_certification_roles();
+    $edition = mgm_get_course_edition($course->id);
+    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
+    
+    if (!$ecuador = mgm_get_course_ecuador($course->id)) {
+        return $data;
+    }    
+    
+    
+    if ($groups = groups_get_all_groups($course->id)) {                
+        foreach($groups as $k=>$v) {            
+            $tmp_data = array(
+                'group' => $v,
+                'result' => array(
+                    'full' => array('amount' => 0, 'count' => 0),
+                    'half' => array('amount' => 0, 'count' => 0),
+                    'dont_start' => array('amount' => 0, 'count' => 0)
+                ),
+                'tutor' => array(),
+                'alumnos' => array()
+            );            
+            
+            if ($groupmemberroles = groups_get_members_by_role($k,$course->id)) {                
+                foreach($groupmemberroles as $key=>$roledata) {                    
+                    if ($key == '*') {                                                
+                        // Multiple roles                        
+                        foreach($roledata->users as $user) {                            
+                            foreach($user->roles as $role) {
+                                if($role->id == $rolesid['tutor']) {                                    
+                                    $tmp_data['tutor'][] = array(
+                                        'id' => $user->id,
+                                        'firstname' => $user->firstname,
+                                        'lastname' => $user->lastname
+                                    );                                    
+                                } 
+                            }
+                        }                        
+                    } else if($key == $rolesid['tutor']) {                        
+                        // Tutor role
+                        foreach($roledata->users as $user) {                        
+                            $tmp_data['tutor'][] = array(
+                                'id' => $user->id,
+                                'firstname' => $user->firstname,
+                                'lastname' => $user->lastname
+                            );                                                        
+                        }                        
+                        
+                    } else if($key == $rolesid['alumno']) {
+                        // Alumno role
+                        $alumnos = array();
+                        foreach($roledata->users as $user) {                            
+                            $tmp_data['alumnos'][] = array(
+                                'id' => $user->id,
+                                'firstname' => $user->firstname,
+                                'lastname' => $user->lastname
+                            );
+                            
+                            if (!$grade = mgm_get_grade($ecuador, $user)) {
+                                $tmp_data['result']['dont_start']['count']++;                                
+                                continue;
+                            }
+                            
+                            $cgrade = mgm_get_grade(mgm_get_certification_task($course->id), $student);
+                            if ($cgrade->finalgrade == $cgrade->rawgrademax) {
+                                $tmp_data['result']['full']['count']++;
+                                $tmp_data['result']['full']['amount'] += $criteria->tutorpayment;
+                                continue;
+                            }
+                            
+                            if ($grade->finalgrade == $grade->rawgrademax) {
+                                $tmp_data['result']['half']['count']++;
+                                $tmp_data['result']['half']['amount'] += ($criteria->tutorpayment * 0.50);
+                            }
+                        }
+                    }
+                }
+            }
+
+            $data[] = $tmp_data;
+        }
+    }
+    
+    return $data;
 }
 
 function mgm_get_course_coordinador_payment($course) {
@@ -2915,9 +3044,12 @@ function mgm_get_course_coordinador_payment($course) {
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
     
-    $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors)) * count($tutors);    
+    $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors));    
     
+    $coord = mgm_get_course_coordinators($course);    
     return array(
+        'user' => $coord,
+        'edicion_user' => get_record('edicion_user', 'userid', $coord->id),
         'total_amount' => (($criteria->duration+1) * $amount_per_tutor) + $criteria->prevlab,
         'tutors' => $tutors,
         'amount_per_tutor' => $amount_per_tutor,
@@ -2926,17 +3058,17 @@ function mgm_get_course_coordinador_payment($course) {
     );    
 }
 
-function mgm_get_tramo_amount($criteria, $num_tutors) {
+function mgm_get_tramo_amount($criteria, $num_tutors) {    
     if ($num_tutors < 6) {
-        return $criteria->tramos[0];
-    } else if ($num_tutors >= 6 && $num_tutors < 11) {
-        return $criteria->tramos[1];
+        return $criteria->tramo[0];
+    } else if ($num_tutors >= 6 && $num_tutors < 11) {        
+        return $criteria->tramo[1];
     } else if ($num_tutors >= 11 && $num_tutors < 16) {
-        return $criteria->tramos[2];
+        return $criteria->tramo[2];
     } else if ($num_tutors >= 16 && $num_tutors < 21) {
-        return $criteria->tramos[3];
+        return $criteria->tramo[3];
     } else {
-        return $criteria->tramos[4];
+        return $criteria->tramo[4];
     }
 }
 
@@ -3020,6 +3152,10 @@ function mgm_get_course_tutors($course) {
     return mgm_get_course_roles_on_demand($course, 'tutor');
 }
 
+function mgm_get_course_coordinators($course) {
+    return mgm_get_course_roles_on_demand($course, 'coordinador'); 
+}
+
 function mgm_get_course_roles_on_demand($course, $role) {
     global $CFG;
     
@@ -3042,7 +3178,15 @@ function mgm_get_course_roles_on_demand($course, $role) {
             AND u.deleted = 0  AND r.roleid=".$roles[$role]." AND (ul.courseid=".$course->id." OR ul.courseid IS NULL) 
             AND u.username != 'guest'";
     
-    return get_records_sql($sql);
+    return ($role != 'coordinador') ? get_records_sql($sql) : get_record_sql($sql);
+}
+
+function mgm_get_user_dni($userid) {
+    if(!$user = get_record('edicion_user', 'userid', $userid)) {
+        return 'NOT SET';
+    }
+        
+    return ($user->dni != '') ? $user->dni : 'NOT SET';
 }
 
 

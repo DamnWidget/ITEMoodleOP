@@ -17,10 +17,7 @@
 
 
 /**
- * This is a one-line short description of the file
- *
- * You can have a rather longer description of the file as well,
- * if you like, and it can span multiple lines.
+ * Main entry module point
  *
  * @package   mod_mgm
  * @copyright 2010 Oscar Campos <oscar.campos@open-phoenix.com>
