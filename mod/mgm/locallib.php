@@ -383,9 +383,9 @@ function mgm_print_fees_ediciones_list() {
         $table .= '<tr>';
         $table .= '<td valign="top" class="mod-mgm edition image">' . $editionimage . '</td>';
         $table .= '<td valign="top" class="mod-mgm edition name">';
-        //$table .= '<a class="mod-mgm edition link" href="'.$CFG->wwwroot.'/mod/mgm/fees.php?editionid='.$edition->id.'">';
+        $table .= '<a class="mod-mgm edition link" href="'.$CFG->wwwroot.'/mod/mgm/fees.php?edition='.$edition->id.'&multiple=1">';
         $table .= format_string($edition -> name);
-        //$table .= '</a>';
+        $table .= '</a>';
         $table .= '</td>';
         $table .= '<td class="mod-mgm edition info">&nbsp;</td>';
         if(mgm_count_courses($edition) > 0) {
