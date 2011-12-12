@@ -293,7 +293,7 @@ function mgm_get_edition_menu($edition) {
         if(mgm_edition_is_on_validate($edition)) {
             $menu .= ' | <a title="'.get_string('certified', 'mgm').'" href="#">'.
                      '<img src="'.$CFG->pixpath.'/i/tick_green_small.gif" class="iconsmall" alt="'.get_string('certified', 'mgm').'" /></a>';
-            $menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="payment.php?id='.$edition->id.'">'.
+            $menu .= ' | <a title="'.get_string('pago', 'mgm').'" href="fees.php?edition='.$edition->id.'&multiple=1">'.
                      '<img src="'.$CFG->pixpath.'/i/lock.gif" class="iconsmall" alt="'.get_string('pago', 'mgm').'" /></a>';
         }
     }
@@ -375,7 +375,7 @@ function mgm_print_whole_ediciones_list() {
 function mgm_print_fees_ediciones_list() {
     global $CFG;
     
-    $editions = get_records('edicion', 'certified', MGM_CERTIFICATE_VALIDATED);
+    $editions = get_records('edicion');
 
     $editionimage = '<img src="' . $CFG -> pixpath . '/i/db.gif" alt="" />';
     $courseimage = '<img src="' . $CFG -> pixpath . '/i/course.gif" alt="" />';
