@@ -88,3 +88,9 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('fees', get_string('fees', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/fees.php', 'mod/mgm:aprobe')
 );
+$ADMIN->add('ediciones', new admin_category('mgmcertifications', get_string('certifications', 'mgm')));
+
+$ADMIN->add(
+    'mgmcertifications', new admin_externalpage('joinusers', get_string('joinusers', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/join_users.php', 'mod/mgm:createedicion')
+);
