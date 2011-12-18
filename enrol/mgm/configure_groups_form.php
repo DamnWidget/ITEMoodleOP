@@ -43,7 +43,7 @@ class mgm_groups_form extends moodleform {
         global $CFG;
         $mform =& $this->_form;
         $criteria = $this->_customdata;
-        print_object($this->_customdata);
+        //print_object($this->_customdata);
 
         if (isset($criteria->id)) {
             // Editing an existing edition criteria

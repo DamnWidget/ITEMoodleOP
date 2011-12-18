@@ -2437,9 +2437,9 @@ function mgm_get_certification_task($course) {
 
     $scala = mgm_get_certification_scala();
 
-    $sql = "SELECT * FROM " . $CFG -> prefix . "grade_items
-    		WHERE scaleid ='" . $scala -> value . "'
-    		AND courseid ='" . $course . "'";
+    $sql = "SELECT * FROM ".$CFG->prefix."grade_items
+    		WHERE scaleid ='".$scala->value."'
+    		AND courseid ='".$course."'";
 
     return get_record_sql($sql);
 }
@@ -2981,7 +2981,9 @@ function mgm_get_course_tutor_payment($course) {
     $data = array();
     $rolesid = mgm_get_certification_roles();
     $edition = mgm_get_course_edition($course->id);
-    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
+    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);    
+    $firsttask = mgm_get_course_first_task($course->id);
+    $ctask = mgm_get_certification_task($course->id);
     
     if (!$ecuador = mgm_get_course_ecuador($course->id)) {
         return $data;
@@ -2989,7 +2991,7 @@ function mgm_get_course_tutor_payment($course) {
     
     
     if ($groups = groups_get_all_groups($course->id)) {                
-        foreach($groups as $k=>$v) {            
+        foreach($groups as $k=>$v) {                        
             $tmp_data = array(
                 'group' => $v,
                 'result' => array(
@@ -3001,9 +3003,9 @@ function mgm_get_course_tutor_payment($course) {
                 'alumnos' => array()
             );            
             
-            if ($groupmemberroles = groups_get_members_by_role($k,$course->id)) {                
-                foreach($groupmemberroles as $key=>$roledata) {                    
-                    if ($key == '*') {                                                
+            if ($groupmemberroles = groups_get_members_by_role($k, $course->id)) {
+                foreach($groupmemberroles as $key=>$roledata) {
+                    if ($key == '*') {                                                                        
                         // Multiple roles                        
                         foreach($roledata->users as $user) {                            
                             foreach($user->roles as $role) {
@@ -3016,43 +3018,20 @@ function mgm_get_course_tutor_payment($course) {
                                 } 
                             }
                         }                        
-                    } else if($key == $rolesid['tutor']) {                        
+                    } else if($key == $rolesid['tutor']) {                                                
                         // Tutor role
-                        foreach($roledata->users as $user) {                        
+                        foreach($roledata->users as $user) {
                             $tmp_data['tutor'][] = array(
                                 'id' => $user->id,
                                 'firstname' => $user->firstname,
-                                'lastname' => $user->lastname
+                                'lastname' => $user->lastname,
+                                'email' => $user->email                                 
                             );                                                        
                         }                        
                         
-                    } else if($key == $rolesid['alumno']) {
+                    } else if($key == $rolesid['alumno']) {                                                
                         // Alumno role
-                        $alumnos = array();
-                        foreach($roledata->users as $user) {                            
-                            $tmp_data['alumnos'][] = array(
-                                'id' => $user->id,
-                                'firstname' => $user->firstname,
-                                'lastname' => $user->lastname
-                            );
-                            
-                            if (!$grade = mgm_get_grade($ecuador, $user)) {
-                                $tmp_data['result']['dont_start']['count']++;                                
-                                continue;
-                            }
-                            
-                            $cgrade = mgm_get_grade(mgm_get_certification_task($course->id), $student);
-                            if ($cgrade->finalgrade == $cgrade->rawgrademax) {
-                                $tmp_data['result']['full']['count']++;
-                                $tmp_data['result']['full']['amount'] += $criteria->tutorpayment;
-                                continue;
-                            }
-                            
-                            if ($grade->finalgrade == $grade->rawgrademax) {
-                                $tmp_data['result']['half']['count']++;
-                                $tmp_data['result']['half']['amount'] += ($criteria->tutorpayment * 0.50);
-                            }
-                        }
+                        $tmp_data['result'] = mgm_calculate_tutor_payment($course, $criteria, $firsttask, $roledata->users);                        
                     }
                 }
             }
@@ -3072,7 +3051,7 @@ function mgm_get_course_coordinador_payment($course) {
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
 
-    $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors)) * count($tutors);
+    $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors));
 
     $coord = mgm_get_course_coordinators($course);    
     return array(
@@ -3113,8 +3092,7 @@ function mgm_get_course_tasks($courseid) {
 function mgm_get_course_ecuador($courseid) {
     $edition = mgm_get_course_edition($courseid);
     $criteria = mgm_get_edition_course_criteria($edition->id, $courseid);
-    if ($criteria->ecuadortask != MGM_ECUADOR_DEFAULT) {
-        print_object($criteria);
+    if ($criteria->ecuadortask != MGM_ECUADOR_DEFAULT) {        
         return $criteria->ecuadortask;
     }    
     
@@ -3160,18 +3138,27 @@ function mgm_get_course_tutor_payment_count($course) {
 
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
-    $firsttask = mgm_get_course_first_task($course->id);    
+    $firsttask = mgm_get_course_first_task($course->id);
     
-    foreach ($students as $student) {                
+    return mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students);
+}
+
+function mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students) {
+    $ctask = mgm_get_certification_task($course->id);
+    
+    $result = array();
+    foreach ($students as $student) {
         if (!$fgrade = mgm_get_grade($firsttask, $student)) {
             $result['dont_start']['count']++;
             continue;
         }
-                
-        if (($cgrade = mgm_get_grade(mgm_get_certification_task($course->id), $student)) && $cgrade->finalgrade == $cgrade->rawgrademax) {
-            $result['full']['count']++;
-            $result['full']['amount'] += $criteria->tutorpayment;
-            continue;                        
+        
+        if ($cgrade = mgm_get_grade($ctask, $student)) {
+            if ($cgrade->finalgrade == $ctask->grademax) {
+                $result['full']['count']++;
+                $result['full']['amount'] += $criteria->tutorpayment;
+                continue;                
+            }                                    
         }
         
         if (($mgrade = mgm_get_grade($criteria->eacuadortask, $student)) && $mgrade->finalgrade == $grade->rawgrademax) {
@@ -3182,7 +3169,7 @@ function mgm_get_course_tutor_payment_count($course) {
             $result['half']['amount'] += ($criteria->tutorpayment * 0.50);
         }
     }
-
+    
     return $result;
 }
 
@@ -3210,7 +3197,7 @@ function mgm_get_course_roles_on_demand($course, $role) {
     }
 
     $roles = mgm_get_certification_roles();
-    $sql = "SELECT DISTINCT u.id, u.username, u.firstname, u.lastname, ctx.id AS ctxid, ctx.contextlevel AS ctxlevel
+    $sql = "SELECT DISTINCT u.id, u.username, u.firstname, u.lastname, u.email, ctx.id AS ctxid, ctx.contextlevel AS ctxlevel
             FROM ".$CFG->prefix."user u
             LEFT OUTER JOIN ".$CFG->prefix."context ctx ON (u.id=ctx.instanceid AND ctx.contextlevel=".CONTEXT_USER.")
             JOIN ".$CFG->prefix."role_assignments r ON u.id=r.userid

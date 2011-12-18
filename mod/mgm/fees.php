@@ -56,6 +56,9 @@ $strhalf            = get_string('half', 'mgm');
 $strfull            = get_string('full', 'mgm');
 $strprev            = get_string('prevlab', 'mgm');
 $strtramo           = get_string('tramo', 'mgm');
+$stremail           = get_string('email');
+$strfechainicio    = get_string('fechainicio', 'mgm');
+$strfechafin       = get_string('fechafin', 'mgm');
 
 $id = optional_param('id', 0, PARAM_INT);    // Course id
 $format = optional_param('format', '', PARAM_ALPHA);
@@ -78,8 +81,8 @@ if(!$multiple) {
     if (!isset($course) && !isset($edition) && !$format) {    
         mgm_print_fees_ediciones_list();    
     } else {
-        $feestablec->head  = array($strname, $strlastname, $strdni, $strcourse, $strtutors, $strprev, $strtramo, $stramount);
-        $feestablec->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+        $feestablec->head  = array($strname, $strlastname, $stremail, $strdni, $strcourse, $strtutors, $strprev, $strtramo, $stramount);
+        $feestablec->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
             
         $tmp_data = array(
             'course' => array(
@@ -92,22 +95,25 @@ if(!$multiple) {
             'alumnos' => mgm_get_course_tutor_payment_count($course),
             'coordinacion' => mgm_get_course_coordinador_payment($course),
             'grupos' => mgm_get_course_tutor_payment($course)
-        );    
+        );        
+      
+        $edition = mgm_get_course_edition($course->id);
         
         $data[] = array(
             $tmp_data['coordinacion']['user']->username,
-            $tmp_data['coordinacion']['user']->lastname,        
+            $tmp_data['coordinacion']['user']->lastname,  
+            $tmp_data['coordinacion']['user']->email,      
             ($tmp_data['coordinacion']['edicion_user']->dni != '') ? $tmp_data['coordinacion']['edicion_user']->dni : 'NO DATA' ,
             $tmp_data['course']['fullname'],
             count($tmp_data['coordinacion']['tutors']),
             $tmp_data['coordinacion']['prevlab'].'€',
             $tmp_data['coordinacion']['amount_per_tutor'].'€',
-            $tmp_data['coordinacion']['total_amount'].'€'                
+            $tmp_data['coordinacion']['total_amount'].'€'
         );
             
         $feestablec->data = $data;
         if(!$format) {
-            print_heading(get_string('coordinador', 'mgm'));    
+            print_heading(date('d-m-Y', $edition->inicio).' / '.date('d-m-Y', $edition->fin).'<br/>'.get_string('coordinador', 'mgm'));            
             print_table($feestablec); 
             echo "<br />";
         }
@@ -127,18 +133,18 @@ if(!$multiple) {
         unset($feestable->data);
         
         if(!$format) print_heading(get_string('tutores', 'mgm'));    
-        if (empty($tmp_data['grupos'])) {
-            foreach($tmp_data['coordinacion']['tutors'] as $tutor) {
+        if (empty($tmp_data['grupos'])) {            
+            foreach($tmp_data['coordinacion']['tutors'] as $tutor) {                
                 $feestable->data[] = array(
                     $tutor->firstname,
                     $tutor->lastname,
                     mgm_get_user_dni($tutor->id),
                     $tmp_data['course']['fullname'],
-                    $tmp_data['coordinacion']['alumnos']['dont_start']['count'] + $tmp_data['coordinacion']['alumnos']['half']['count'] + $tmp_data['coordinacion']['alumnos']['full']['count'],
-                    $tmp_data['coordinacion']['alumnos']['dont_start']['count'],
-                    $tmp_data['coordinacion']['alumnos']['half']['count'],
-                    $tmp_data['coordinacion']['alumnos']['full']['count'],
-                    $tmp_data['coordinacion']['alumnos']['half']['amount'] + $tmp_data['coordinacion']['alumnos']['full']['amount'].'€' 
+                    $tmp_data['alumnos']['dont_start']['count'] + $tmp_data['alumnos']['half']['count'] + $tmp_data['alumnos']['full']['count'],
+                    $tmp_data['alumnos']['dont_start']['count'],
+                    $tmp_data['alumnos']['half']['count'],
+                    $tmp_data['alumnos']['full']['count'],
+                    $tmp_data['alumnos']['half']['amount'] + $tmp_data['alumnos']['full']['amount'].'€' 
                 );
             }
         } else {
