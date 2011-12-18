@@ -2452,7 +2452,8 @@ function mgm_get_certification_task($course) {
  * @return object
  */
 function mgm_get_grade($task, $user) {
-    return get_record('grade_grades', 'itemid', $task->id, 'userid', $user->id);
+    $taskid = (is_object($task)) ? $task->id : $task;
+    return get_record('grade_grades', 'itemid', $taskid, 'userid', $user->id);
 }
 
 /**
@@ -3104,7 +3105,7 @@ function mgm_get_course_tasks($courseid) {
 
     $sql = "SELECT * FROM ".$CFG->prefix."grade_items
             WHERE courseid=".$courseid."
-            AND scaleid IS NOT NULL";
+            AND itemtype !='course' ORDER by sortorder";  
 
     return get_records_sql($sql);
 }
@@ -3113,11 +3114,12 @@ function mgm_get_course_ecuador($courseid) {
     $edition = mgm_get_course_edition($courseid);
     $criteria = mgm_get_edition_course_criteria($edition->id, $courseid);
     if ($criteria->ecuadortask != MGM_ECUADOR_DEFAULT) {
+        print_object($criteria);
         return $criteria->ecuadortask;
-    }
-
-    $tasks = mgm_get_course_tasks($courseid);
-
+    }    
+    
+    $tasks = mgm_get_course_tasks($courseid);        
+    
     $x = 1;
     foreach ($tasks as $task) {
         if ($x == round(count($tasks) / 2)) {
@@ -3128,6 +3130,17 @@ function mgm_get_course_ecuador($courseid) {
     }
 
     return null;
+}
+
+function mgm_get_course_first_task($courseid) {
+    global $CFG;
+    
+    $sql = "SELECT * FROM ".$CFG->prefix."grade_items
+            WHERE courseid=".$courseid."
+            AND itemtype !='course' ORDER BY sortorder LIMIT 1";
+    
+    
+    return array_pop(get_records_sql($sql));
 }
 
 function mgm_get_course_tutor_payment_count($course) {
@@ -3147,21 +3160,24 @@ function mgm_get_course_tutor_payment_count($course) {
 
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
-
-    foreach ($students as $student) {
-        if (!$grade = mgm_get_grade($ecuador, $student)) {
+    $firsttask = mgm_get_course_first_task($course->id);    
+    
+    foreach ($students as $student) {                
+        if (!$fgrade = mgm_get_grade($firsttask, $student)) {
             $result['dont_start']['count']++;
             continue;
         }
-
-        $cgrade = mgm_get_grade(mgm_get_certification_task($course->id), $student);
-        if ($cgrade->finalgrade == $cgrade->rawgrademax) {
+                
+        if (($cgrade = mgm_get_grade(mgm_get_certification_task($course->id), $student)) && $cgrade->finalgrade == $cgrade->rawgrademax) {
             $result['full']['count']++;
             $result['full']['amount'] += $criteria->tutorpayment;
-            continue;
+            continue;                        
         }
-
-        if ($grade->finalgrade == $grade->rawgrademax) {
+        
+        if (($mgrade = mgm_get_grade($criteria->eacuadortask, $student)) && $mgrade->finalgrade == $grade->rawgrademax) {
+            $result['full']['count']++;
+            $result['full']['amount'] += $criteria->tutorpayment;            
+        } else {
             $result['half']['count']++;
             $result['half']['amount'] += ($criteria->tutorpayment * 0.50);
         }
