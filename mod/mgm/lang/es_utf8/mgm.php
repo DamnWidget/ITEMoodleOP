@@ -213,8 +213,14 @@ $string['incidencia_dni'] = '<p>Advertencia: El campo DNI está vacío o es inco
 $string['incidencia_no_aprobado'] = '<p>Advertencia: No se incluye al usuario $a->nombre al no haber aprobado el curso \"$a->curso\".</p>';
 $string['incidencia_no_tipo_usuario'] = '<p>Advertencia: El usuario $a->nombre no tiene asignado un rol de Tutor, Coordinador o Alumno para el curso \"$a->curso\".</p>';
 $string['edition'] = 'Edición';
-$string['filtereditions'] = 'Ediciones';
-$string['filtereditions_summary'] = 'Este filtro muestra una lista de ediciones. Solo se puede seleccionar una ediciona al mismo tiempo';
+$string['editions'] = 'Ediciones';
+$string['editions_summary'] = 'Este filtro muestra una lista de ediciones. Solo se puede seleccionar una edicion al mismo tiempo';
 $string['reports'] = 'Informes';
 $string['dinamicinfo'] = 'Dinamico';
 $string['unknowreport'] = 'Tipo de informe desconocido';
+$string['groups'] = 'Grupos';
+$string['groups_summary'] = 'Este filtro muestra una lista de grupos. Solo se puede seleccionar un grupo al mismo tiempo';
+$string['custommgm'] = 'MGM';
+$string['custommgm_summary'] = 'Acceso a informes controlado por el modulo MGM';
+
+
