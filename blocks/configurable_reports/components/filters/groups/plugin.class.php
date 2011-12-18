@@ -24,33 +24,32 @@
 
 require_once($CFG->dirroot.'/blocks/configurable_reports/plugin.class.php');
 
-class plugin_editions extends plugin_base{
+class plugin_groups extends plugin_base{
 
 	function init(){
 		$this->form = false;
 		$this->unique = true;
-		$this->fullname = get_string('editions','mgm');
+		$this->fullname = get_string('groups','mgm');
 		$this->reporttypes = array('courses','sql');
 	}
 
 	function summary($data){
-		return get_string('editions_summary','mgm');
+		return get_string('groups_summary','mgm');
 	}
 
 	function execute($finalelements, $data){
-
-		$filter_editions = optional_param('filter_editions',0,PARAM_INT);
-		if(!$filter_editions)
+		$filter_groups = optional_param('filter_groups');
+		if(!$filter_groups)
 			return $finalelements;
 
 		if($this->report->type != 'sql'){
-				return array($filter_editions);
+				return array($filter_groups);
 		}
 		else{
-			if(preg_match("/%%FILTER_EDITIONS:([^%]+)%%/i",$finalelements,
+			if(preg_match("/%%FILTER_GROUPS:([^%]+)%%/i",$finalelements,
     $output)){
-				$replace = ' AND '.$output[1].' = '.$filter_editions;
-				return str_replace('%%FILTER_EDITIONS:'.$output[1].'%%',$replace,$finalelements);
+				$replace = ' AND '.$output[1].' IN '.$filter_groups;
+				return str_replace('%%FILTER_GROUPS:'.$output[1].'%%',$replace,$finalelements);
 			}
 		}
 		return $finalelements;
@@ -59,7 +58,7 @@ class plugin_editions extends plugin_base{
 	function print_filter(&$mform){
 		global $CFG;
 
-		$filter_editions = optional_param('filter_editions',0,PARAM_INT);
+		$filter_groups = optional_param('filter_groups');
 
 		$reportclassname = 'report_'.$this->report->type;
 		$reportclass = new $reportclassname($this->report);
@@ -68,25 +67,25 @@ class plugin_editions extends plugin_base{
 			$components = cr_unserialize($this->report->components);
 			$conditions = $components['conditions'];
 
-			$editionlist = $reportclass->elements_by_conditions($conditions);
+			$grouplist = $reportclass->elements_by_conditions($conditions);
 		}
 		else{
-			$editionlist = array_keys(get_records('edicion'));
+			$grouplist = array_keys(get_records('groups'));
 		}
 
-		$editionoptions = array();
-		$editionoptions[0] = get_string('choose');
+		$groupoptions = array();
+		$groupoptions[0] = get_string('choose');
 
-		if(!empty($editionlist)){
-			$editions = get_records_select('edicion','id in ('.(implode(',',$editionlist)).')');
+		if(!empty($grouplist)){
+			$groups = get_records_select('groups','id in ('.(implode(',',$grouplist)).')');
 
-			foreach($editions as $c){
-				$editionoptions[$c->id] = format_string($c->name);
+			foreach($groups as $c){
+				$groupoptions['('.$c->id.')'] = format_string($c->name);
 			}
 		}
 
-		$mform->addElement('select', 'filter_editions', get_string('edition', 'mgm'), $editionoptions);
-		$mform->setType('filter_editions', PARAM_INT);
+		$mform->addElement('select', 'filter_groups', get_string('groups', 'mgm'), $groupoptions);
+		$mform->setType('filter_groups', PARAM_CLEAN);
 
 	}
 
