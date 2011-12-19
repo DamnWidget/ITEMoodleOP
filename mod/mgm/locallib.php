@@ -3032,7 +3032,6 @@ function mgm_get_course_tutor_payment($course) {
                     } else if($key == $rolesid['alumno']) {                                                
                         // Alumno role
 						$result = mgm_calculate_tutor_payment($course, $criteria, $firsttask, $roledata->users);
-						print_object($result);
                         $tmp_data['result'] = $result['data'];
 						$tmp_data['alumnos'] = $result['alumnos'];
                     }
