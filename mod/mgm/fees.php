@@ -100,7 +100,7 @@ if(!$multiple) {
         $edition = mgm_get_course_edition($course->id);
         
         $data[] = array(
-            $tmp_data['coordinacion']['user']->username,
+            $tmp_data['coordinacion']['user']->firstname,
             $tmp_data['coordinacion']['user']->lastname,  
             $tmp_data['coordinacion']['user']->email,      
             ($tmp_data['coordinacion']['edicion_user']->dni != '') ? $tmp_data['coordinacion']['edicion_user']->dni : 'NO DATA' ,
@@ -211,7 +211,7 @@ if(!$multiple) {
     foreach($data as $course) {
         $coord_data[] = array(
             '<b>'.$course['course']['fullname'].'</b>',
-            ($course['coordinacion']['user']) ? $course['coordinacion']['user']->username : 'NO DATA',
+            ($course['coordinacion']['user']) ? $course['coordinacion']['user']->firstname : 'NO DATA',
             ($course['coordinacion']['user']) ? $course['coordinacion']['user']->lastname : 'NO DATA',        
             ($course['coordinacion']['edicion_user']->dni != '') ? $course['coordinacion']['edicion_user']->dni : 'NO DATA' ,            
             count($course['coordinacion']['tutors']),

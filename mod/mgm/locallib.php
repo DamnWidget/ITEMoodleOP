@@ -2947,13 +2947,9 @@ function mgm_courses_from_user_choices($choices) {
 }
 
 function mgm_get_edition_payment_data($edition, &$data) {
-    if ($edition->certified != MGM_CERTIFICATE_VALIDATED) {
-        $data = get_string('pago-nc', 'mgm');
-        return false;
-    }
-
     $data = array();
     foreach(mgm_get_edition_courses($edition) as $course) {
+		print_object('Pues si');
         $groups = groups_get_all_groups($course->id);
         foreach($groups as $k=>$v) {
             if ($groupmemberroles = groups_get_members_by_role($k,$course->id)) {
@@ -3127,16 +3123,6 @@ function mgm_get_course_tutor_payment_count($course) {
     if (!$students = mgm_get_course_students($course)) {
         return false;
     }
-
-    if (!$ecuador = mgm_get_course_ecuador($course->id)) {
-        return false;
-    }
-
-    $result = array(
-        'dont_start' => array('count' => 0, 'amount' => 0),
-        'half' => array('count' => 0, 'amount' => 0),
-        'full' => array('count' => 0, 'amount' => 0)
-    );
 
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
