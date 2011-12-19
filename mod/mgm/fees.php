@@ -131,7 +131,6 @@ if(!$multiple) {
         $feestable->head  = array($strname, $strlastname, $strdni, $strcourse, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
         $feestable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         unset($feestable->data);
-        
         if(!$format) print_heading(get_string('tutores', 'mgm'));    
         if (empty($tmp_data['grupos'])) {            
             foreach($tmp_data['coordinacion']['tutors'] as $tutor) {                

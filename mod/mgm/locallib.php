@@ -3031,7 +3031,10 @@ function mgm_get_course_tutor_payment($course) {
                         
                     } else if($key == $rolesid['alumno']) {                                                
                         // Alumno role
-                        $tmp_data['result'] = mgm_calculate_tutor_payment($course, $criteria, $firsttask, $roledata->users);                        
+						$result = mgm_calculate_tutor_payment($course, $criteria, $firsttask, $roledata->users);
+						print_object($result);
+                        $tmp_data['result'] = $result['data'];
+						$tmp_data['alumnos'] = $result['alumnos'];
                     }
                 }
             }
@@ -3146,27 +3149,41 @@ function mgm_get_course_tutor_payment_count($course) {
 function mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students) {
     $ctask = mgm_get_certification_task($course->id);
     
-    $result = array();
+	$result = array(
+		'data' => array(
+	        'dont_start' => array('count' => 0, 'amount' => 0),
+	        'half' => array('count' => 0, 'amount' => 0),
+	        'full' => array('count' => 0, 'amount' => 0)
+	    ),
+		'alumnos' => array()
+	);
+
     foreach ($students as $student) {
+		$result['alumnos'][] = array(
+			'id' => $student->id,
+		    'firstname' => $student->firstname,
+		    'lastname' => $student->lastname
+		);
+		
         if (!$fgrade = mgm_get_grade($firsttask, $student)) {
-            $result['dont_start']['count']++;
+            $result['data']['dont_start']['count']++;
             continue;
         }
         
         if ($cgrade = mgm_get_grade($ctask, $student)) {
             if ($cgrade->finalgrade == $ctask->grademax) {
-                $result['full']['count']++;
-                $result['full']['amount'] += $criteria->tutorpayment;
+                $result['data']['full']['count']++;
+                $result['data']['full']['amount'] += $criteria->tutorpayment;
                 continue;                
             }                                    
         }
         
         if (($mgrade = mgm_get_grade($criteria->eacuadortask, $student)) && $mgrade->finalgrade == $grade->rawgrademax) {
-            $result['full']['count']++;
-            $result['full']['amount'] += $criteria->tutorpayment;            
+            $result['data']['full']['count']++;
+            $result['data']['full']['amount'] += $criteria->tutorpayment;            
         } else {
-            $result['half']['count']++;
-            $result['half']['amount'] += ($criteria->tutorpayment * 0.50);
+            $result['data']['half']['count']++;
+            $result['data']['half']['amount'] += ($criteria->tutorpayment * 0.50);
         }
     }
     
