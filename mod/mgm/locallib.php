@@ -2949,7 +2949,6 @@ function mgm_courses_from_user_choices($choices) {
 function mgm_get_edition_payment_data($edition, &$data) {
     $data = array();
     foreach(mgm_get_edition_courses($edition) as $course) {
-		print_object('Pues si');
         $groups = groups_get_all_groups($course->id);
         foreach($groups as $k=>$v) {
             if ($groupmemberroles = groups_get_members_by_role($k,$course->id)) {
