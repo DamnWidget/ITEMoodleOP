@@ -3154,6 +3154,11 @@ function mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students) 
             continue;
         }
         
+        if ($fgrade->finalgrade != $firsttask->grademax) {
+            $result['data']['dont_start']['count']++;
+            continue;
+        }
+        
         if ($cgrade = mgm_get_grade($ctask, $student)) {
             if ($cgrade->finalgrade == $ctask->grademax) {
                 $result['data']['full']['count']++;
