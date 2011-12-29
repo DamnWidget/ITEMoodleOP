@@ -3008,19 +3008,20 @@ function mgm_get_course_tutor_payment($course) {
                                     $tmp_data['tutor'][] = array(
                                         'id' => $user->id,
                                         'firstname' => $user->firstname,
-                                        'lastname' => $user->lastname
+                                        'lastname' => $user->lastname,
+                                        'email' => $user->email
                                     );                                    
                                 } 
                             }
                         }                        
                     } else if($key == $rolesid['tutor']) {                                                
                         // Tutor role
-                        foreach($roledata->users as $user) {
+                        foreach($roledata->users as $user) {                            
                             $tmp_data['tutor'][] = array(
                                 'id' => $user->id,
                                 'firstname' => $user->firstname,
                                 'lastname' => $user->lastname,
-                                'email' => $user->email                                 
+                                'email' => $user->email                            
                             );                                                        
                         }                        
                         

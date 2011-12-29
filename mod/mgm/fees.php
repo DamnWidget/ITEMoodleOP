@@ -128,8 +128,8 @@ if(!$multiple) {
             print_box_end();
         }
         
-        $feestable->head  = array($strname, $strlastname, $strdni, $strcourse, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
-        $feestable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+        $feestable->head  = array($strname, $strlastname, $strdni, $stremail, $strcourse, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
+        $feestable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
         unset($feestable->data);
         if(!$format) print_heading(get_string('tutores', 'mgm'));    
         if (empty($tmp_data['grupos'])) {            
@@ -147,11 +147,12 @@ if(!$multiple) {
                 );
             }
         } else {
-            foreach($tmp_data['grupos'] as $grupo) {
+            foreach($tmp_data['grupos'] as $grupo) {                
                 $feestable->data[] = array(
                     $grupo['tutor'][0]['firstname'],
                     $grupo['tutor'][0]['lastname'],
                     mgm_get_user_dni($grupo['tutor'][0]['id']),
+                    $grupo['tutor'][0]['email'],
                     $tmp_data['course']['fullname'],
                     count($grupo['alumnos']),
                     $grupo['result']['dont_start']['count'],
@@ -201,8 +202,8 @@ if(!$multiple) {
     $coordstable->head  = array('<b>'.$strcourse.'</b>', $strname, $strlastname, $strdni, $strtutors, $strprev, $strtramo, $stramount);
     $coordstable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
     
-    $tutorstable->head  = array($strcourse, $strname, $strlastname, $strdni, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
-    $tutorstable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
+    $tutorstable->head  = array($strcourse, $strname, $strlastname, $strdni, $stremail, $stralumnos, $strnostart, $strhalf, $strfull, $stramount);
+    $tutorstable->align = array('center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center', 'center');
     
     $data = '';        
     $edition = get_record('edicion', 'id', $editionid);    
@@ -235,12 +236,13 @@ if(!$multiple) {
                 );
             }
         } else {
-            foreach($course['grupos'] as $grupo) {
+            foreach($course['grupos'] as $grupo) {                
                 $tutor_data[] = array(
                     '<b>'.$course['course']['fullname'].'</b>',
                     $grupo['tutor'][0]['firstname'],
                     $grupo['tutor'][0]['lastname'],
-                    mgm_get_user_dni($grupo['tutor'][0]['id']),                    
+                    mgm_get_user_dni($grupo['tutor'][0]['id']),
+                    $grupo['tutor'][0]['email'],                    
                     count($grupo['alumnos']),
                     $grupo['result']['dont_start']['count'],
                     $grupo['result']['half']['count'],
