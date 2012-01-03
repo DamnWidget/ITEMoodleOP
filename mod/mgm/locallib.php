@@ -3167,10 +3167,15 @@ function mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students) 
                 continue;                
             }                                    
         }
-        
-        if (($mgrade = mgm_get_grade($criteria->eacuadortask, $student)) && $mgrade->finalgrade == $grade->rawgrademax) {
-            $result['data']['full']['count']++;
-            $result['data']['full']['amount'] += $criteria->tutorpayment;            
+
+        if ($mgrade = mgm_get_grade($criteria->ecuadortask, $student) {
+			if($mgrade->finalgrade == $grade->rawgrademax) {
+				$result['data']['full']['count']++;
+	            $result['data']['full']['amount'] += $criteria->tutorpayment;
+			} else {
+				$result['data']['half']['count']++;
+	            $result['data']['half']['amount'] += ($criteria->tutorpayment * 0.50);
+			}            
         } else {
             $result['data']['half']['count']++;
             $result['data']['half']['amount'] += ($criteria->tutorpayment * 0.50);
