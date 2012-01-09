@@ -41,28 +41,36 @@ require_once($CFG->libdir.'/adminlib.php');
 
 $tempdir = $CFG->dataroot."/temp/";
 $filename = optional_param('filename');
+$generated = optional_param('generated');
 
 if ($filename && file_exists($tempdir.$filename)) {
   $lifetime = 0;
   send_file($tempdir.$filename, "export.zip", $lifetime, 0, false, true);
 }
+else if ($generated) {
+	admin_externalpage_setup('edicionesmgmt', mgm_update_edition_button());
+  admin_externalpage_print_header();
+  print_heading($strtitle);
+  print_simple_box_start('center');
+  $emision = new EmisionDatos();
+  $validacion = $emision->Validar();
+  $afichero = $emision->aFichero( $tempdir );
+
+  foreach (array_merge($validacion->incidencias, $afichero->incidencias) as $incidencia)
+    echo $incidencia;
+
+  echo get_string('file_export_link', 'mgm', $afichero);
+  print_simple_box_end();
+  admin_externalpage_print_footer();
+}
 else {
   admin_externalpage_setup('edicionesmgmt', mgm_update_edition_button());
   admin_externalpage_print_header();
   print_heading($strtitle);
-  
   print_simple_box_start('center');
-  
-  $emision = new EmisionDatos();
-  $validacion = $emision->Validar();
-  $afichero = $emision->aFichero( $tempdir );
-  
-  foreach (array_merge($validacion->incidencias, $afichero->incidencias) as $incidencia)
-    echo $incidencia;
-  
-  echo get_string('file_export_link', 'mgm', $afichero);
+  print get_string('exportpleasewait', 'mgm');
   print_simple_box_end();
-  
-  admin_externalpage_print_footer();
+	admin_externalpage_print_footer();
+	redirect("$CFG->wwwroot".'/mod/mgm/export.php?generated=1');
 }
 ?>

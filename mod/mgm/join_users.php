@@ -63,6 +63,7 @@ if ($data = $user_form->get_data(false)) {
  	unset($_POST);
   unset($SESSION->sourceuser);
   unset($SESSION->destinationuser);
+  unset($SESSION->joinusers);
 }
 
 

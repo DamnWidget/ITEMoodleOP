@@ -216,3 +216,6 @@ $string['filtereditions_summary'] = 'This filter shows a list of editions. Only 
 $string['reports'] = 'Reports';
 $string['dinamicinfo'] = 'Dinamic';
 $string['unknowreport'] = 'Unknow Report type';
+$string['exportpleasewait'] ='Exporting data, please wait ...';
+$string['certifications'] = 'Certifications';
+$string['joinusers'] = 'Join users';

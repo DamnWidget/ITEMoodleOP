@@ -29,6 +29,7 @@ require_once ($CFG -> dirroot . '/course/lib.php');
 require_once ($CFG -> dirroot . '/group/lib.php');
 require_once ($CFG -> libdir . '/excellib.class.php');
 require_once ($CFG -> libdir . '/odslib.class.php');
+require_once($CFG -> dirroot . '/user/profile/lib.php');
 
 defined('MOODLE_INTERNAL') || die();
 
@@ -374,7 +375,7 @@ function mgm_print_whole_ediciones_list() {
 
 function mgm_print_fees_ediciones_list() {
     global $CFG;
-    
+
     $editions = get_records('edicion');
 
     $editionimage = '<img src="' . $CFG -> pixpath . '/i/db.gif" alt="" />';
@@ -394,7 +395,7 @@ function mgm_print_fees_ediciones_list() {
                 $table .= '<tr>';
                 $table .= '<td valign="top" class="mod-mgm edition image course">' . $courseimage . '</td>';
                 $table .= '<td valign="top" class="mod-mgm edition name course">';
-                $table .= '<a class="mod-mgm edition link course" href="'.$CFG->wwwroot.'/mod/mgm/fees.php?id='.$course->id.'&edicionid='.$edition->id.'">'.format_string($course -> fullname).'</a>';                
+                $table .= '<a class="mod-mgm edition link course" href="'.$CFG->wwwroot.'/mod/mgm/fees.php?id='.$course->id.'&edicionid='.$edition->id.'">'.format_string($course -> fullname).'</a>';
                 $table .= '</td>';
                 $table .= '<td class="mod-mgm course info">&nbsp;</td>';
                 $table .= '</tr>';
@@ -1975,6 +1976,57 @@ function mgm_get_user_extend($userid) {
     return $euser;
 }
 
+/**
+ * Return the user's complete data
+ * @param string $userid
+ * @return user object which all field values
+ */
+function mgm_get_user_complete($userid) {
+		$user=false;
+		if($user = get_record('user', 'id', $userid)) {
+      if($euser = get_record('edicion_user', 'userid', $userid)) { //base data
+      	unset($euser->id);
+        foreach(array_keys(get_object_vars($euser)) as $key){ //mgm user data
+        	$user->$key=$euser->$key;
+        }
+      }//mgm user data end
+      if ($puser=profile_user_record($userid)){//profile user data
+       		unset($puser->id);
+       		foreach(array_keys(get_object_vars($puser)) as $key){
+       			if (! array_key_exists($key, $user)){
+       				$user->$key=$puser->$key;
+       			}else{
+       				$key2="profile_".$key;
+       				$user->$key2>=$puser->$key;
+       			}
+       		}
+      }//profile user data end
+		}
+    return $user;
+}
+
+/**
+ * Set the user's complete data
+ * @param user object
+ * @return bool
+ */
+function mgm_update_user_complete($user) {
+    if( get_record('user', 'id', $user->id)) {
+      update_record('user', $user);//user base data save
+			profile_save_data($user);// profile data save
+      if ($userext=get_record('edicion_user', 'userid', $user->id)) {// edicion_user data save
+      	$user -> userid = $user->id;
+        $user -> id = $userext->id;
+        update_record('edicion_user', $user);
+      }else{
+        $user->userid=$user -> id;
+        unset($user->id);
+        insert_record('edicion_user', $user);
+      }
+      return true;
+    }
+    return false;
+}
 function mgm_get_user_especialidades($userid) {
     if($especialidades = get_record('edicion_user', 'userid', $userid)) {
         $especs = array();
@@ -2503,6 +2555,16 @@ function mgm_get_cert_history($userid) {
     return get_records('edicion_cert_history', 'userid', $userid);
 }
 
+function mgm_get_cert_history_str($userid) {
+		$str='';
+   		foreach(mgm_get_cert_history($userid) as $cert){
+   			if ($course=get_record('course', 'id', $cert->courseid)){
+   				$str=$str.$course->fullname.'(reg:'.$cert->numregistro .', confirm: '.$cert->confirm.")\n";
+   			}
+   		}
+   		return $str;
+}
+
 /**
  * Return true if user given by userid has certified the course given by courseid
  *
@@ -2841,7 +2903,7 @@ function mgm_download_doc($fields) {
         $worksheet[0]->write(0, $col, $fieldname);
         $col++;
     }
-    
+
     $row = 1;
     foreach($fields['data'] as $data) {
         $col = 0;
@@ -2952,9 +3014,9 @@ function mgm_get_edition_payment_data($edition, &$data) {
         $groups = groups_get_all_groups($course->id);
         foreach($groups as $k=>$v) {
             if ($groupmemberroles = groups_get_members_by_role($k,$course->id)) {
-                
+
             }
-        }                                 
+        }
         $data[] = array(
             'course' => array(
                 'id' => $course->id,
@@ -2972,21 +3034,21 @@ function mgm_get_edition_payment_data($edition, &$data) {
     return true;
 }
 
-function mgm_get_course_tutor_payment($course) {    
+function mgm_get_course_tutor_payment($course) {
     $data = array();
     $rolesid = mgm_get_certification_roles();
     $edition = mgm_get_course_edition($course->id);
-    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);    
+    $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
     $firsttask = mgm_get_course_first_task($course->id);
     $ctask = mgm_get_certification_task($course->id);
-    
+
     if (!$ecuador = mgm_get_course_ecuador($course->id)) {
         return $data;
-    }    
-    
-    
-    if ($groups = groups_get_all_groups($course->id)) {                
-        foreach($groups as $k=>$v) {                        
+    }
+
+
+    if ($groups = groups_get_all_groups($course->id)) {
+        foreach($groups as $k=>$v) {
             $tmp_data = array(
                 'group' => $v,
                 'result' => array(
@@ -2996,36 +3058,36 @@ function mgm_get_course_tutor_payment($course) {
                 ),
                 'tutor' => array(),
                 'alumnos' => array()
-            );            
-            
+            );
+
             if ($groupmemberroles = groups_get_members_by_role($k, $course->id)) {
                 foreach($groupmemberroles as $key=>$roledata) {
-                    if ($key == '*') {                                                                        
-                        // Multiple roles                        
-                        foreach($roledata->users as $user) {                            
+                    if ($key == '*') {
+                        // Multiple roles
+                        foreach($roledata->users as $user) {
                             foreach($user->roles as $role) {
-                                if($role->id == $rolesid['tutor']) {                                    
+                                if($role->id == $rolesid['tutor']) {
                                     $tmp_data['tutor'][] = array(
                                         'id' => $user->id,
                                         'firstname' => $user->firstname,
                                         'lastname' => $user->lastname,
                                         'email' => $user->email
-                                    );                                    
-                                } 
+                                    );
+                                }
                             }
-                        }                        
-                    } else if($key == $rolesid['tutor']) {                                                
+                        }
+                    } else if($key == $rolesid['tutor']) {
                         // Tutor role
-                        foreach($roledata->users as $user) {                            
+                        foreach($roledata->users as $user) {
                             $tmp_data['tutor'][] = array(
                                 'id' => $user->id,
                                 'firstname' => $user->firstname,
                                 'lastname' => $user->lastname,
-                                'email' => $user->email                            
-                            );                                                        
-                        }                        
-                        
-                    } else if($key == $rolesid['alumno']) {                                                
+                                'email' => $user->email
+                            );
+                        }
+
+                    } else if($key == $rolesid['alumno']) {
                         // Alumno role
 						$result = mgm_calculate_tutor_payment($course, $criteria, $firsttask, $roledata->users);
                         $tmp_data['result'] = $result['data'];
@@ -3037,7 +3099,7 @@ function mgm_get_course_tutor_payment($course) {
             $data[] = $tmp_data;
         }
     }
-    
+
     return $data;
 }
 
@@ -3051,7 +3113,7 @@ function mgm_get_course_coordinador_payment($course) {
 
     $amount_per_tutor = mgm_get_tramo_amount($criteria, count($tutors));
 
-    $coord = mgm_get_course_coordinators($course);    
+    $coord = mgm_get_course_coordinators($course);
     return array(
         'user' => $coord,
         'edicion_user' => get_record('edicion_user', 'userid', $coord->id),
@@ -3063,10 +3125,10 @@ function mgm_get_course_coordinador_payment($course) {
     );
 }
 
-function mgm_get_tramo_amount($criteria, $num_tutors) {    
+function mgm_get_tramo_amount($criteria, $num_tutors) {
     if ($num_tutors < 6) {
         return $criteria->tramo[0];
-    } else if ($num_tutors >= 6 && $num_tutors < 11) {        
+    } else if ($num_tutors >= 6 && $num_tutors < 11) {
         return $criteria->tramo[1];
     } else if ($num_tutors >= 11 && $num_tutors < 16) {
         return $criteria->tramo[2];
@@ -3082,7 +3144,7 @@ function mgm_get_course_tasks($courseid) {
 
     $sql = "SELECT * FROM ".$CFG->prefix."grade_items
             WHERE courseid=".$courseid."
-            AND itemtype !='course' ORDER by sortorder";  
+            AND itemtype !='course' ORDER by sortorder";
 
     return get_records_sql($sql);
 }
@@ -3090,12 +3152,12 @@ function mgm_get_course_tasks($courseid) {
 function mgm_get_course_ecuador($courseid) {
     $edition = mgm_get_course_edition($courseid);
     $criteria = mgm_get_edition_course_criteria($edition->id, $courseid);
-    if ($criteria->ecuadortask != MGM_ECUADOR_DEFAULT) {        
+    if ($criteria->ecuadortask != MGM_ECUADOR_DEFAULT) {
         return $criteria->ecuadortask;
-    }    
-    
-    $tasks = mgm_get_course_tasks($courseid);        
-    
+    }
+
+    $tasks = mgm_get_course_tasks($courseid);
+
     $x = 1;
     foreach ($tasks as $task) {
         if ($x == round(count($tasks) / 2)) {
@@ -3110,12 +3172,12 @@ function mgm_get_course_ecuador($courseid) {
 
 function mgm_get_course_first_task($courseid) {
     global $CFG;
-    
+
     $sql = "SELECT * FROM ".$CFG->prefix."grade_items
             WHERE courseid=".$courseid."
             AND itemtype !='course' ORDER BY sortorder LIMIT 1";
-    
-    
+
+
     return array_pop(get_records_sql($sql));
 }
 
@@ -3127,13 +3189,13 @@ function mgm_get_course_tutor_payment_count($course) {
     $edition = mgm_get_course_edition($course->id);
     $criteria = mgm_get_edition_course_criteria($edition->id, $course->id);
     $firsttask = mgm_get_course_first_task($course->id);
-    
+
     return mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students);
 }
 
 function mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students) {
-    $ctask = mgm_get_certification_task($course->id);
-    
+  //$ctask = mgm_get_certification_task($course->id);
+
 	$result = array(
 		'data' => array(
 	        'dont_start' => array('count' => 0, 'amount' => 0),
@@ -3143,45 +3205,42 @@ function mgm_calculate_tutor_payment($course, $criteria, $firsttask, $students) 
 		'alumnos' => array()
 	);
 
+    if ($criteria->ecuadortask){
+      $ecuador=$criteria->ecuadortask;
+    }else{
+    	$ecuador=mgm_get_course_ecuador($course->id);
+    }
+
     foreach ($students as $student) {
 		$result['alumnos'][] = array(
 			'id' => $student->id,
 		    'firstname' => $student->firstname,
 		    'lastname' => $student->lastname
 		);
-		
+
         if (!$fgrade = mgm_get_grade($firsttask, $student)) {
             $result['data']['dont_start']['count']++;
             continue;
         }
-        
+
         if ($fgrade->finalgrade != $firsttask->grademax) {
             $result['data']['dont_start']['count']++;
             continue;
         }
-        
-        if ($cgrade = mgm_get_grade($ctask, $student)) {
-            if ($cgrade->finalgrade == $ctask->grademax) {
-                $result['data']['full']['count']++;
-                $result['data']['full']['amount'] += $criteria->tutorpayment;
-                continue;                
-            }                                    
-        }
-
-        if ($mgrade = mgm_get_grade($criteria->ecuadortask, $student) {
-			if($mgrade->finalgrade == $grade->rawgrademax) {
-				$result['data']['full']['count']++;
-	            $result['data']['full']['amount'] += $criteria->tutorpayment;
-			} else {
-				$result['data']['half']['count']++;
-	            $result['data']['half']['amount'] += ($criteria->tutorpayment * 0.50);
-			}            
-        } else {
+      if ($mgrade = mgm_get_grade($ecuador, $student)) {
+				if($mgrade->finalgrade == $mgrade->rawgrademax) {
+						$result['data']['full']['count']++;
+	        	$result['data']['full']['amount'] += $criteria->tutorpayment;
+				}else{
+						$result['data']['half']['count']++;
+	          $result['data']['half']['amount'] += ($criteria->tutorpayment * 0.50);
+				}
+       } else {
             $result['data']['half']['count']++;
             $result['data']['half']['amount'] += ($criteria->tutorpayment * 0.50);
-        }
+       }
     }
-    
+
     return $result;
 }
 
@@ -3194,7 +3253,7 @@ function mgm_get_course_tutors($course) {
 }
 
 function mgm_get_course_coordinators($course) {
-    return mgm_get_course_roles_on_demand($course, 'coordinador'); 
+    return mgm_get_course_roles_on_demand($course, 'coordinador');
 }
 
 function mgm_get_course_roles_on_demand($course, $role) {
@@ -3217,7 +3276,7 @@ function mgm_get_course_roles_on_demand($course, $role) {
             WHERE (r.contextid=".$context->id.")
             AND u.deleted = 0  AND r.roleid=".$roles[$role]." AND (ul.courseid=".$course->id." OR ul.courseid IS NULL)
             AND u.username != 'guest'";
-    
+
     return ($role != 'coordinador') ? get_records_sql($sql) : get_record_sql($sql);
 }
 
@@ -3225,11 +3284,20 @@ function mgm_get_user_dni($userid) {
     if(!$user = get_record('edicion_user', 'userid', $userid)) {
         return 'NOT SET';
     }
-        
+
     return ($user->dni != '') ? $user->dni : 'NOT SET';
 }
 
 
+function mgm_get_string($str){
+	$dev=get_string($str);
+	if ($dev[0] == '['){
+		$dev=str_replace('[','',$dev);
+		$dev=str_replace(']','',$dev);
+		$dev=ucfirst($dev);
+	}
+	return $dev;
+}
 
 /*
  * Class
@@ -3287,6 +3355,13 @@ class Curso {
     var $incidencias = array();
     var $info;
     var $tareas = array();
+    function format_text($str){
+    	  if ($str){
+
+    	   return '"'.str_replace('"','',$str).'"';
+    	  }
+    	  return $str;
+    }
 
     function cargarEdata($campo, $ncampo) {
         if(!$campo) {
@@ -3306,47 +3381,49 @@ class Curso {
         $this -> info -> cursoid = $this -> data -> id;
         $this -> info -> edicionid = $this -> edicion -> data -> id;
 
-        $this -> edata['anoacademico'] = $this -> edicion -> getAnoAcademico();
+        $this -> edata['anoacademico'] = $this->format_text($this -> edicion -> getAnoAcademico());
         #Obligatorio
 
         #TODO: Parametrizar?
-        $this -> edata['codentidad'] = '28923065';
+        $this -> edata['codentidad'] = $this->format_text('28923065');
         #Obligatorio
 
         #TODO: Parametrizar?
-        $this -> edata['codentidadvisado'] = '28923016';
+        $this -> edata['codentidadvisado'] = $this->format_text('28923016');
         #Obligatorio
 
-        $this -> edata['codtipoactividad'] = 'AP';
+        $this -> edata['codtipoactividad'] = $this->format_text('AP');
         #Obligatorio
 
         #Nos tiene que venir de vuelta
         $this -> edata['numactividad'] = $numactividad;
 
+
         $this -> cargarEdata($this -> dbedata -> codagrupacion, 'codagrupacion');
         #Obligatorio
 
         #Nos tiene que venir de vuelta
-        $this -> edata['codactividad'] = $this -> edata['codentidad'] . sprintf('%04d', $numactividad);
+        $this -> edata['codactividad'] = $this->format_text($this -> edata['codentidad'] . sprintf('%04d', $numactividad));
+        #$this -> edata['codactividad'] = null;
         #Obligatorio
 
-        $this -> cargarEdata($this -> dbedata -> codmodalidad, 'codmodalidad');
+        $this -> cargarEdata($this->format_text($this -> dbedata -> codmodalidad), 'codmodalidad');
         #Obligatorio
 
         #TODO: Parametrizar?
-        $this -> edata['codentidadpadre'] = '28923016';
+        $this -> edata['codentidadpadre'] = $this->format_text('28923016');
         #Obligatorio
 
-        $this -> cargarEdata($this -> dbedata -> codprovincia, 'codprovincia');
+        $this -> cargarEdata($this->format_text($this -> dbedata -> codprovincia), 'codprovincia');
         #Obligatorio
 
-        $this -> cargarEdata($this -> dbedata -> codpais, 'codpais');
+        $this -> cargarEdata($this->format_text($this -> dbedata -> codpais), 'codpais');
         #Obligatorio
 
-        $this -> cargarEdata($this -> dbedata -> codmateria, 'codmateria');
+        $this -> cargarEdata($this->format_text($this -> dbedata -> codmateria), 'codmateria');
         #Obligatorio
 
-        $this -> cargarEdata($this -> dbedata -> codniveleducativo, 'codniveleducativo');
+        $this -> cargarEdata($this->format_text($this -> dbedata -> codniveleducativo), 'codniveleducativo');
         #Obligatorio
 
         #No es necesario rellenarlo, sería necesario rellenar mediante interfaz
@@ -3394,7 +3471,7 @@ class Curso {
         #No es necesario rellenarlo
         $this -> edata['tema'] = null;
 
-        $this -> edata['titulo'] = mb_strtoupper($this -> data -> fullname, 'utf-8');
+        $this -> edata['titulo'] = $this->format_text(mb_strtoupper($this -> data -> fullname, 'utf-8'));
         #Obligatorio
 
         #No es necesario rellenarlo
@@ -3409,7 +3486,7 @@ class Curso {
         #No es necesario rellenarlo
         $this -> edata['centroeducativo'] = null;
 
-        $this -> cargarEdata(mb_strtoupper($this -> dbedata -> localidad, 'utf-8'), 'localidad');
+        $this -> cargarEdata($this->format_text(mb_strtoupper($this -> dbedata -> localidad, 'utf-8')), 'localidad');
         #Obligatorio
 
         #No es necesario rellenarlo
@@ -3428,7 +3505,7 @@ class Curso {
         $this -> edata['fechaactualizacion'] = null;
 
         #No es necesario rellenarlo
-        $this -> edata['codentidadmodif'] = null;
+        $this -> edata['codentidmodif'] = null;
 
         $this -> cargarEdata(date('d/m/y H:i:s', $this -> dbedata -> fechainimodalidad), 'fechainimodalidad');
         #Obligatorio
@@ -3513,7 +3590,12 @@ class Usuario {
     var $curso;
     var $incidencias = array();
     var $info;
-
+    function format_text($str){
+    	  if ($str){
+    	   return '"'.str_replace('"','',$str).'"';;
+    	  }
+    	  return $str;
+    }
     function Usuario($data, $curso) {
         $this -> data = $data;
         $this -> curso = $curso;
@@ -3524,10 +3606,10 @@ class Usuario {
         $this -> dbdata = get_record('edicion_user', 'userid', $data -> userid);
 
         //Datos para participantes.csv
-        $this -> edata['anoacademico'] = $this -> curso -> edicion -> getAnoAcademico();
+        $this -> edata['anoacademico'] = $this->format_text($this -> curso -> edicion -> getAnoAcademico());
         #Obligatorio
-        $this -> edata['anoacademico'] = "20102011";
-        $this -> edata['codactividad'] = $this -> curso -> edata['codactividad'];
+        //$this -> edata['anoacademico'] = $this->format_text("20102011");
+        $this -> edata['codactividad'] = $this->format_text($this -> curso -> edata['codactividad']);
         #Obligatorio, proviene de la actividad/curso. Nos vendrá de vuelta
         if(!$this -> dbdata) {
             $this -> edata['tipoid'] = null;
@@ -3538,9 +3620,9 @@ class Usuario {
         } else {
             if(!$this -> dbdata -> dni || strlen($this -> dbdata -> dni) != 9)
                 $this -> incidencias[] = get_string('incidencia_dni', 'mgm', $this -> info);
-            $this -> edata['tipoid'] = $this -> dbdata -> tipoid;
+            $this -> edata['tipoid'] = $this->format_text($this -> dbdata -> tipoid);
             $this -> edata['DNI'] = strtoupper($this -> dbdata -> dni);
-            $this -> edata['DNI'] = substr($this -> edata['DNI'], strspn($this -> edata['DNI'], '0'));
+            $this -> edata['DNI'] = $this->format_text(substr($this -> edata['DNI'], strspn($this -> edata['DNI'], '0')));
         }
         $this -> edata['creditos'] = $this -> curso -> edata['numcreditos'];
         #Obligatorio, proviene de la actividad/curso
@@ -3552,15 +3634,15 @@ class Usuario {
         $this -> edata['numregistro'] = null;
         $this -> edata['numregistroCCAA'] = null;
         $this -> edata['generacertif'] = null;
-        $this -> edata['codtipoparticipante'] = $this -> getTipo();
+        $this -> edata['codtipoparticipante'] = $this->format_text($this -> getTipo());
         #Obligatorio
         if(!$this -> edata['codtipoparticipante'])
             $this -> incidencias[] = get_string('incidencia_no_tipo_usuario', 'mgm', $this -> info);
-        $this -> edata['codmodalidad'] = $this -> curso -> edata['codmodalidad'];
+        $this -> edata['codmodalidad'] = $this->format_text($this -> curso -> edata['codmodalidad']);
         #Obligatorio, proviene de la actividad/curso
         $this -> edata['fechainicio'] = $this -> curso -> edata['fechainicio'];
         #Obligatorio, proviene de la actividad/curso
-        $this -> edata['codtipoactividad'] = 'AP';
+        $this -> edata['codtipoactividad'] = $this->format_text('AP');
         #Obligatorio
         $this -> edata['idayuda'] = null;
         $this -> edata['organismo'] = null;
@@ -3571,9 +3653,9 @@ class Usuario {
         #Obligatorio, proviene de la actividad/curso
 
         //Datos para profesores.csv
-        $this -> edatap['tipoid'] = $this -> edata['tipoid'];
+        $this -> edatap['tipoid'] = $this->format_text($this -> edata['tipoid']);
         #Obligatorio
-        $this -> edatap['DNI'] = $this -> edata['DNI'];
+        $this -> edatap['DNI'] = $this->format_text($this -> edata['DNI']);
         #Obligatorio
         if(!$this -> dbdata) {
             $this -> edatap['codniveleducativo'] = null;
@@ -3581,9 +3663,9 @@ class Usuario {
             $this -> edatap['codcuerpodocente'] = null;
             #Obligatorio
         } else {
-            $this -> edatap['codniveleducativo'] = $this -> dbdata -> codniveleducativo;
+            $this -> edatap['codniveleducativo'] =$this->format_text( $this -> dbdata -> codniveleducativo);
             #Obligatorio
-            $this -> edatap['codcuerpodocente'] = $this -> dbdata -> codcuerpodocente;
+            $this -> edatap['codcuerpodocente'] = $this->format_text($this -> dbdata -> codcuerpodocente);
             #Obligatorio
         }
         if(!$this -> dbdata) {
@@ -3594,42 +3676,42 @@ class Usuario {
             $this -> edatap['codcentro'] = null;
             #Obligatorio
         } else {
-            $this -> edatap['codprovincia'] = $this -> dbdata -> codprovincia;
+            $this -> edatap['codprovincia'] =$this->format_text( $this -> dbdata -> codprovincia);
             #Obligatorio
-            $this -> edatap['codpostal'] = $this -> dbdata -> codpostal;
+            $this -> edatap['codpostal'] =$this->format_text($this -> dbdata -> codpostal);
             #Obligatorio
             $this -> edatap['codcentro'] = $this -> dbdata -> cc;
             #Obligatorio
         }
         $userdata = get_record('user', 'id', $data -> userid);
-        $apellidos = explode(' ', $userdata -> lastname, 2);
+        $apellidos = explode(' ',trim($userdata -> lastname), 2);
         if(count($apellidos) > 0)
-            $this -> edatap['apellido1'] = mb_strtoupper($apellidos[0], 'utf-8');
+            $this -> edatap['apellido1'] = $this->format_text(mb_strtoupper($apellidos[0], 'utf-8'));
         #Obligatorio
         else
             $this -> edatap['apellido1'] = null;
         if(count($apellidos) > 1)
-            $this -> edatap['apellido2'] = mb_strtoupper($apellidos[1], 'utf-8');
+            $this -> edatap['apellido2'] = $this->format_text(mb_strtoupper($apellidos[1], 'utf-8'));
         #Obligatorio
         else
             $this -> edatap['apellido2'] = null;
-        $this -> edatap['nombre'] = mb_strtoupper($userdata -> firstname, 'utf-8');
+        $this -> edatap['nombre'] = $this->format_text(mb_strtoupper(trim($userdata -> firstname), 'utf-8'));
         #Obligatorio
         $this -> edatap['anosexperiencia'] = null;
         $this -> edatap['situacionadmin'] = null;
-        $this -> edatap['domicilio'] = mb_strtoupper($userdata -> address, 'utf-8');
+        $this -> edatap['domicilio'] = $this->format_text(mb_strtoupper($userdata -> address, 'utf-8'));
         #Obligatorio
         $this -> edatap['telefono'] = $userdata -> phone1;
         #Obligatorio
-        $this -> edatap['localidad'] = mb_strtoupper($userdata -> city, 'utf-8');
+        $this -> edatap['localidad'] =$this->format_text( mb_strtoupper($userdata -> city, 'utf-8'));
         #Obligatorio
         if(!$this -> dbdata) {
             $this -> edatap['codpais'] = null;
             $this -> edatap['sexo'] = null;
             #Obligatorio
         } else {
-            $this -> edatap['codpais'] = $this -> dbdata -> codpais;
-            $this -> edatap['sexo'] = $this -> dbdata -> sexo;
+            $this -> edatap['codpais'] =$this->format_text( $this -> dbdata -> codpais);
+            $this -> edatap['sexo'] = $this->format_text($this -> dbdata -> sexo);
             #Obligatorio
         }
     }
@@ -3757,35 +3839,40 @@ class EmisionDatos {
         if($cursos)
             foreach($cursos as $curso) {
                 if(!$cabecera_participantes) {
-                    fwrite($factividades, implode($this -> separador_campo, array_keys($curso -> edata)) . "\n");
+                    fwrite($factividades, '"'. implode('"'. $this -> separador_campo .'"', array_keys($curso -> edata)) . '"'."\n");
                     $cabecera_actividades = True;
                 }
                 if($curso -> incidencias)
                     $ret -> incidencias = array_merge($ret -> incidencias, $curso -> incidencias);
-                fwrite($factividades, implode($this -> separador_campo, $curso -> edata) . "\n");
+                else
+                		fwrite($factividades, implode($this -> separador_campo, $curso -> edata) . "\n");
                 $participantes = $curso -> getParticipantes();
                 foreach($participantes as $participante) {
                     if(!$cabecera_participantes) {
-                        fwrite($fparticipantes, implode($this -> separador_campo, array_keys($participante -> edata)) . "\n");
+                        fwrite($fparticipantes,'"' . implode('"'. $this -> separador_campo . '"', array_keys($participante -> edata)) .'"'."\n");
                         $cabecera_participantes = True;
                     }
                     if($participante -> incidencias)
                         $ret -> incidencias = array_merge($ret -> incidencias, $participante -> incidencias);
-                    if(in_array($participante -> edata['codtipoparticipante'], array('C', 'T')) || $aprobado = $curso -> aprobado($participante)) {
-                        if($participante -> dbdata)
-                            $profesores[$participante -> edata['DNI']] = $participante;
-                        fwrite($fparticipantes, implode($this -> separador_campo, $participante -> edata) . "\n");
-                    } elseif(!$aprobado && $participante -> edata['codtipoparticipante'])
-                        $ret -> incidencias[] = get_string('incidencia_no_aprobado', 'mgm', $participante -> info);
+                    else{
+		                    if(in_array($participante -> edata['codtipoparticipante'], array('C', 'T')) || $aprobado = $curso -> aprobado($participante)) {
+
+		                        if($participante -> dbdata)
+		                            $profesores[$participante -> edata['DNI']] = $participante;
+		                        fwrite($fparticipantes, implode($this -> separador_campo, $participante -> edata) . "\n");
+		                    } elseif(!$aprobado && $participante -> edata['codtipoparticipante'])
+		                        $ret -> incidencias[] = get_string('incidencia_no_aprobado', 'mgm', $participante -> info);
+                    }
                 }
             }
         if($profesores)
             foreach($profesores as $profesor) {
                 if(!$cabecera_profesores) {
-                    fwrite($fprofesores, implode($this -> separador_campo, array_keys($profesor -> edatap)) . "\n");
+                    fwrite($fprofesores, '"' . implode('"'. $this -> separador_campo . '"', array_keys($profesor -> edatap)) . '"'."\n");
                     $cabecera_profesores = True;
                 }
-                fwrite($fprofesores, implode($this -> separador_campo, $profesor -> edatap) . "\n");
+                if (! $profesor->incidencias)
+                    fwrite($fprofesores, implode($this -> separador_campo, $profesor -> edatap) . "\n");
             }
         fclose($factividades);
         fclose($fparticipantes);
@@ -3804,4 +3891,282 @@ class EmisionDatos {
         return $ret;
     }
 
+}
+
+class JoinUsers{
+		var $user_orig=false;
+		var $user_dest=false;
+		var $user_diff=null;
+		var $rkeys=array('id','userid');//CLAVES QUE NO SE MUESTRAN EN DIFERENCIAS
+		var $obj2save=false;
+		var $fsave=true; //flag para guardar cambios
+
+		function JoinUsers($orig=false, $dest=false){
+			if ($orig){
+				$this->user_orig=$orig;
+
+			}
+			if ($dest){
+				$this->user_dest=$dest;
+
+			}
+		}
+
+		function removeRKeys($keys){
+			foreach ($this->rkeys as $rkey){
+				$key=array_search($rkey, $keys);
+				if (is_int($key)){
+					unset($keys[$key]);
+				}
+			}
+			return array_values($keys);
+		}
+
+		function addDiff(){
+			if (!isset($this->user_diff)){
+         if (isset($this->user_orig) and isset($this->user_dest)){
+         	  $this->user_diff=new stdClass();
+         	  $rkeys=array();
+         	  $keys_orig=array_keys(get_object_vars($this->user_orig));
+         	  $keys_dest=array_keys(get_object_vars($this->user_dest));
+         	  $keys=array_unique(array_merge($keys_orig, $keys_dest));
+         	  $keys=$this->removeRKeys($keys);
+         		foreach($keys as $key){
+         				if ($this->user_orig->$key != $this->user_dest->$key){
+         					$this->user_diff->$key->orig=$this->user_orig->$key;
+         					$this->user_diff->$key->dest=$this->user_dest->$key;
+         					if (! isset($this->user_dest->$key) || $this->user_dest->$key == ''){
+         						$this->user_diff->$key->v=1;
+         					}else{
+         					  $this->user_diff->$key->v=2;
+         					}
+         				}
+         		}
+         }
+			}
+		}
+		function setDiffField($key, $value=2){
+			$this->userdiff->$key->v=$value;
+		}
+
+		function setDiffVals($keys2set){
+				foreach(array_keys(get_object_vars($this->user_diff)) as $key => $value){
+				 	$this->user_diff->$value->v=$keys2set[$key];
+				}
+		}
+		#Listado de valores a ser establecidos en el usuario destino
+		function getValues2Modif(){
+		  $ret=array();
+		  foreach(array_keys(get_object_vars($this->user_diff)) as $key => $value){
+				 	if ($this->user_diff->$value->v==1){
+				 		$ret[$value]=$this->user_orig->$value;
+				 	}
+			}
+			return $ret;
+		}
+
+		function getSaveValues(){
+				if (! $this->obj2save){
+					$this->setSaveValues();
+				}
+				return $this->obj2save;
+		}
+
+		function setSaveValues(){
+				$this->obj2save=new stdClass();
+				$this->obj2save->id=$this->user_dest->id;
+				foreach ($this->getValues2Modif() as $k=>$v){
+					$this->obj2save->$k=$v;
+				}
+				return true;
+		}
+
+		function updateCertDest(){
+			if ($cert_orig=mgm_get_cert_history($this->user_orig->id)){
+				foreach  ($cert_orig as $cert){
+					$cert->userid=$this->user_dest->id;
+					update_record($cert);
+				}
+			}
+			return true;
+		}
+
+		function save(){
+				if (! $this->obj2save){
+					$this->setSaveValues();
+				}
+				if ($this->fsave){
+					  //guardar destino
+						mgm_update_user_complete($this->obj2save);
+						//actualizar cursos certificados
+						$this->updateCertDest();
+						//eliminar usurio origen
+						if ($user=get_record('user', 'id', $this->user_orig->id)){
+							$ret=delete_user($user);
+							//borrar edicion_user
+							//borrar user
+						}
+						return true;
+				}
+			  return false;
+		}
+
+
+		function getDiff(){
+			return $this->user_diff;
+		}
+
+		function setUserId($userid, $type='orig'){
+			$type=strtolower($type);
+			if ($type == 'orig' or $type == 'dest'){
+				$usertype='user_' .$type;
+				if ($user=mgm_get_user_complete($userid)){
+			  	$this->$usertype=$user;
+			  	return true;
+				}
+				return false;
+			}
+			else{
+				return false;
+			}
+		}
+
+		function getDiffTable(){
+			global $CFG;
+			$table=new stdClass();
+			$table->head=array(
+			'Campo',
+			'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$this->user_orig->id.'&amp;course='.SITEID.'">'.fullname($this->user_orig, true).' (id: '.$this->user_orig->id.')</a>',
+			'<a href="'.$CFG->wwwroot.'/user/view.php?id='.$this->user_dest->id.'&amp;course='.SITEID.'">'.fullname($this->user_dest, true).' (id: '.$this->user_dest->id.')</a>',
+			'Valor a almacenar'
+			);
+			$table->data=array();
+			foreach(array_keys(get_object_vars($this->user_diff)) as $key => $value){
+				  if ($this->user_diff->$value->v == 1){
+				  	$checked1='checked';
+				  	$checked2='';
+				  }else{
+				  	$checked1='';
+				  	$checked2='checked';
+				  }
+				  $table->data[] = array(
+				  mgm_get_string($value),
+				 	$this->user_diff->$value->orig,
+				  $this->user_diff->$value->dest,
+				  '<div align="center">
+					<input type="radio" name="' .$key. '" value="1" '.$checked1.'>Origen
+					<input type="radio" name="' .$key. '" value="2" '.$checked2.'>Destino
+					</div>'
+
+				);
+			}
+//			$table->data[]=array(
+//			get_string('certifications'),
+//			mgm_get_cert_history_str($this->user_orig->id),
+//			mgm_get_cert_history_str($this->user_dest->id),
+//			'Nota'
+//			);
+			return $table;
+		}
+
+		function getSaveTable(){
+			global $CFG;
+			$table=new stdClass();
+			$table->head=array(
+			'Número',
+			'Campo',
+			'Valor'
+			);
+			$table->data=array();
+			$c=1;
+			$this->setSaveValues();
+			foreach(get_object_vars($this->obj2save) as $key => $value){
+				  $table->data[] = array(
+				  $c,
+				  mgm_get_string($key),
+				 	$value,
+				);
+				$c++;
+			}
+			return $table;
+		}
+
+		function getCertOrigTable(){
+			global $CFG;
+			if ($cert_orig=mgm_get_cert_history($this->user_orig->id)){
+				$table=new stdClass();
+				$table->head=array(
+				'Número',
+				'Curso',
+				'Registro',
+				'Confirmado'
+				);
+				$table->data=array();
+				$c=1;
+				foreach($cert_orig as $cert){
+					$course=get_record('course', 'id', $cert->courseid);
+					  $table->data[] = array(
+				  	$c,
+				  	$course->fullname,
+				 		$cert->numregistro,
+				 		$cert->confirm
+					);
+					$c++;
+			  }
+			  return $table;
+			}
+			return false;
+		}
+
+		function getCertTable(){
+			$cert_orig=mgm_get_cert_history($this->user_orig->id);
+			$cert_dest=mgm_get_cert_history($this->user_dest->id);
+			$table=new stdClass();
+			if ($cert_orig || $cert_dest){
+				$table->head=array(
+				fullname($this->user_orig, true),
+				fullname($this->user_dest, true)
+				);
+				$table->data=array();
+				$numrows=count($cert_orig);
+				if(count($cert_orig)<count($cert_dest)){
+					$numrows=count($cert_dest);
+				}
+		  	for($i=0;$i<$numrows; $i++){
+		  		$orig=array_pop($cert_orig);
+		  		$dest=array_pop($cert_dest);
+		    	if (! is_null($orig)){
+		    		$course=get_record('course', 'id', $orig->courseid);
+		  			$origs='Curso: ' . $course->fullname .', numreg: '. $orig->numregistro . ' confirm: ' . $orig->confirm;
+		  		}else{
+		  			$orig='';
+		  		}
+		  		if (! is_null($dest)){
+		  			$course=get_record('course', 'id', $dest->courseid);
+		  			$dests='Curso: ' . $course->fullname .', numreg: '. $dest->numregistro . ' confirm: ' . $dest->confirm;
+		  		}else{
+		  			$dest='';
+		  		}
+		  		$table->data[]=array($origs, $dests);
+		   	}
+			}
+			return $table;
+		}
+
+		function displayDiffForm($table){
+			print '<form action="join_users_act.php" method="POST">';
+    	print_table($table);
+    	print '<input type="hidden" value="1" name="confirm">
+    	<input type="hidden" value="'.sesskey().'" name="sesskey">
+    	<input type="submit" name="submit_yes" id="Submit_btn1" value="'.get_string('next').'">
+    	</form>
+    	<form action="join_users.php" method="GET">
+    	<input type="submit" name="submit_no" id="Submit_btn2" value="'.get_string('cancel').'">
+    	</form>';
+
+		}
+
+		function getCertificateRow(){
+
+		}
 }

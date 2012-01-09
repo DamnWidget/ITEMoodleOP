@@ -26,7 +26,8 @@
  */
 
 $ADMIN->add('root', new admin_category('ediciones', get_string('ediciones','mgm')));
-
+$ADMIN->add('ediciones', new admin_category('mgmcertifications', get_string('certifications', 'mgm')));
+$ADMIN->add('ediciones', new admin_category('mgmreports', get_string('reports', 'mgm')));
 $ADMIN->add(
 	'ediciones', new admin_externalpage('edicionesmgmt', get_string('edicionesmgmt', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/index.php?editionedit=on', 'mod/mgm:createedicion')
@@ -43,7 +44,7 @@ $ADMIN->add(
 );
 
 $ADMIN->add(
-    'ediciones', new admin_externalpage('edicionescert', get_string('edicionescert', 'mgm'),
+    'mgmcertifications', new admin_externalpage('edicionescert', get_string('edicionescert', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/user_certifications.php', 'mod/mgm:aprobe')
 );
 
@@ -58,18 +59,22 @@ $ADMIN->add(
 );
 
 $ADMIN->add(
-    'ediciones', new admin_externalpage('edicionesscala', get_string('edicionesscala', 'mgm'),
+    'mgmcertifications', new admin_externalpage('edicionesscala', get_string('edicionesscala', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/edicionesscala.php', 'mod/mgm:createedicion')
 );
 
 $ADMIN->add(
-    'ediciones', new admin_externalpage('edicionesrole', get_string('edicionesrole', 'mgm'),
+    'mgmcertifications', new admin_externalpage('edicionesrole', get_string('edicionesrole', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/roles.php', 'mod/mgm:createedicion')
 );
 
 $ADMIN->add(
-    'ediciones', new admin_externalpage('exportdata', get_string('exportdata', 'mgm'),
+    'mgmcertifications', new admin_externalpage('exportdata', get_string('exportdata', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/export.php', 'mod/mgm:aprobe')
+);
+$ADMIN->add(
+    'mgmcertifications', new admin_externalpage('importdata', get_string('importdata', 'mgm'),
+        $CFG->wwwroot . '/mod/mgm/import.php', 'mod/mgm:createedicion')
 );
 
 $ADMIN->add(
@@ -77,7 +82,7 @@ $ADMIN->add(
         $CFG->wwwroot . '/mod/mgm/espec.php', 'mod/mgm:createedicion')
 );
 
-$ADMIN->add('ediciones', new admin_category('mgmreports', get_string('reports', 'mgm')));
+
 
 $ADMIN->add(
     'mgmreports', new admin_externalpage('dinamicinfo', get_string('dinamicinfo', 'mgm'),
@@ -88,7 +93,6 @@ $ADMIN->add(
     'ediciones', new admin_externalpage('fees', get_string('fees', 'mgm'),
         $CFG->wwwroot . '/mod/mgm/fees.php', 'mod/mgm:aprobe')
 );
-$ADMIN->add('ediciones', new admin_category('mgmcertifications', get_string('certifications', 'mgm')));
 
 $ADMIN->add(
     'mgmcertifications', new admin_externalpage('joinusers', get_string('joinusers', 'mgm'),

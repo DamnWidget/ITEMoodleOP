@@ -71,6 +71,7 @@ admin/user/
 admin/xmldb/
 auth/
 backup/
+blocks/
 blocks/activity_modules/
 blocks/admin/
 blocks/admin_bookmarks/
@@ -81,6 +82,7 @@ blocks/calendar_month/
 blocks/calendar_upcoming/
 blocks/course_list/
 blocks/course_summary/
+blocks/configurable_report/
 blocks/db/
 blocks/email_list/
 blocks/feedback/

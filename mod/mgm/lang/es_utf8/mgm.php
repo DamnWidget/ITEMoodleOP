@@ -222,5 +222,11 @@ $string['groups'] = 'Grupos';
 $string['groups_summary'] = 'Este filtro muestra una lista de grupos. Solo se puede seleccionar un grupo al mismo tiempo';
 $string['custommgm'] = 'MGM';
 $string['custommgm_summary'] = 'Acceso a informes controlado por el modulo MGM';
-
+$string['exportpleasewait'] = 'Exportando datos, espere por favor...';
+$string['certifications'] = 'Certificaciones';
+$string['joinusers'] = 'Fusionar usuarios';
+$string['selectsourceuser'] = 'Usuario Origen';
+$string['selectdestinationuser'] = 'Usuario Destino';
+$string['joinusercheck'] = '¿Realizar la fusión de usuarios?';
+$string['importdata'] = 'Importar Datos';
 
